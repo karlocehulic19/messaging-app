@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "dotenv -e .env.test vitest",
+    "dev": "dotenv -e .env.development -- node --watch ./app.js",
+    "inspect": "dotenv -e .env.development -- node --watch --inspect ./app.js",
+    "preview": "dotenv -e .env.preview -- node --watch app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv-cli": "^7.4.4",
+    "express-async-handler": "^1.2.0"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.6"
+  }
+}
