@@ -4,9 +4,11 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "dotenv -e .env.test vitest",
-    "dev": "dotenv -e .env.development -- node --watch ./app.js",
-    "inspect": "dotenv -e .env.development -- node --watch --inspect ./app.js",
+    "test:int": "dotenv -e .env.test -- npx prisma migrate deploy && dotenv -e .env.test -- vitest -c ./vitest.config.integration.js",
+    "test:unit": "dotenv -e .env.test -- vitest -c ./vitest.config.unit.js",
+    "test": "npm run test:int run && npm run test:unit run",
+    "dev": "dotenv -e .env.test -- node --watch ./app.js",
+    "inspect": "node --watch --inspect ./app.js",
     "preview": "dotenv -e .env.preview -- node --watch app.js"
   },
   "keywords": [],
