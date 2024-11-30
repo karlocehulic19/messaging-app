@@ -22,6 +22,7 @@ const mockUser = {
   firstName: "Test",
   lastName: "User",
   username: "TestUser",
+  email: "testuser1@example.com",
   password: "TestPassword1!",
 };
 
@@ -32,7 +33,7 @@ describe("/register", () => {
 
       expect(response.status).toBe(400);
       expect(response.text).toBe(
-        "Missing body property/ies: firstName, lastName, password"
+        "Missing body property/ies: username, firstName, lastName, password, email"
       );
     });
 
@@ -83,6 +84,42 @@ describe("/register", () => {
       expect(response.text).toBe(
         "Missing body property/ies: firstName, password"
       );
+    });
+
+    it("sends bad request on missing email", async () => {
+      const response = await request(app)
+        .post("/register")
+        .send({ ...mockUser, email: undefined });
+
+      expect(response.status).toBe(400);
+      expect(response.text).toBe("Missing body property/ies: email");
+    });
+
+    it("sends bad request when too many body properties are present (all necessary remain)", () => {
+      return request(app)
+        .post("/register")
+        .send({ ...mockUser, foo: "random", bar: "random" })
+        .expect(400)
+        .then((response) => {
+          expect(response.text).toBe(
+            "Request sent invalid properties: foo, bar"
+          );
+        });
+    });
+
+    it("sends bad request when too many body properties are present (missing username)", () => {
+      return request(app)
+        .post("/register")
+        .send({
+          ...mockUser,
+          username: undefined,
+          foo: "random",
+          bar: "random",
+        })
+        .expect(400)
+        .then((response) => {
+          expect(response.text).toBe("Missing body property/ies: username");
+        });
     });
 
     it("sends bad request with message when invalid characters are used in username", async () => {
@@ -164,6 +201,7 @@ describe("/register", () => {
           firstName: "Test",
           lastName: "User",
           password: "willBeEncrypted",
+          email: "random@example.com",
         },
       });
 
@@ -218,7 +256,6 @@ describe("/register", () => {
         .send({ ...mockUser, password: "Ll@@@@@@" });
 
       expect(response.status).toBe(422);
-      console.log(response.body.message);
       expect(response.body.message).toEqual([
         "Password must contain at least one number",
       ]);
@@ -233,6 +270,38 @@ describe("/register", () => {
       expect(response.body.message).toEqual([
         "Password must contain at least one symbol",
       ]);
+    });
+
+    it("sends bad req when email is not in right formal", () => {
+      return request(app)
+        .post("/register")
+        .send({ ...mockUser, email: "wrongemail.com" })
+        .expect(422)
+        .then((response) => {
+          expect(response.body).toEqual({
+            message: ["Email must be have form username@example.com"],
+          });
+        });
+    });
+
+    it("sends bad req when email is db", async () => {
+      await prisma.user.create({
+        data: {
+          firstName: "Test",
+          lastName: "User",
+          email: "email@email.com",
+          password: "8Length!",
+          username: "SomeRandomName",
+        },
+      });
+
+      const response = await request(app)
+        .post("/register")
+        .send({ ...mockUser, email: "email@email.com" });
+      expect(response.status).toBe(422);
+      expect(response.body).toEqual({
+        message: ["User with that email already exists"],
+      });
     });
   });
 });

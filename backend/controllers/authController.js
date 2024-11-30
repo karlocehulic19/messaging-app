@@ -11,7 +11,7 @@ const validateUser = [
     .isAscii()
     .withMessage("Username contains invalid characters")
     .custom(async (value) => {
-      const user = await queries.readUserByUsername(value);
+      const user = await queries.getUserByUsername(value);
       if (user) {
         throw new Error("User with that username already exists");
       }
@@ -37,14 +37,32 @@ const validateUser = [
     .custom(isContainingCallback("number", validator.isNumeric))
     .matches(/[-!$%@^&*()_+|~=`{}\[\]:";'<>?,.\/]/)
     .withMessage("Password must contain at least one symbol"),
+  body("email")
+    .isEmail()
+    .withMessage("Email must be have form username@example.com")
+    .custom(async (email) => {
+      if (await queries.getUserByEmail(email)) {
+        throw new Error("User with that email already exists");
+      }
+
+      return true;
+    }),
 ];
 
 module.exports.postUser = [
   validateUser,
   async (req, res) => {
-    const formDataProps = ["firstName", "lastName", "password"];
+    const formDataProps = [
+      "username",
+      "firstName",
+      "lastName",
+      "password",
+      "email",
+    ];
 
     const missing = [];
+    const surplus = [];
+
     for (const prop of formDataProps) {
       if (!Object.keys(req.body).includes(prop)) missing.push(prop);
     }
@@ -53,6 +71,16 @@ module.exports.postUser = [
       return res
         .status(400)
         .send(`Missing body property/ies: ${missing.join(", ")}`);
+    }
+
+    for (const bProp of Object.keys(req.body)) {
+      if (!formDataProps.includes(bProp)) surplus.push(bProp);
+    }
+
+    if (surplus.length) {
+      return res
+        .status(400)
+        .send(`Request sent invalid properties: ${surplus.join(", ")}`);
     }
 
     const validationErrors = validationResult(req);

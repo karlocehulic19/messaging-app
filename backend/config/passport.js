@@ -4,7 +4,7 @@ const queries = require("../db/queries");
 
 const validateUser = new LocalStrategy(async (username, password, done) => {
   try {
-    await queries.readUserByUsername(username);
+    await queries.getUserByUsername(username);
   } catch (error) {
     done(error);
   }
