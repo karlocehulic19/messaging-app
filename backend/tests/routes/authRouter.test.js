@@ -1,8 +1,8 @@
-/* eslint-disable no-undef */
 const prisma = require("../../prisma");
 const request = require("supertest");
 const express = require("express");
 const authRouter = require("../../routes/authRouter");
+const errorMiddleware = require("../../middleware/errorMiddleware");
 
 const app = express();
 
@@ -11,12 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/", authRouter);
 
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  console.log(err);
-
-  res.send(err.statusCode || 500).send("Internal Server Error");
-});
+app.use(errorMiddleware);
 
 const mockUser = {
   firstName: "Test",
