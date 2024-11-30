@@ -3,6 +3,7 @@ const queries = require("../db/queries");
 const { customIsAlpha, isGlobalAlpha } = require("../utils/customIsAlpha");
 const isContainingCallback = require("../utils/isContainingCallback");
 const validator = require("validator");
+const bcrypt = require("bcrypt");
 
 const validateUser = [
   body("firstName").custom(customIsAlpha("First Name")),
@@ -90,7 +91,10 @@ module.exports.postUser = [
         .send({ message: validationErrors.array().map((err) => err.msg) });
     }
 
-    await queries.createUser({ ...req.body });
+    await queries.createUser({
+      ...req.body,
+      password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync()),
+    });
 
     res.status(200).send();
   },

@@ -3,6 +3,7 @@ const request = require("supertest");
 const express = require("express");
 const authRouter = require("../../routes/authRouter");
 const errorMiddleware = require("../../middleware/errorMiddleware");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
@@ -297,6 +298,21 @@ describe("/register", () => {
       expect(response.body).toEqual({
         message: ["User with that email already exists"],
       });
+    });
+
+    it("stores encrypted password in db", async () => {
+      const response = await request(app).post("/register").send(mockUser);
+
+      expect(
+        await bcrypt.compare(
+          mockUser.password,
+          (
+            await prisma.user.findFirst({
+              where: { username: mockUser.username },
+            })
+          ).password
+        )
+      ).toBe(true);
     });
   });
 });

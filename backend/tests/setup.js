@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const prisma = require("../prisma");
 
 afterEach(async () => {
