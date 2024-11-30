@@ -5,5 +5,6 @@ module.exports = defineConfig({
     globals: true,
     setupFiles: ["./tests/setup.js"],
     include: ["./tests/**/*.test.js"],
+    threads: false,
   },
 });

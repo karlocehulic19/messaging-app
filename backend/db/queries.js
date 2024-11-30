@@ -8,3 +8,11 @@ module.exports.readUserByUsername = async (username) => {
     },
   });
 };
+
+module.exports.createUser = async (user) => {
+  await client.user.create({
+    data: {
+      ...user,
+    },
+  });
+};
