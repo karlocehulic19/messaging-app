@@ -75,7 +75,8 @@ module.exports.postUser = [
     }
 
     for (const bProp of Object.keys(req.body)) {
-      if (!formDataProps.includes(bProp)) surplus.push(bProp);
+      if (![...formDataProps, "photoPublicId"].includes(bProp))
+        surplus.push(bProp);
     }
 
     if (surplus.length) {
