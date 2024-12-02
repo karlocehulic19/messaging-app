@@ -8,8 +8,6 @@ module.exports.config = () => {
     try {
       const user = await queries.getUserByUsername(username);
 
-      console.log(user);
-
       if (!user) {
         return done(null, false, {
           message: "Username or password is incorrect",
