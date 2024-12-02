@@ -4,6 +4,8 @@ const { customIsAlpha, isGlobalAlpha } = require("../utils/customIsAlpha");
 const isContainingCallback = require("../utils/isContainingCallback");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
+const passport = require("passport");
+const jwt = require("jsonwebtoken");
 
 const validateUser = [
   body("firstName").custom(customIsAlpha("First Name")),
@@ -50,7 +52,7 @@ const validateUser = [
     }),
 ];
 
-module.exports.postUser = [
+module.exports.userPost = [
   validateUser,
   async (req, res) => {
     const formDataProps = [
@@ -98,5 +100,27 @@ module.exports.postUser = [
     });
 
     res.status(200).send();
+  },
+];
+
+module.exports.loginPost = [
+  (req, res, next) => {
+    passport.authenticate("local", { session: false }, (err, user, info) => {
+      if (err) {
+        next(err);
+      }
+
+      if (!user) {
+        return res.status(401).send({ messages: [info.message] });
+      }
+
+      req.user = user;
+      next();
+    })(req, res, next);
+  },
+  (req, res) => {
+    res
+      .status(200)
+      .send({ token: jwt.sign({ user: req.user }, process.env.JWT_SECRET) });
   },
 ];
