@@ -1,9 +1,14 @@
 const express = require("express");
 const errorMiddleware = require("./middleware/errorMiddleware");
+const authRouter = require("./routes/authRouter");
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+require("./config/passport").config();
+
+app.use("/", authRouter);
 
 app.use(errorMiddleware);
 
