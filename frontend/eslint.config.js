@@ -13,6 +13,7 @@ export default [
       ecmaVersion: 2020,
       globals: {
         ...globals.browser,
+        global: true,
         ...pluginJest.environments.globals.globals,
       },
       parserOptions: {
