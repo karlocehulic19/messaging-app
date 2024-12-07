@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { config } from "../Constants";
 
-function LoginForm() {
+function LoginForm({ callback }) {
   const [emptyErrors, setEmptyErrors] = useState({});
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -18,13 +18,19 @@ function LoginForm() {
       await fetch(`${config.url.BACKEND_URL}/login`, {
         method: "post",
         body: JSON.stringify({ username, password }),
+        headers: {
+          "content-type": "application/json",
+        },
       })
-        .then((response) => {
+        .then(async (response) => {
           if (response.status !== 401 && response.status !== 200) {
             throw new Error(
-              `Error while fetching: ${response.url} - ${response.status}: ${response.statusText}`
+              `Error while fetching: ${response.url} - ${response.status}: ${
+                (await response.text()) || response.statusText
+              }`
             );
           }
+          if (response.status == 200) callback();
         })
         .catch((err) => {
           setError(true);
