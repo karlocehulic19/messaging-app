@@ -7,6 +7,13 @@ export const handlers = [
     if (!body.username || !body.password) {
       return new HttpResponse("Missing credentials", { status: 401 });
     }
+
+    if (body.username != "someUsername" || body.password != "somePassword") {
+      return HttpResponse.json(
+        { messages: ["Username or password is incorrect"] },
+        { status: 401 }
+      );
+    }
     return HttpResponse.json({ token: "randomJWTtoken" }, { status: 200 });
   }),
 ];
