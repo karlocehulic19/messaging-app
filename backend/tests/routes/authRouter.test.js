@@ -367,6 +367,9 @@ describe("/login", () => {
     ).toEqual(
       await prisma.user.findFirst({ where: { username: mockUser.username } })
     );
+    expect(response.body.user).toEqual(
+      await prisma.user.findFirst({ where: { username: mockUser.username } })
+    );
   });
 
   it("sends 401 on wrong password login", async () => {
