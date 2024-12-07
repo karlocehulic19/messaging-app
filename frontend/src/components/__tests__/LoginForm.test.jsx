@@ -1,9 +1,22 @@
 import LoginForm from "../LoginForm";
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterAll, afterEach } from "vitest";
 import { screen, render, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { config } from "../../Constants";
 import { vitest } from "vitest";
+import { server } from "../../mocks/node";
+
+beforeAll(() => {
+  server.listen();
+});
+
+afterEach(() => {
+  server.resetHandlers();
+});
+
+afterAll(() => {
+  server.close();
+});
 
 describe("<LoginForm />", () => {
   let user;
