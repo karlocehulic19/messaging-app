@@ -6,6 +6,8 @@ const validator = require("validator");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
+const passport = require("passport");
+const jwt = require("jsonwebtoken");
 
 const validateUser = [
   body("firstName").custom(customIsAlpha("First Name")),
@@ -52,6 +54,7 @@ const validateUser = [
     }),
 ];
 
+module.exports.userPost = [
 module.exports.userPost = [
   validateUser,
   async (req, res) => {

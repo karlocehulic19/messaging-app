@@ -13,6 +13,9 @@ function AuthProvider({ children }) {
   const loginAction = async (username, password) => {
     const response = await fetch(`${config.url.BACKEND_URL}/login`, {
       method: "post",
+      headers: {
+        "content-type": "application/json",
+      },
       body: JSON.stringify({ username, password }),
     });
 

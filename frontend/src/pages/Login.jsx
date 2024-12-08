@@ -11,7 +11,7 @@ function Login() {
   return (
     <>
       <h1>Login</h1>
-      <LoginForm />
+      <LoginForm callback={() => navigate("/")} />
       <span>
         You don&apos;t have an account? Register here:{" "}
         <a role="link" onClick={handleRegisterRedirect}>
