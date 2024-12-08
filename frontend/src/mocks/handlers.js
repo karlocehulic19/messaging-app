@@ -14,6 +14,20 @@ export const handlers = [
         { status: 401 }
       );
     }
-    return HttpResponse.json({ token: "randomJWTtoken" }, { status: 200 });
+    return HttpResponse.json(
+      {
+        token: "randomJWTtoken",
+        user: {
+          firsName: "Some",
+          lastName: "Random",
+          username: "someUsername",
+          password: "somePassword",
+          email: "someemail@some.com",
+          photoPublicId: null,
+          id: "someUUID",
+        },
+      },
+      { status: 200 }
+    );
   }),
 ];

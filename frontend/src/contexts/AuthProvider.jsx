@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
@@ -17,7 +17,6 @@ function AuthProvider({ children }) {
     });
 
     if (response.status !== 200 && response.status !== 401) {
-      console.log("here boo");
       throw new Error(
         `Error while fetching: ${response.url} - ${response.status}: ${
           (await response.text()) || response.statusText
@@ -28,14 +27,19 @@ function AuthProvider({ children }) {
     const res = await response.json();
 
     if (res.token) {
-      return setToken("randomJWTtoken");
+      localStorage.setItem("site", `Bearer ${res.token}`);
+      setUser(res.user);
+      setToken("randomJWTtoken");
     }
 
     if (res.messages) return res.messages;
   };
 
   const logout = () => {
-    return null;
+    setToken("");
+    setUser(null);
+    localStorage.removeItem("site");
+    navigate("/login");
   };
 
   return (
