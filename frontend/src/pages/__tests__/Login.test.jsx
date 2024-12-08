@@ -10,6 +10,14 @@ vitest.mock("react-router-dom", async (importOriginal) => ({
   useNavigate: () => mockedNavigate,
 }));
 
+vitest.mock("../../components/LoginForm", () => {
+  return {
+    default: () => {
+      return <p data-testid={"login-form"}>LoginForm</p>;
+    },
+  };
+});
+
 describe("<Login />", () => {
   let user;
 
@@ -20,7 +28,7 @@ describe("<Login />", () => {
   });
   describe("rendering", () => {
     it("renders login form", () => {
-      expect(() => screen.getByLabelText("Login form")).not.toThrow();
+      expect(screen.getByTestId("login-form").textContent).toBe("LoginForm");
     });
     it("renders title", () => {
       expect(screen.getByRole("heading").textContent).toBe("Login");

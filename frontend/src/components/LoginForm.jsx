@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { config } from "../Constants";
+import { useAuth } from "../hooks/useAuth";
 
 function LoginForm({ callback }) {
   const [emptyErrors, setEmptyErrors] = useState({});
@@ -7,6 +7,9 @@ function LoginForm({ callback }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [loginMessage, setLoginMessage] = useState("");
+
+  const { loginAction } = useAuth();
 
   async function handleFormSubmit(e) {
     e.preventDefault();
@@ -15,27 +18,15 @@ function LoginForm({ callback }) {
 
     if (password.length && username.length) {
       setLoading(true);
-      await fetch(`${config.url.BACKEND_URL}/login`, {
-        method: "post",
-        body: JSON.stringify({ username, password }),
-        headers: {
-          "content-type": "application/json",
-        },
-      })
-        .then(async (response) => {
-          if (response.status !== 401 && response.status !== 200) {
-            throw new Error(
-              `Error while fetching: ${response.url} - ${response.status}: ${
-                (await response.text()) || response.statusText
-              }`
-            );
-          }
-          if (response.status == 200) callback();
-        })
-        .catch((err) => {
-          setError(true);
-          console.log(err);
-        });
+      try {
+        const messages = await loginAction(username, password);
+        if (!messages) return callback();
+        setLoginMessage(messages[0]);
+      } catch (error) {
+        console.log(error);
+        setError("Error occurred: Please try again!");
+      }
+
       setLoading(false);
     }
   }
@@ -47,6 +38,9 @@ function LoginForm({ callback }) {
   return (
     <>
       <form noValidate aria-label="Login form" onSubmit={handleFormSubmit}>
+        {!!loginMessage.length && (
+          <span aria-label="Login message">{loginMessage}</span>
+        )}
         <label htmlFor="username">Username: </label>
         {emptyErrors.username && <span>Username can&apos;t be empty</span>}
         <input
