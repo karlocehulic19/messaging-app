@@ -3,8 +3,9 @@ const errorMiddleware = require("./middleware/errorMiddleware");
 const authRouter = require("./routes/authRouter");
 const app = express();
 const cors = require("cors");
+const { corsConfig } = require("./config/cors");
 
-app.use(cors());
+app.use(cors(...corsConfig));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
