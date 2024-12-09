@@ -5,7 +5,6 @@ const authRouter = require("../../routes/authRouter");
 const errorMiddleware = require("../../middleware/errorMiddleware");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const jwt = require("jsonwebtoken");
 
 const app = express();
 
@@ -13,8 +12,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/", authRouter);
-
-require("../../config/passport").config();
 
 require("../../config/passport").config();
 
@@ -270,7 +267,6 @@ describe("/register", () => {
         });
     });
 
-    it("sends bad req when email is in db", async () => {
     it("sends bad req when email is in db", async () => {
       await prisma.user.create({
         data: {
