@@ -1,6 +1,6 @@
 import LoginForm from "../LoginForm";
 import { describe, it, expect, afterEach, beforeEach } from "vitest";
-import { screen, render, act } from "@testing-library/react";
+import { screen, render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { config } from "../../Constants";
 import { vitest } from "vitest";
