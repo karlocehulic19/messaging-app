@@ -9,7 +9,7 @@ function Login() {
   }
 
   return (
-    <>
+    <div>
       <h1>Login</h1>
       <LoginForm callback={() => navigate("/")} />
       <span>
@@ -18,7 +18,7 @@ function Login() {
           HERE
         </a>
       </span>
-    </>
+    </div>
   );
 }
 
