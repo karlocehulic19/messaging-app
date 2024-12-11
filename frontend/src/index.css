@@ -3,6 +3,22 @@
   https://www.joshwcomeau.com/css/custom-css-reset/
 */
 
+@font-face {
+  font-family: "norwesterregular";
+  src: url("../public/fonts/def_1/norwester-webfont.woff2") format("woff2"),
+    url("../public/fonts/def_1/norwester-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "allerregular";
+  src: url("../public/fonts/def_1/aller_rg-webfont.woff2") format("woff2"),
+    url("../public/fonts/def_1/aller_rg-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --primary-color: rgb(34, 40, 49);
   --secondary-color: rgb(49, 54, 63);
@@ -21,6 +37,7 @@
 }
 
 body {
+  font-family: "allerregular", "Courier New", Courier, monospace;
   background-color: var(--primary-color);
   color: var(--quaternary-color);
   line-height: 1.5;
