@@ -86,9 +86,3 @@ h6 {
 #__next {
   isolation: isolate;
 }
-
-a {
-  color: rgb(52, 142, 216);
-  font-weight: 600;
-  cursor: pointer;
-}
