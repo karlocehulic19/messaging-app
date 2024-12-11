@@ -1,0 +1,11 @@
+.login-container {
+  display: flex;
+  flex-direction: column;
+  margin: 10vh;
+  text-align: center;
+  gap: 2rem;
+}
+
+.login-header {
+  font-size: 2.7rem;
+}
