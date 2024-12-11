@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import PropTypes from "prop-types";
+import styles from "./styles/LoginForm.module.css";
 
 function LoginForm({ callback }) {
   const [emptyErrors, setEmptyErrors] = useState({});
@@ -38,7 +39,12 @@ function LoginForm({ callback }) {
 
   return (
     <>
-      <form noValidate aria-label="Login form" onSubmit={handleFormSubmit}>
+      <form
+        className={styles["login-form"]}
+        noValidate
+        aria-label="Login form"
+        onSubmit={handleFormSubmit}
+      >
         {!!loginMessage.length && (
           <span aria-label="Login message">{loginMessage}</span>
         )}

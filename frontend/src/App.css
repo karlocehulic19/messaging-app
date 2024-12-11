@@ -1,0 +1,8 @@
+form {
+  display: grid;
+  background-color: var(--tertiary-color);
+  padding: 1rem;
+  color: var(--secondary-color);
+  border-radius: 1rem;
+  gap: 1rem;
+}
