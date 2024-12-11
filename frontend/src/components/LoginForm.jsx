@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
+import PropTypes from "prop-types";
 
 function LoginForm({ callback }) {
   const [emptyErrors, setEmptyErrors] = useState({});
@@ -41,7 +42,6 @@ function LoginForm({ callback }) {
         {!!loginMessage.length && (
           <span aria-label="Login message">{loginMessage}</span>
         )}
-        <label htmlFor="username">Username: </label>
         {emptyErrors.username && <span>Username can&apos;t be empty</span>}
         <input
           onChange={handleInput}
@@ -49,9 +49,9 @@ function LoginForm({ callback }) {
           name="username"
           id="username"
           aria-label="Username input"
+          placeholder="Username"
           required
         />
-        <label htmlFor="username">Password: </label>
         {emptyErrors.password && <span>Password can&apos;t be empty</span>}
         <input
           onChange={(e) => {
@@ -61,6 +61,7 @@ function LoginForm({ callback }) {
           name="password"
           id="password"
           aria-label="Password input"
+          placeholder="Password"
         />
         {!loading ? (
           <button type="submit">Login</button>
@@ -76,5 +77,9 @@ function LoginForm({ callback }) {
     </>
   );
 }
+
+LoginForm.propTypes = {
+  callback: PropTypes.func.isRequired,
+};
 
 export default LoginForm;

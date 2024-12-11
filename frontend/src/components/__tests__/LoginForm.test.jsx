@@ -28,13 +28,17 @@ describe("<LoginForm />", () => {
     expect(() => screen.getByLabelText("Login form")).not.toThrow();
   });
 
-  it("renders inputs and labels", () => {
+  it("renders inputs with placeholders", () => {
     render(<LoginForm callback={() => null} />);
 
-    expect(() => screen.getByText("Username:")).not.toThrow();
-    expect(() => screen.getByText("Password:")).not.toThrow();
     expect(screen.getByLabelText("Password input").id).toBe("password");
+    expect(screen.getByLabelText("Password input").placeholder).toBe(
+      "Password"
+    );
     expect(screen.getByLabelText("Username input").id).toBe("username");
+    expect(screen.getByLabelText("Username input").placeholder).toBe(
+      "Username"
+    );
     expect(screen.getByLabelText("Password input").getAttribute("type")).toBe(
       "password"
     );
