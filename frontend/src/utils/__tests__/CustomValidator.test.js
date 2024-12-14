@@ -127,5 +127,19 @@ describe("CustomValidator", () => {
         username: "username2 validation fails",
       });
     });
+
+    it("works with async validation callbacks", async () => {
+      const { validator, mockedValidations, testData } = setup();
+
+      mockedValidations.email.mockImplementation(() => Promise.resolve(true));
+
+      expect(await validator.validate(testData)).toEqual({});
+
+      mockedValidations.email.mockImplementation(() => Promise.resolve(false));
+
+      expect(await validator.validate(testData)).toEqual({
+        email: "email validation fails",
+      });
+    });
   });
 });

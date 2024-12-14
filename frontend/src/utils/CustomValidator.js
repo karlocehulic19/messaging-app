@@ -16,14 +16,12 @@ class CustomValidator {
     return null;
   }
 
-  #validateField(field, value) {
-    return new Promise((resolve, reject) => {
-      for (const [callback, message] of this.validationChain[field]) {
-        if (!callback(value)) reject({ field, message });
-      }
+  async #validateField(field, value) {
+    for (const [callback, message] of this.validationChain[field]) {
+      if (!(await callback(value))) throw { field, message };
+    }
 
-      resolve();
-    });
+    return;
   }
 
   async validate(formData) {
