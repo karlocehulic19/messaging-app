@@ -1,6 +1,9 @@
 const { body, validationResult } = require("express-validator");
 const queries = require("../db/queries");
-const { customIsAlpha, isGlobalAlpha } = require("../utils/customIsAlpha");
+const {
+  customIsAlpha,
+  isGlobalAlpha,
+} = require("../../common/utils/customIsAlpha");
 const isContainingCallback = require("../utils/isContainingCallback");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
