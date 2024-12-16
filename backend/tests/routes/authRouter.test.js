@@ -198,7 +198,20 @@ describe("/register", () => {
       ]);
     });
 
-    it("sends bad req when password is longer than 8 chars", async () => {
+    it("sends bad req when password is empty", async () => {
+      const response = await request(app)
+        .post("/register")
+        .send({ ...mockUser, password: "" });
+
+      expect(response.status).toBe(422);
+      expect(
+        response.body.message.includes(
+          "Password must contain at least 8 characters"
+        )
+      ).toBe(true);
+    });
+
+    it("sends bad req when password is shorter than 8 chars", async () => {
       const response = await request(app)
         .post("/register")
         .send({ ...mockUser, password: "lL1@" });

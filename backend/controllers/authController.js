@@ -2,7 +2,7 @@ const { body, validationResult } = require("express-validator");
 const queries = require("../db/queries");
 const {
   customIsAlpha,
-  isGlobalAlpha,
+  hasGlobalAlpha,
 } = require("../../common/utils/customIsAlpha");
 const isContainingCallback = require("../utils/isContainingCallback");
 const validator = require("validator");
@@ -30,14 +30,14 @@ const validateUser = [
         // better than using matchers bcs it includes all uppercase letters (not only from A - Z)
         "uppercase letter",
         validator.isUppercase,
-        isGlobalAlpha
+        hasGlobalAlpha
       )
     )
     .custom(
       isContainingCallback(
         "lowercase letter",
         validator.isLowercase,
-        isGlobalAlpha
+        hasGlobalAlpha
       )
     )
     .custom(isContainingCallback("number", validator.isNumeric))

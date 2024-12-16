@@ -1,7 +1,7 @@
 // tested in authRouter integration tests in backend workspace
 const validator = require("validator");
 
-const isGlobalAlpha = async (str) => {
+function createAlphaPromises(str) {
   const promises = [];
 
   for (const locale of validator.isAlphaLocales) {
@@ -12,29 +12,37 @@ const isGlobalAlpha = async (str) => {
     );
   }
 
-  return await Promise.any(promises)
+  return promises;
+}
+
+const hasGlobalAlpha = async (str) => {
+  return await Promise.any(createAlphaPromises(str))
     .then(() => true)
     .catch(() => false);
 };
 
-module.exports.isGlobalAlpha = isGlobalAlpha;
+const isGlobalAlpha = async (str) => {
+  return await Promise.all(createAlphaPromises(str))
+    .then(() => true)
+    .catch(() => false);
+};
 
-module.exports.customIsAlpha = (prettyPath) => {
+const customIsAlpha = (prettyPath) => {
   return async (val) => {
-    if (!(await isGlobalAlpha(val))) {
+    if (!(await hasGlobalAlpha(val))) {
       throw new Error(`${prettyPath} contains non alphabetical values`);
     }
   };
 };
 
-// tested in frontend hasUpperCase and hasLowerCase
-module.exports.isGlobalAlphaCB = async (str, callback) => {
+// tested in frontend hasUpperCase and hasLowerCase (validationExpressions.test.js)
+const hasGlobalAlphaCB = async (str, callback) => {
   const promises = [];
 
   for (const n of str) {
     promises.push(
       new Promise((resolve, reject) => {
-        isGlobalAlpha(n).then((res) => {
+        hasGlobalAlpha(n).then((res) => {
           if (res && callback(n)) resolve();
           reject();
         });
@@ -45,4 +53,11 @@ module.exports.isGlobalAlphaCB = async (str, callback) => {
   return await Promise.any(promises)
     .then(() => true)
     .catch(() => false);
+};
+
+module.exports = {
+  hasGlobalAlpha,
+  isGlobalAlpha,
+  customIsAlpha,
+  hasGlobalAlphaCB,
 };
