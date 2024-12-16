@@ -141,6 +141,16 @@ describe("CustomValidator", () => {
         email: "email validation fails",
       });
     });
+
+    it("callback are called with optional argument", async () => {
+      const { validator, mockedValidations, testData } = setup();
+
+      mockedValidations.email.mockImplementation(
+        (value, { formData }) => formData === testData
+      );
+
+      expect(await validator.validate(testData)).toEqual({});
+    });
   });
 });
 

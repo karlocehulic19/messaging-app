@@ -1,4 +1,4 @@
-class CustomValidator {
+export class CustomValidator {
   constructor() {
     this.validationChain = {};
   }
@@ -16,9 +16,9 @@ class CustomValidator {
     return null;
   }
 
-  async #validateField(field, value) {
+  async #validateField(field, value, optional) {
     for (const [callback, message] of this.validationChain[field]) {
-      if (!(await callback(value))) throw { field, message };
+      if (!(await callback(value, optional))) throw { field, message };
     }
 
     return;
@@ -29,7 +29,7 @@ class CustomValidator {
     const promises = [];
 
     for (const field of Object.keys(this.validationChain)) {
-      promises.push(this.#validateField(field, formData[field]));
+      promises.push(this.#validateField(field, formData[field], { formData }));
     }
 
     await Promise.allSettled(promises).then((result) => {
