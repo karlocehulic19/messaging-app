@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import CustomValidator from "../CustomValidator";
+import { CustomValidator, ValidatorBuilder } from "../CustomValidator";
 
 const setup = () => {
   const mockedValidations = {
@@ -139,6 +139,129 @@ describe("CustomValidator", () => {
 
       expect(await validator.validate(testData)).toEqual({
         email: "email validation fails",
+      });
+    });
+  });
+});
+
+const setupBuilder = () => {
+  const builder = new ValidatorBuilder();
+
+  return { builder };
+};
+
+describe("ValidatorBuilder", () => {
+  describe("field()", () => {
+    it("throws on empty field", () => {
+      const { builder } = setupBuilder();
+
+      expect(() => builder.field()).toThrow(
+        "Field argument must be a non empty string"
+      );
+    });
+
+    it("throws on falsy values", () => {
+      const { builder } = setupBuilder();
+
+      expect(() => builder.field(null)).toThrow(
+        "Field argument must be a non empty string"
+      );
+      expect(() => builder.field(undefined)).toThrow(
+        "Field argument must be a non empty string"
+      );
+      expect(() => builder.field(0)).toThrow(
+        "Field argument must be a non empty string"
+      );
+    });
+
+    it("throws on non strings", () => {
+      const { builder } = setupBuilder();
+
+      expect(() => builder.field(10)).toThrow(
+        "Field argument must be a non empty string"
+      );
+
+      expect(() => builder.field({ foo: "bar" })).toThrow(
+        "Field argument must be a non empty string"
+      );
+    });
+
+    it("returns builder obj", () => {
+      const { builder } = setupBuilder();
+      expect(builder.field("some")).toBe(builder);
+    });
+  });
+
+  describe("build() and addRule()", () => {
+    it("addRule throws on unspecified field", () => {
+      const { builder } = setupBuilder();
+
+      expect(() => {
+        builder.addRule(() => true, "Some error");
+      }).toThrow("Field name must be specified before adding a rule");
+    });
+
+    it("builder returns custom validation obj", () => {
+      const { builder } = setupBuilder();
+      expect(builder.build()).toBeInstanceOf(CustomValidator);
+    });
+
+    it("addRule adds validationRule to validator", () => {
+      const { builder } = setupBuilder();
+      builder.field("test").addRule("");
+
+      expect(builder.build()).toBeInstanceOf(CustomValidator);
+    });
+
+    it("addRule works with different fields", async () => {
+      const { builder } = setupBuilder();
+      const usernameRule = vi.fn(() => true);
+      const passwordRule = vi.fn(() => true);
+
+      builder.field("username").addRule(usernameRule, "username rule error");
+      builder.field("password").addRule(passwordRule, "password rule error");
+
+      const validator = builder.build();
+
+      expect(await validator.validate({})).toEqual({});
+
+      usernameRule.mockReturnValueOnce(false);
+
+      expect(await validator.validate({})).toEqual({
+        username: "username rule error",
+      });
+
+      passwordRule.mockReturnValueOnce(false);
+
+      expect(await validator.validate({})).toEqual({
+        password: "password rule error",
+      });
+    });
+
+    it("addRule works with multiple field rules", async () => {
+      const { builder } = setupBuilder();
+      const firstUsernameRule = vi.fn(() => true);
+      const secondUsernameRule = vi.fn(() => true);
+
+      builder
+        .field("username")
+        .addRule(firstUsernameRule, "username1 rule error")
+        .addRule(secondUsernameRule, "username2 rule error");
+
+      const validator = builder.build();
+
+      expect(await validator.validate({})).toEqual({});
+
+      firstUsernameRule.mockReturnValueOnce(false);
+
+      expect(await validator.validate({})).toEqual({
+        username: "username1 rule error",
+      });
+
+      secondUsernameRule.mockReturnValueOnce(false);
+
+      expect(await validator.validate({})).toEqual({
+        username: "username2 rule error",
       });
     });
   });

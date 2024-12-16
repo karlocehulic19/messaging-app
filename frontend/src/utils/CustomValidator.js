@@ -44,4 +44,29 @@ class CustomValidator {
   }
 }
 
-export default CustomValidator;
+export class ValidatorBuilder {
+  constructor() {
+    this.validator = new CustomValidator();
+  }
+
+  field(field) {
+    if (!field || typeof field !== "string")
+      throw new Error("Field argument must be a non empty string");
+    this.currField = field;
+
+    return this;
+  }
+
+  addRule(rule, message) {
+    if (!this.currField) {
+      throw new Error("Field name must be specified before adding a rule");
+    }
+
+    this.validator.addValidation(this.currField, rule, message);
+    return this;
+  }
+
+  build() {
+    return this.validator;
+  }
+}
