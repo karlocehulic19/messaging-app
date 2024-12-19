@@ -56,7 +56,7 @@ function RegisterForm() {
 
   if (submit) {
     const hasErrors = !!Object.keys(validationErrors).length;
-    if (!hasErrors) navigate("/");
+    if (!hasErrors) navigate("/login");
     setSubmit(false);
   }
 

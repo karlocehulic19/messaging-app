@@ -86,7 +86,7 @@ describe("<RegisterForm></RegisterForm>", () => {
 
       await user.click(screen.getByRole("button"));
       expect(mockedNavigate).toBeCalledTimes(1);
-      expect(mockedNavigate).toBeCalledWith("/");
+      expect(mockedNavigate).toBeCalledWith("/login");
     });
 
     it("doesn't redirect after wrong validation", async () => {
