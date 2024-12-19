@@ -13,8 +13,8 @@ function useValidator(validator) {
     [validator]
   );
 
-  function validateFormData() {
-    setValidationErrors(validator.validate(formData));
+  async function validateFormData() {
+    setValidationErrors(await validator.validate(formData));
   }
 
   return {

@@ -120,17 +120,30 @@ describe("useValidator()", () => {
       expect(mockedValidator.validate).toBeCalledWith(hookFormData);
     });
 
-    it("sets error messages to 'validator.validate' return value", () => {
-      const returnedObj = {};
+    it("sets error messages to 'validator.validate' sync return value", async () => {
+      const returnedObj = { err: "foo" };
       const { mockedValidator } = setup();
       mockedValidator.validate = vi.fn(() => returnedObj);
       const { result } = renderHook(() => useValidator(mockedValidator));
 
-      act(() => {
-        result.current.validateFormData();
+      await act(async () => {
+        await result.current.validateFormData();
       });
 
-      expect(result.current.validationErrors).toBe(returnedObj);
+      expect(result.current.validationErrors).toEqual(returnedObj);
+    });
+
+    it("sets error messages to 'validator.validate' async return value", async () => {
+      const returnedObj = { err: "foo" };
+      const { mockedValidator } = setup();
+      mockedValidator.validate = vi.fn(() => Promise.resolve(returnedObj));
+      const { result } = renderHook(() => useValidator(mockedValidator));
+
+      await act(async () => {
+        await result.current.validateFormData();
+      });
+
+      expect(result.current.validationErrors).toEqual(returnedObj);
     });
   });
 });

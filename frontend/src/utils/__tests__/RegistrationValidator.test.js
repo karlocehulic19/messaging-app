@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { test, expect } from "vitest";
 import RegistrationValidator from "../RegistrationValidator";
 
 const setup = () => {
