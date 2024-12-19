@@ -1,5 +1,5 @@
 // tested in authRouter integration tests in backend workspace
-const validator = require("validator");
+import validator from "validator";
 
 function createAlphaPromises(str) {
   const promises = [];
@@ -15,19 +15,19 @@ function createAlphaPromises(str) {
   return promises;
 }
 
-const hasGlobalAlpha = async (str) => {
+export const hasGlobalAlpha = async (str) => {
   return await Promise.any(createAlphaPromises(str))
     .then(() => true)
     .catch(() => false);
 };
 
-const isGlobalAlpha = async (str) => {
+export const isGlobalAlpha = async (str) => {
   return await Promise.all(createAlphaPromises(str))
     .then(() => true)
     .catch(() => false);
 };
 
-const customIsAlpha = (prettyPath) => {
+export const customIsAlpha = (prettyPath) => {
   return async (val) => {
     if (!(await hasGlobalAlpha(val))) {
       throw new Error(`${prettyPath} contains non alphabetical values`);
@@ -36,7 +36,7 @@ const customIsAlpha = (prettyPath) => {
 };
 
 // tested in frontend hasUpperCase and hasLowerCase (validationExpressions.test.js)
-const hasGlobalAlphaCB = async (str, callback) => {
+export const hasGlobalAlphaCB = async (str, callback) => {
   const promises = [];
 
   for (const n of str) {
@@ -53,11 +53,4 @@ const hasGlobalAlphaCB = async (str, callback) => {
   return await Promise.any(promises)
     .then(() => true)
     .catch(() => false);
-};
-
-module.exports = {
-  hasGlobalAlpha,
-  isGlobalAlpha,
-  customIsAlpha,
-  hasGlobalAlphaCB,
 };
