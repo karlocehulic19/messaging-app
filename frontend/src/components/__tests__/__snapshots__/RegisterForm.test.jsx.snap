@@ -1,0 +1,131 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<RegisterForm></RegisterForm> > renders empty inputs correctly(non-password) 1`] = `
+[
+  <input
+    id="username"
+    name="username"
+    placeholder="Username"
+    type="text"
+  />,
+  <input
+    id="email"
+    name="email"
+    placeholder="Email"
+    type="email"
+  />,
+  <input
+    id="firstName"
+    name="firstName"
+    placeholder="First Name"
+    type="text"
+  />,
+  <input
+    id="lastName"
+    name="lastName"
+    placeholder="Last Name"
+    type="text"
+  />,
+]
+`;
+
+exports[`<RegisterForm></RegisterForm> > renders empty inputs correctly(password) 1`] = `
+[
+  <input
+    aria-label="Password input"
+    data-testid="pw-input"
+    id="password"
+    name="password"
+    placeholder="Password"
+    type="password"
+  />,
+  <input
+    aria-label="Password Confirmation input"
+    data-testid="pw-input"
+    id="passwordConf"
+    name="passwordConf"
+    placeholder="Confirm Password"
+    type="password"
+  />,
+]
+`;
+
+exports[`<RegisterForm></RegisterForm> > renders form with right attributes 1`] = `
+NamedNodeMap {
+  "aria-label": "Login form",
+  "novalidate": "",
+}
+`;
+
+exports[`<RegisterForm></RegisterForm> > renders labels with right attribute 1`] = `
+[
+  NamedNodeMap {
+    "data-testid": "input-label",
+    "for": "username",
+  },
+  NamedNodeMap {
+    "data-testid": "input-label",
+    "for": "email",
+  },
+  NamedNodeMap {
+    "data-testid": "input-label",
+    "for": "firstName",
+  },
+  NamedNodeMap {
+    "data-testid": "input-label",
+    "for": "lastName",
+  },
+  NamedNodeMap {
+    "data-testid": "input-label",
+    "for": "password",
+  },
+  NamedNodeMap {
+    "data-testid": "input-label",
+    "for": "passwordConf",
+  },
+]
+`;
+
+exports[`<RegisterForm></RegisterForm> > validation logic > renders many invalid inputs correctly(all of them in nearly correct setup) 1`] = `
+[
+  <span
+    aria-label="Username validation error"
+    data-testid="validation-msg"
+  >
+    Username field is required
+  </span>,
+  <span
+    aria-label="Email validation error"
+    data-testid="validation-msg"
+  >
+    Value provided must be an valid email address
+  </span>,
+  <span
+    aria-label="First Name validation error"
+    data-testid="validation-msg"
+  >
+    First name is required
+  </span>,
+  <span
+    aria-label="Last Name validation error"
+    data-testid="validation-msg"
+  >
+    Last name is required
+  </span>,
+  <span
+    aria-label="Confirm Password validation error"
+    data-testid="validation-msg"
+  >
+    Password confirmation must be same as password
+  </span>,
+]
+`;
+
+exports[`<RegisterForm></RegisterForm> > validation logic > renders one invalid input correctly(passConfirmation) 1`] = `
+<span
+  aria-label="Confirm Password validation error"
+  data-testid="validation-msg"
+>
+  Password confirmation must be same as password
+</span>
+`;

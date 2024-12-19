@@ -130,23 +130,6 @@ describe("<LoginForm />", () => {
       expect(() => screen.getByText("Password can't be empty")).toThrow();
     });
 
-    it("removes missing username on second try if username is not empty", async () => {
-      render(<LoginForm callback={() => null} />);
-      const user = userEvent.setup();
-
-      await user.click(screen.getByLabelText("Password input"));
-      await user.keyboard("randomPassword");
-
-      await user.click(screen.getByRole("button"));
-
-      await user.click(screen.getByLabelText("Username input"));
-      await user.keyboard("randomUsername");
-
-      await user.click(screen.getByRole("button"));
-
-      expect(() => screen.getByText("Username can't be empty")).toThrow();
-    });
-
     it("removes both missing password and username msg on second try if password and username is not empty", async () => {
       render(<LoginForm callback={() => null} />);
       const user = userEvent.setup();

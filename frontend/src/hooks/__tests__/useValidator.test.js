@@ -109,11 +109,11 @@ describe("useValidator()", () => {
   });
 
   describe("validateFormData()", () => {
-    it("calls form data with right form data", () => {
+    it("calls form data with right form data", async () => {
       const { mockedValidator, hookResult, hookFormData } = setup();
 
-      act(() => {
-        hookResult.current.validateFormData();
+      await act(async () => {
+        await hookResult.current.validateFormData();
       });
 
       expect(mockedValidator.validate).toBeCalledTimes(1);
