@@ -7,24 +7,28 @@ exports[`<RegisterForm></RegisterForm> > renders empty inputs correctly(non-pass
     name="username"
     placeholder="Username"
     type="text"
+    value=""
   />,
   <input
     id="email"
     name="email"
     placeholder="Email"
     type="email"
+    value=""
   />,
   <input
     id="firstName"
     name="firstName"
     placeholder="First Name"
     type="text"
+    value=""
   />,
   <input
     id="lastName"
     name="lastName"
     placeholder="Last Name"
     type="text"
+    value=""
   />,
 ]
 `;
@@ -38,6 +42,7 @@ exports[`<RegisterForm></RegisterForm> > renders empty inputs correctly(password
     name="password"
     placeholder="Password"
     type="password"
+    value=""
   />,
   <input
     aria-label="Password Confirmation input"
@@ -46,6 +51,7 @@ exports[`<RegisterForm></RegisterForm> > renders empty inputs correctly(password
     name="passwordConf"
     placeholder="Confirm Password"
     type="password"
+    value=""
   />,
 ]
 `;
@@ -121,11 +127,84 @@ exports[`<RegisterForm></RegisterForm> > validation logic > renders many invalid
 ]
 `;
 
-exports[`<RegisterForm></RegisterForm> > validation logic > renders one invalid input correctly(passConfirmation) 1`] = `
-<span
-  aria-label="Confirm Password validation error"
-  data-testid="validation-msg"
->
-  Password confirmation must be same as password
-</span>
+exports[`<RegisterForm></RegisterForm> > validation logic > renders validation errors after interacting with any input 1`] = `
+[
+  <span
+    aria-label="Username validation error"
+    data-testid="validation-msg"
+  >
+    Username field is required
+  </span>,
+  <span
+    aria-label="Email validation error"
+    data-testid="validation-msg"
+  >
+    Email field is required
+  </span>,
+  <span
+    aria-label="First Name validation error"
+    data-testid="validation-msg"
+  >
+    First name is required
+  </span>,
+  <span
+    aria-label="Last Name validation error"
+    data-testid="validation-msg"
+  >
+    Last name is required
+  </span>,
+  <span
+    aria-label="Password validation error"
+    data-testid="validation-msg"
+  >
+    Password field is required
+  </span>,
+  <span
+    aria-label="Confirm Password validation error"
+    data-testid="validation-msg"
+  >
+    Password confirmation is required
+  </span>,
+]
+`;
+
+exports[`<RegisterForm></RegisterForm> > validation logic > renders validation errors after interacting with input 1`] = `
+[
+  <span
+    aria-label="Username validation error"
+    data-testid="validation-msg"
+  >
+    Username field is required
+  </span>,
+  <span
+    aria-label="Email validation error"
+    data-testid="validation-msg"
+  >
+    Email field is required
+  </span>,
+  <span
+    aria-label="First Name validation error"
+    data-testid="validation-msg"
+  >
+    First name is required
+  </span>,
+  <span
+    aria-label="Last Name validation error"
+    data-testid="validation-msg"
+  >
+    Last name is required
+  </span>,
+  <span
+    aria-label="Password validation error"
+    data-testid="validation-msg"
+  >
+    Password field is required
+  </span>,
+  <span
+    aria-label="Confirm Password validation error"
+    data-testid="validation-msg"
+  >
+    Password confirmation is required
+  </span>,
+]
 `;

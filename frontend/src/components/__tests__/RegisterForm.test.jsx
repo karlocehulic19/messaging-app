@@ -81,6 +81,31 @@ describe("<RegisterForm></RegisterForm>", () => {
   });
 
   describe("validation logic", () => {
+    it("doesn't render validation errors after first render", () => {
+      render(<RegisterForm />);
+      expect(screen.queryAllByTestId("validation-msg")).toEqual([]);
+    });
+
+    it("renders validation errors after interacting with input", async () => {
+      render(<RegisterForm />);
+      const user = userEvent.setup();
+
+      await user.click(screen.getByPlaceholderText("Username"));
+      await user.keyboard("a");
+
+      expect(screen.getAllByTestId("validation-msg")).toMatchSnapshot();
+    });
+
+    it("renders validation errors after interacting with any input", async () => {
+      render(<RegisterForm />);
+      const user = userEvent.setup();
+
+      await user.click(screen.getByPlaceholderText("Password"));
+      await user.keyboard("a");
+
+      expect(screen.getAllByTestId("validation-msg")).toMatchSnapshot();
+    });
+
     it("redirects after right validation", async () => {
       const { user } = await setup();
 

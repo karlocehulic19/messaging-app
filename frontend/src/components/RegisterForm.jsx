@@ -49,25 +49,19 @@ const defaultInputs = [
 
 function RegisterForm() {
   const navigate = useNavigate();
-  const [submit, setSubmit] = useState(false);
-  const { changeFormData, validationErrors, validateFormData } = useValidator(
-    RegistrationValidator
-  );
-
-  if (submit) {
-    const hasErrors = !!Object.keys(validationErrors).length;
-    if (!hasErrors) navigate("/login");
-    setSubmit(false);
-  }
+  const { formData, changeFormData, validationErrors, validateFormData } =
+    useValidator(RegistrationValidator);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    await validateFormData();
-    setSubmit(true);
+    const hasErrors = !!Object.keys(validationErrors).length;
+    console.log(validationErrors);
+    if (!hasErrors) navigate("/login");
   }
 
-  function handleInputChange(e) {
+  async function handleInputChange(e) {
     changeFormData(e.target.id, e.target.value);
+    await validateFormData();
   }
 
   return (
@@ -88,6 +82,11 @@ function RegisterForm() {
               </span>
             )}
             <input
+              value={
+                formData[shortcut.getField()]
+                  ? formData[shortcut.getField()]
+                  : ""
+              }
               onChange={handleInputChange}
               {...shortcut.getProps()}
             ></input>
