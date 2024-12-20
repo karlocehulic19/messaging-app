@@ -1,9 +1,8 @@
 const { body, validationResult } = require("express-validator");
 const queries = require("../db/queries");
-const {
-  customIsAlpha,
-  hasGlobalAlpha,
-} = require("../../common/utils/customIsAlpha");
+const { customIsAlpha, hasGlobalAlpha } = require("fix-esm").require(
+  "../../common/utils/customIsAlpha"
+);
 const isContainingCallback = require("../utils/isContainingCallback");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
