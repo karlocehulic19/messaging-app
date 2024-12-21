@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import RegisterForm from "../RegisterForm";
 import { expect, describe, it, vi, afterEach } from "vitest";
 import userEvent from "@testing-library/user-event";
@@ -60,6 +60,7 @@ const setupNearlyCorrect = async () => {
 describe("<RegisterForm></RegisterForm>", () => {
   it("renders form with right attributes", () => {
     render(<RegisterForm />);
+
     expect(screen.getByRole("form").attributes).toMatchSnapshot();
   });
 
@@ -82,7 +83,10 @@ describe("<RegisterForm></RegisterForm>", () => {
 
   describe("validation logic", () => {
     it("doesn't render validation errors after first render", () => {
-      render(<RegisterForm />);
+      act(() => {
+        render(<RegisterForm />);
+      });
+
       expect(screen.queryAllByTestId("validation-msg")).toEqual([]);
     });
 
@@ -91,6 +95,7 @@ describe("<RegisterForm></RegisterForm>", () => {
       const user = userEvent.setup();
 
       await user.click(screen.getByPlaceholderText("Username"));
+
       await user.keyboard("a");
 
       expect(screen.getAllByTestId("validation-msg")).toMatchSnapshot();

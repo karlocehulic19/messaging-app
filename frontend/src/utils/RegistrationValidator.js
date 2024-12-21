@@ -28,16 +28,17 @@ RegistrationValidatorBuilder.field("email")
 
 RegistrationValidatorBuilder.field("password")
   .addRule(isRequired, "Password field is required")
-  .addRule(
-    (value) => validator.isLength(value, { min: 8 }),
-    "Password must contain at least 8 characters"
-  )
   .addRule(hasUpperCase, "Password must contain at least one uppercase letter")
   .addRule(hasLowerCase, "Password must contain at least one lowercase letter")
   .addRule(hasNumeric, "Password must contain at least one number")
   .addRule(
+    // eslint-disable-next-line no-useless-escape
     (value) => validator.matches(value, /[-!$%@^&*()_+|~=`{}\[\]:";'<>?,.\/]/),
     "Password must contain at least one symbol"
+  )
+  .addRule(
+    (value) => validator.isLength(value, { min: 8 }),
+    "Password must contain at least 8 characters"
   );
 
 RegistrationValidatorBuilder.field("passwordConf")

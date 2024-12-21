@@ -127,6 +127,15 @@ exports[`<RegisterForm></RegisterForm> > validation logic > renders many invalid
 ]
 `;
 
+exports[`<RegisterForm></RegisterForm> > validation logic > renders one invalid input correctly(passConfirmation) 1`] = `
+<span
+  aria-label="Confirm Password validation error"
+  data-testid="validation-msg"
+>
+  Password confirmation must be same as password
+</span>
+`;
+
 exports[`<RegisterForm></RegisterForm> > validation logic > renders validation errors after interacting with any input 1`] = `
 [
   <span
@@ -157,7 +166,7 @@ exports[`<RegisterForm></RegisterForm> > validation logic > renders validation e
     aria-label="Password validation error"
     data-testid="validation-msg"
   >
-    Password field is required
+    Password must contain at least one uppercase letter
   </span>,
   <span
     aria-label="Confirm Password validation error"
@@ -170,12 +179,6 @@ exports[`<RegisterForm></RegisterForm> > validation logic > renders validation e
 
 exports[`<RegisterForm></RegisterForm> > validation logic > renders validation errors after interacting with input 1`] = `
 [
-  <span
-    aria-label="Username validation error"
-    data-testid="validation-msg"
-  >
-    Username field is required
-  </span>,
   <span
     aria-label="Email validation error"
     data-testid="validation-msg"

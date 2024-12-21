@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import RegistrationValidator from "../utils/RegistrationValidator";
 import useValidator from "../hooks/useValidator";
-import { useState } from "react";
 
 class InputShortcut {
   constructor(name, password = false) {
@@ -49,19 +48,18 @@ const defaultInputs = [
 
 function RegisterForm() {
   const navigate = useNavigate();
-  const { formData, changeFormData, validationErrors, validateFormData } =
-    useValidator(RegistrationValidator);
+  const { formData, changeFormData, validationErrors } = useValidator(
+    RegistrationValidator
+  );
 
-  async function handleSubmit(e) {
+  function handleSubmit(e) {
     e.preventDefault();
     const hasErrors = !!Object.keys(validationErrors).length;
-    console.log(validationErrors);
     if (!hasErrors) navigate("/login");
   }
 
-  async function handleInputChange(e) {
+  function handleInputChange(e) {
     changeFormData(e.target.id, e.target.value);
-    await validateFormData();
   }
 
   return (

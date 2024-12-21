@@ -43,8 +43,8 @@ test("returns message on not long enough password", async () => {
   expect(
     await RegistrationValidator.validate({
       ...validData,
-      password: "notlong",
-      passwordConf: "notlong",
+      password: "@1Aa",
+      passwordConf: "@1Aa",
     })
   ).toEqual({
     password: "Password must contain at least 8 characters",
