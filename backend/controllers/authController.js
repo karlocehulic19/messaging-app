@@ -40,6 +40,7 @@ const validateUser = [
       )
     )
     .custom(isContainingCallback("number", validator.isNumeric))
+    // eslint-disable-next-line no-useless-escape
     .matches(/[-!$%@^&*()_+|~=`{}\[\]:";'<>?,.\/]/)
     .withMessage("Password must contain at least one symbol"),
   body("email")
