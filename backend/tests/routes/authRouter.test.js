@@ -31,9 +31,10 @@ describe("/register", () => {
       const response = await request(app).post("/register");
 
       expect(response.status).toBe(400);
-      expect(response.text).toBe(
-        "Missing body property/ies: username, firstName, lastName, password, email"
-      );
+      expect(response.body).toEqual({
+        error:
+          "Missing body property/ies: username, firstName, lastName, password, email",
+      });
     });
 
     it("sends bad request on missing first name", async () => {
@@ -42,7 +43,9 @@ describe("/register", () => {
         .send({ ...mockUser, firstName: undefined });
 
       expect(response.status).toBe(400);
-      expect(response.text).toBe("Missing body property/ies: firstName");
+      expect(response.body).toEqual({
+        error: "Missing body property/ies: firstName",
+      });
     });
 
     it("sends bad request on missing last name", async () => {
@@ -51,7 +54,9 @@ describe("/register", () => {
         .send({ ...mockUser, lastName: undefined });
 
       expect(response.status).toBe(400);
-      expect(response.text).toBe("Missing body property/ies: lastName");
+      expect(response.body).toEqual({
+        error: "Missing body property/ies: lastName",
+      });
     });
 
     it("sends bad request on missing first and last name", async () => {
@@ -60,9 +65,9 @@ describe("/register", () => {
         .send({ ...mockUser, firstName: undefined, lastName: undefined });
 
       expect(response.status).toBe(400);
-      expect(response.text).toBe(
-        "Missing body property/ies: firstName, lastName"
-      );
+      expect(response.body).toEqual({
+        error: "Missing body property/ies: firstName, lastName",
+      });
     });
 
     it("sends bad request on missing password", async () => {
@@ -71,7 +76,9 @@ describe("/register", () => {
         .send({ ...mockUser, password: undefined });
 
       expect(response.status).toBe(400);
-      expect(response.text).toBe("Missing body property/ies: password");
+      expect(response.body).toEqual({
+        error: "Missing body property/ies: password",
+      });
     });
 
     it("sends bad request on missing firstName and password", async () => {
@@ -80,9 +87,9 @@ describe("/register", () => {
         .send({ ...mockUser, password: undefined, firstName: undefined });
 
       expect(response.status).toBe(400);
-      expect(response.text).toBe(
-        "Missing body property/ies: firstName, password"
-      );
+      expect(response.body).toEqual({
+        error: "Missing body property/ies: firstName, password",
+      });
     });
 
     it("sends bad request on missing email", async () => {
@@ -91,7 +98,9 @@ describe("/register", () => {
         .send({ ...mockUser, email: undefined });
 
       expect(response.status).toBe(400);
-      expect(response.text).toBe("Missing body property/ies: email");
+      expect(response.body).toEqual({
+        error: "Missing body property/ies: email",
+      });
     });
 
     it("sends bad request when too many body properties are present (all necessary remain)", () => {
@@ -100,9 +109,9 @@ describe("/register", () => {
         .send({ ...mockUser, foo: "random", bar: "random" })
         .expect(400)
         .then((response) => {
-          expect(response.text).toBe(
-            "Request sent invalid properties: foo, bar"
-          );
+          expect(response.body).toEqual({
+            error: "Request sent invalid properties: foo, bar",
+          });
         });
     });
 
@@ -117,7 +126,9 @@ describe("/register", () => {
         })
         .expect(400)
         .then((response) => {
-          expect(response.text).toBe("Missing body property/ies: username");
+          expect(response.body).toEqual({
+            error: "Missing body property/ies: username",
+          });
         });
     });
 

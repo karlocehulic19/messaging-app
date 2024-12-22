@@ -76,7 +76,7 @@ module.exports.userPost = [
     if (missing.length) {
       return res
         .status(400)
-        .send(`Missing body property/ies: ${missing.join(", ")}`);
+        .send({ error: `Missing body property/ies: ${missing.join(", ")}` });
     }
 
     for (const bProp of Object.keys(req.body)) {
@@ -87,7 +87,9 @@ module.exports.userPost = [
     if (surplus.length) {
       return res
         .status(400)
-        .send(`Request sent invalid properties: ${surplus.join(", ")}`);
+        .send({
+          error: `Request sent invalid properties: ${surplus.join(", ")}`,
+        });
     }
 
     const validationErrors = validationResult(req);
