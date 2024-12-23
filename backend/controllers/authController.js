@@ -85,11 +85,9 @@ module.exports.userPost = [
     }
 
     if (surplus.length) {
-      return res
-        .status(400)
-        .send({
-          error: `Request sent invalid properties: ${surplus.join(", ")}`,
-        });
+      return res.status(400).send({
+        error: `Request sent invalid properties: ${surplus.join(", ")}`,
+      });
     }
 
     const validationErrors = validationResult(req);
@@ -114,7 +112,6 @@ module.exports.loginPost = [
       if (err) {
         next(err);
       }
-
       if (!user) {
         return res.status(401).send({ messages: [info.message] });
       }
