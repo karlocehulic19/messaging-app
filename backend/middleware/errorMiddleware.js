@@ -4,5 +4,5 @@ module.exports = (err, req, res, next) => {
 
   res
     .status(err.statusCode || 500)
-    .send(err.message || "Internal Server Error");
+    .send({ error: err.message || "Internal Server Error" });
 };
