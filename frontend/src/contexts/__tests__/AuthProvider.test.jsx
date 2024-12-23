@@ -120,7 +120,7 @@ describe("<AuthProvider></AuthProvider>", () => {
     ]);
   });
 
-  test("login throws on anything other than 401 and 400", async () => {
+  test("login throws on anything other than 401 and 200", async () => {
     render(
       <TestingComponent username="notInDbUsername" password="notInDbPassword" />
     );
@@ -128,9 +128,8 @@ describe("<AuthProvider></AuthProvider>", () => {
     const user = userEvent.setup();
 
     server.use(
-      http.post(
-        `${config.url.BACKEND_URL}/login`,
-        () => new HttpResponse("Some error!", { status: 422 })
+      http.post(`${config.url.BACKEND_URL}/login`, () =>
+        HttpResponse.json({ error: "Some error!" }, { status: 422 })
       )
     );
 

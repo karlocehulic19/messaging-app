@@ -19,15 +19,15 @@ function AuthProvider({ children }) {
       body: JSON.stringify({ username, password }),
     });
 
+    const res = await response.json();
+
     if (response.status !== 200 && response.status !== 401) {
       throw new Error(
         `Error while fetching: ${response.url} - ${response.status}: ${
-          (await response.text()) || response.statusText
+          res.error || response.statusText
         }`
       );
     }
-
-    const res = await response.json();
 
     if (res.token) {
       localStorage.setItem("site", `Bearer ${res.token}`);
