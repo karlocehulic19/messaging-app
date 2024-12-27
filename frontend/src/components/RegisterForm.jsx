@@ -55,10 +55,9 @@ function RegisterForm() {
   );
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    const hasErrors = !!Object.keys(validationErrors).length;
-    if (!hasErrors) navigate("/login");
+    if (await syncValidate(formData)) navigate("/login");
   }
 
   function handleInputChange(e) {

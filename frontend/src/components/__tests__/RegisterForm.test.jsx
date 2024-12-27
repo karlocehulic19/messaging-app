@@ -111,6 +111,15 @@ describe("<RegisterForm></RegisterForm>", () => {
       expect(screen.getAllByTestId("validation-msg")).toMatchSnapshot();
     });
 
+    it("doesn't redirect after only clicking on register", async () => {
+      render(<RegisterForm />);
+      const user = userEvent.setup();
+
+      await user.click(screen.getByRole("button"));
+
+      expect(mockedNavigate).not.toBeCalled();
+    });
+
     it("redirects after right validation", async () => {
       const { user } = await setup();
 

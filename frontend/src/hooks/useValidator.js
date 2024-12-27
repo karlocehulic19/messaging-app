@@ -24,10 +24,14 @@ function useValidator(validator) {
     [validator]
   );
 
+  const syncValidate = async () =>
+    !Object.keys(await validator.validate(formData)).length;
+
   return {
     formData,
     validationErrors,
     changeFormData,
+    syncValidate,
   };
 }
 
