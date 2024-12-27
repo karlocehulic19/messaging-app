@@ -50,10 +50,18 @@ const defaultInputs = [
 
 function RegisterForm() {
   const navigate = useNavigate();
-  const { formData, changeFormData, validationErrors } = useValidator(
-    RegistrationValidator
-  );
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+  const { formData, changeFormData, validationErrors, syncValidate } =
+    useValidator(RegistrationValidator);
+  const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
+    useDropzone({
+      maxFiles: 1,
+      accept: {
+        "image/jpeg": [],
+        "image/png": [],
+      },
+    });
+
+  const fileRejected = !!fileRejections.length;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -93,16 +101,26 @@ function RegisterForm() {
           </label>
         );
       })}
-      <div
-        {...getRootProps({
-          className: "dropbox",
-          id: styles["picture-dropbox"],
-        })}
-      >
-        <input
-          {...getInputProps({ for: "profile-picture", id: "profile-picture" })}
-        />
-        <p>Drop your profile picture here!</p>
+      <div>
+        {fileRejected && (
+          <p>Please select image that is in PNG or JPEG format</p>
+        )}
+        <div
+          {...getRootProps({
+            className: "dropbox",
+            id: styles["picture-dropbox"],
+            ["aria-label"]: "Profile picture dropbox",
+          })}
+        >
+          <input
+            {...getInputProps({
+              htmlFor: "profile-picture",
+              id: "profile-picture",
+              ["data-testid"]: "picture-input",
+            })}
+          />
+          <p>Drop your profile picture here!</p>
+        </div>
       </div>
       <button type="submit">Register</button>
     </form>
