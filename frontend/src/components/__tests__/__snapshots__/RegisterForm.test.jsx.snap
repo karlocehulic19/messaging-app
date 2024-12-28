@@ -211,3 +211,44 @@ exports[`<RegisterForm></RegisterForm> > validation logic > renders validation e
   </span>,
 ]
 `;
+
+exports[`<RegisterForm></RegisterForm> > validation logic > renders validation errors after pressing on register 1`] = `
+[
+  <span
+    aria-label="Username validation error"
+    data-testid="validation-msg"
+  >
+    Username field is required
+  </span>,
+  <span
+    aria-label="Email validation error"
+    data-testid="validation-msg"
+  >
+    Email field is required
+  </span>,
+  <span
+    aria-label="First Name validation error"
+    data-testid="validation-msg"
+  >
+    First name is required
+  </span>,
+  <span
+    aria-label="Last Name validation error"
+    data-testid="validation-msg"
+  >
+    Last name is required
+  </span>,
+  <span
+    aria-label="Password validation error"
+    data-testid="validation-msg"
+  >
+    Password field is required
+  </span>,
+  <span
+    aria-label="Confirm Password validation error"
+    data-testid="validation-msg"
+  >
+    Password confirmation is required
+  </span>,
+]
+`;

@@ -65,6 +65,8 @@ function RegisterForm() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    changeFormData(e.target.id, e.target.value);
     if (await syncValidate(formData)) navigate("/login");
   }
 
