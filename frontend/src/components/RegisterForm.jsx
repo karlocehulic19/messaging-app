@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import RegistrationValidator from "../utils/RegistrationValidator";
 import useValidator from "../hooks/useValidator";
-import { useDropzone } from "react-dropzone";
-import styles from "./styles/RegisterForm.module.css";
 
 class InputShortcut {
   constructor(name, password = false) {
@@ -52,16 +50,6 @@ function RegisterForm() {
   const navigate = useNavigate();
   const { formData, changeFormData, validationErrors, syncValidate } =
     useValidator(RegistrationValidator);
-  const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
-    useDropzone({
-      maxFiles: 1,
-      accept: {
-        "image/jpeg": [],
-        "image/png": [],
-      },
-    });
-
-  const fileRejected = !!fileRejections.length;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -103,27 +91,6 @@ function RegisterForm() {
           </label>
         );
       })}
-      <div>
-        {fileRejected && (
-          <p>Please select image that is in PNG or JPEG format</p>
-        )}
-        <div
-          {...getRootProps({
-            className: "dropbox",
-            id: styles["picture-dropbox"],
-            ["aria-label"]: "Profile picture dropbox",
-          })}
-        >
-          <input
-            {...getInputProps({
-              htmlFor: "profile-picture",
-              id: "profile-picture",
-              ["data-testid"]: "picture-input",
-            })}
-          />
-          <p>Drop your profile picture here!</p>
-        </div>
-      </div>
       <button type="submit">Register</button>
     </form>
   );

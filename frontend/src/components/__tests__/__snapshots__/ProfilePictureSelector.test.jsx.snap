@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<ProfilePictureSelector /> > displays profile picture with right file type 1`] = `
+<div
+  aria-label="Profile picture demonstration"
+>
+  <label
+    for="profile-picture"
+  >
+    Profile picture
+  </label>
+  <img
+    alt="Current Profile picture"
+    src=""
+  />
+</div>
+`;
