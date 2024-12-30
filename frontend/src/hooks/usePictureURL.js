@@ -1,22 +1,29 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 function usePictureURL(pictureFile) {
-  const [pictureURL, setPictureUrl] = useState(null);
+  const [pictureURL, setPictureURL] = useState(null);
+  const clear = useRef(() => null);
+
+  const reset = useCallback(() => {
+    clear.current();
+    clear.current = () => null;
+    setPictureURL(null);
+  }, []);
 
   useEffect(() => {
     if (pictureFile) {
-      const newPicURL = URL.createObjectURL(pictureFile);
-      setPictureUrl(newPicURL);
+      const newPictureURL = URL.createObjectURL(pictureFile);
 
-      return () => {
-        URL.revokeObjectURL(newPicURL);
+      setPictureURL(newPictureURL);
+      clear.current = () => {
+        URL.revokeObjectURL(newPictureURL);
       };
-    } else {
-      setPictureUrl(null);
+
+      return clear.current;
     }
   }, [pictureFile]);
 
-  return pictureURL;
+  return { pictureURL, reset };
 }
 
 export default usePictureURL;

@@ -12,7 +12,7 @@ function ProfilePictureSelector() {
       },
     });
 
-  const pictureURL = usePictureURL(acceptedFiles[0]);
+  const { pictureURL, reset } = usePictureURL(acceptedFiles[0]);
 
   const fileRejected = !!fileRejections.length;
 
@@ -30,6 +30,7 @@ function ProfilePictureSelector() {
         <div aria-label="Profile picture demonstration">
           <label htmlFor="profile-picture">Profile picture</label>
           <img src={pictureURL} alt="Current Profile picture" />
+          <button onClick={reset}>Remove Picture</button>
         </div>
       )}
 

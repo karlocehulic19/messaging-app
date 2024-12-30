@@ -97,4 +97,19 @@ describe("<ProfilePictureSelector />", () => {
 
     expect(screen.getByTestId("profile-picture-container")).toMatchSnapshot();
   });
+
+  it("doesn't remove profile image after invalid picture selection", async () => {
+    const { user } = await setupValidFile();
+
+    await user.upload(screen.getByTestId("picture-input"), mockedInvalidFile);
+    expect(screen.getByRole("img")).toBeInTheDocument();
+  });
+
+  it("removes profile image after clicking on remove button", async () => {
+    const { user } = await setupValidFile();
+
+    await user.click(screen.getByText("Remove Picture"));
+
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  });
 });

@@ -13,6 +13,9 @@ exports[`<ProfilePictureSelector /> > displays profile picture with right file t
     alt="Current Profile picture"
     src="mockedFilePath"
   />
+  <button>
+    Remove Picture
+  </button>
 </div>
 `;
 
@@ -102,6 +105,9 @@ exports[`<ProfilePictureSelector /> > uses demonstration styling when image is i
       alt="Current Profile picture"
       src="mockedFilePath"
     />
+    <button>
+      Remove Picture
+    </button>
   </div>
   <div
     class="picture-dropbox-container"
