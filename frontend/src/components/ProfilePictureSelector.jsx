@@ -1,9 +1,8 @@
 import { useDropzone } from "react-dropzone";
 import styles from "./styles/ProfilePictureSelector.module.css";
-import { useEffect, useState } from "react";
+import usePictureURL from "../hooks/usePictureURL";
 
 function ProfilePictureSelector() {
-  const [pictureUrl, setPictureUrl] = useState(null);
   const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
     useDropzone({
       maxFiles: 1,
@@ -13,22 +12,27 @@ function ProfilePictureSelector() {
       },
     });
 
+  const pictureURL = usePictureURL(acceptedFiles[0]);
+
   const fileRejected = !!fileRejections.length;
 
-  useEffect(() => {
-    console.log(acceptedFiles);
-    // setPictureUrl(URL.createObjectURL(acceptedFiles[0]));
-    // return () => {
-    //   URL.revokeObjectURL(pictureUrl);
-    // };
-  }, [acceptedFiles]);
-
   return (
-    <div className="profile-picture-container">
-      <div aria-label="Profile picture demonstration">
-        <label htmlFor="profile-picture">Profile picture</label>
-        <img src={acceptedFiles[0]?.path} alt="Current Profile picture" />
-      </div>
+    <div
+      data-testid="profile-picture-container"
+      className="profile-picture-container"
+      id={
+        pictureURL
+          ? styles["picture-container-demo"]
+          : styles["picture-container"]
+      }
+    >
+      {pictureURL && (
+        <div aria-label="Profile picture demonstration">
+          <label htmlFor="profile-picture">Profile picture</label>
+          <img src={pictureURL} alt="Current Profile picture" />
+        </div>
+      )}
+
       <div className="picture-dropbox-container">
         {fileRejected && (
           <p>Please select image that is in PNG or JPEG format</p>

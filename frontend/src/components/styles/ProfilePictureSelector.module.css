@@ -3,3 +3,13 @@
   padding: 2rem;
   border-color: rgb(74, 111, 113);
 }
+
+#picture-container-demo {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
+#picture-container {
+  display: grid;
+  grid-template-columns: auto;
+}

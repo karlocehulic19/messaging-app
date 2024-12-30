@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import RegistrationValidator from "../utils/RegistrationValidator";
 import useValidator from "../hooks/useValidator";
+import ProfilePictureSelector from "./ProfilePictureSelector";
 
 class InputShortcut {
   constructor(name, password = false) {
@@ -91,6 +92,7 @@ function RegisterForm() {
           </label>
         );
       })}
+      <ProfilePictureSelector />
       <button type="submit">Register</button>
     </form>
   );

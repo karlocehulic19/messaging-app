@@ -11,7 +11,122 @@ exports[`<ProfilePictureSelector /> > displays profile picture with right file t
   </label>
   <img
     alt="Current Profile picture"
-    src=""
+    src="mockedFilePath"
   />
+</div>
+`;
+
+exports[`<ProfilePictureSelector /> > doesn't use demonstration styling when image isn't imported 1`] = `
+<div
+  class="profile-picture-container"
+  data-testid="profile-picture-container"
+  id="_picture-container_ee6cb2"
+>
+  <div
+    class="picture-dropbox-container"
+  >
+    <div
+      aria-label="Profile picture dropbox"
+      class="dropbox"
+      id="_picture-dropbox_ee6cb2"
+      role="presentation"
+      tabindex="0"
+    >
+      <input
+        accept="image/jpeg,image/png"
+        data-testid="picture-input"
+        for="profile-picture"
+        id="profile-picture"
+        multiple=""
+        style="border: 0px; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); height: 1px; margin: 0px -1px -1px 0px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
+        tabindex="-1"
+        type="file"
+      />
+      <p>
+        Drop your profile picture here!
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`<ProfilePictureSelector /> > doesn't use demonstration styling when image isn't imported 2`] = `
+<div
+  class="profile-picture-container"
+  data-testid="profile-picture-container"
+  id="_picture-container_ee6cb2"
+>
+  <div
+    class="picture-dropbox-container"
+  >
+    <div
+      aria-label="Profile picture dropbox"
+      class="dropbox"
+      id="_picture-dropbox_ee6cb2"
+      role="presentation"
+      tabindex="0"
+    >
+      <input
+        accept="image/jpeg,image/png"
+        data-testid="picture-input"
+        for="profile-picture"
+        id="profile-picture"
+        multiple=""
+        style="border: 0px; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); height: 1px; margin: 0px -1px -1px 0px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
+        tabindex="-1"
+        type="file"
+      />
+      <p>
+        Drop your profile picture here!
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`<ProfilePictureSelector /> > uses demonstration styling when image is imported 1`] = `
+<div
+  class="profile-picture-container"
+  data-testid="profile-picture-container"
+  id="_picture-container-demo_ee6cb2"
+>
+  <div
+    aria-label="Profile picture demonstration"
+  >
+    <label
+      for="profile-picture"
+    >
+      Profile picture
+    </label>
+    <img
+      alt="Current Profile picture"
+      src="mockedFilePath"
+    />
+  </div>
+  <div
+    class="picture-dropbox-container"
+  >
+    <div
+      aria-label="Profile picture dropbox"
+      class="dropbox"
+      id="_picture-dropbox_ee6cb2"
+      role="presentation"
+      tabindex="0"
+    >
+      <input
+        accept="image/jpeg,image/png"
+        data-testid="picture-input"
+        for="profile-picture"
+        id="profile-picture"
+        multiple=""
+        style="border: 0px; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); height: 1px; margin: 0px -1px -1px 0px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
+        tabindex="-1"
+        type="file"
+      />
+      <p>
+        Drop your profile picture here!
+      </p>
+    </div>
+  </div>
 </div>
 `;

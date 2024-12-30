@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import RegisterForm from "../RegisterForm";
 import { expect, describe, it, vi, afterEach } from "vitest";
 import userEvent from "@testing-library/user-event";
+import "../../mocks/URL";
 
 const mockedNavigate = vi.fn();
 

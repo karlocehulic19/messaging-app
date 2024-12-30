@@ -1,6 +1,8 @@
-import { render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ProfilePictureSelector from "../ProfilePictureSelector";
+import "../../mocks/URL";
+import { expect } from "vitest";
 
 const mockedPNGFile = new File(["test"], "test.png", { type: "image/png" });
 const mockedJPEGFile = new File(["test"], "test.jpeg", { type: "image/jpeg" });
@@ -70,5 +72,29 @@ describe("<ProfilePictureSelector />", () => {
     expect(
       screen.getByLabelText("Profile picture demonstration")
     ).toMatchSnapshot();
+  });
+
+  it("doesn't display profile picture if non are selected", () => {
+    render(<ProfilePictureSelector />);
+
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  });
+
+  it("uses demonstration styling when image is imported", async () => {
+    await setupValidFile();
+
+    expect(screen.getByTestId("profile-picture-container")).toMatchSnapshot();
+  });
+
+  it("doesn't use demonstration styling when image isn't imported", async () => {
+    await setupInvalidFile();
+
+    expect(screen.getByTestId("profile-picture-container")).toMatchSnapshot();
+
+    cleanup();
+
+    render(<ProfilePictureSelector />);
+
+    expect(screen.getByTestId("profile-picture-container")).toMatchSnapshot();
   });
 });
