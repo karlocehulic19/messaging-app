@@ -5,7 +5,7 @@ export const handlers = [
   http.post(`${config.url.BACKEND_URL}/login`, async ({ request }) => {
     const body = await request.json();
     if (!body.username || !body.password) {
-      return new HttpResponse.json(
+      return HttpResponse.json(
         { error: "Missing credentials" },
         { status: 401 }
       );
@@ -32,5 +32,9 @@ export const handlers = [
       },
       { status: 200 }
     );
+  }),
+
+  http.post(`${config.url.BACKEND_URL}/register`, async () => {
+    return new HttpResponse(null);
   }),
 ];
