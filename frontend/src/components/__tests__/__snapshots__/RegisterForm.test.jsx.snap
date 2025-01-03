@@ -1,5 +1,15 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`<RegisterForm></RegisterForm> > fetching logic > displays a error popup on failed requests 1`] = `
+<div
+  aria-label="Error message"
+>
+  <p>
+    An error occurred. Please try again.
+  </p>
+</div>
+`;
+
 exports[`<RegisterForm></RegisterForm> > renders empty inputs correctly(non-password) 1`] = `
 [
   <input

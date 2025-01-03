@@ -1,10 +1,20 @@
-import { render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import RegisterForm from "../RegisterForm";
 import { expect, describe, it, vi, afterEach } from "vitest";
 import userEvent from "@testing-library/user-event";
 import "../../mocks/URL";
+import { server } from "../../mocks/node";
+import { config } from "../../Constants";
+import { HttpResponse, http } from "msw";
 
 const mockedNavigate = vi.fn();
+server.listen();
+
+const registerHandler = (resolver) =>
+  http.post(`${config.url.BACKEND_URL}/register`, resolver);
+
+const resolver500 = () =>
+  HttpResponse.json({ error: "Internal Server Error" }, { status: 500 });
 
 vi.mock("react-router-dom", async (importOriginal) => {
   return {
@@ -17,9 +27,9 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-const setup = async () => {
+const setup = async (userEventOptions = {}) => {
+  const user = userEvent.setup(userEventOptions);
   render(<RegisterForm />);
-  const user = userEvent.setup();
 
   await user.click(screen.getByPlaceholderText("Username"));
   await user.keyboard("test");
@@ -43,8 +53,8 @@ const setup = async () => {
 };
 
 const setupNearlyCorrect = async () => {
-  render(<RegisterForm />);
   const user = userEvent.setup();
+  render(<RegisterForm />);
 
   await user.click(screen.getByPlaceholderText("Email"));
   await user.keyboard("karlocehlic@gmail");
@@ -160,6 +170,50 @@ describe("<RegisterForm></RegisterForm>", () => {
       await user.click(screen.getByRole("button"));
 
       expect(screen.getAllByTestId("validation-msg")).toMatchSnapshot();
+    });
+  });
+
+  describe("fetching logic", () => {
+    it("redirects after ok response", async () => {
+      const { user } = await setup();
+      await user.click(screen.getByRole("button"));
+
+      expect(mockedNavigate).toHaveBeenCalledOnce();
+    });
+
+    it("doesn't displays a error popup on meant requests", async () => {
+      const { user: user1 } = await setup();
+      await user1.click(screen.getByRole("button"));
+
+      expect(screen.queryByLabelText("Error message")).not.toBeInTheDocument();
+
+      cleanup();
+
+      const { user: user2 } = await setup();
+      server.use(
+        registerHandler(() =>
+          HttpResponse.json(
+            {
+              message: [
+                "First validation message",
+                "Second validation message",
+              ],
+            },
+            { status: 422 }
+          )
+        )
+      );
+      await user2.click(screen.getByRole("button"));
+
+      expect(screen.queryByLabelText("Error message")).not.toBeInTheDocument();
+    });
+
+    it("displays a error popup on failed requests", async () => {
+      const { user } = await setup();
+      server.use(registerHandler(resolver500));
+      await user.click(screen.getByRole("button"));
+
+      expect(screen.getByLabelText("Error message")).toMatchSnapshot();
     });
   });
 });
