@@ -37,4 +37,11 @@ export const handlers = [
   http.post(`${config.url.BACKEND_URL}/register`, async () => {
     return new HttpResponse(null);
   }),
+
+  http.all(`${config.url.BACKEND_URL}/test`, async ({ request }) => {
+    return HttpResponse.json({
+      passedHeaders: [...request.headers],
+      isValid: true,
+    });
+  }),
 ];
