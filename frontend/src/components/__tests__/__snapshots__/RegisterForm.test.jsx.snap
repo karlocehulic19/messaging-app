@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<RegisterForm></RegisterForm> > fetching logic > displays a error popup on failed requests 1`] = `
+exports[`<RegisterForm></RegisterForm> > fetching logic > displays an error popup on failed network request 1`] = `
 <div
   aria-label="Error message"
 >
@@ -8,6 +8,28 @@ exports[`<RegisterForm></RegisterForm> > fetching logic > displays a error popup
     An error occurred. Please try again.
   </p>
 </div>
+`;
+
+exports[`<RegisterForm></RegisterForm> > fetching logic > displays an error popup on failed requests 1`] = `
+<div
+  aria-label="Error message"
+>
+  <p>
+    An error occurred. Please try again.
+  </p>
+</div>
+`;
+
+exports[`<RegisterForm></RegisterForm> > fetching logic > displays validation messages on 422 1`] = `
+<p>
+  First validation message
+</p>
+`;
+
+exports[`<RegisterForm></RegisterForm> > fetching logic > displays validation messages on 422 2`] = `
+<p>
+  Second validation message
+</p>
 `;
 
 exports[`<RegisterForm></RegisterForm> > renders empty inputs correctly(non-password) 1`] = `
@@ -189,47 +211,6 @@ exports[`<RegisterForm></RegisterForm> > validation logic > renders validation e
 
 exports[`<RegisterForm></RegisterForm> > validation logic > renders validation errors after interacting with input 1`] = `
 [
-  <span
-    aria-label="Email validation error"
-    data-testid="validation-msg"
-  >
-    Email field is required
-  </span>,
-  <span
-    aria-label="First Name validation error"
-    data-testid="validation-msg"
-  >
-    First name is required
-  </span>,
-  <span
-    aria-label="Last Name validation error"
-    data-testid="validation-msg"
-  >
-    Last name is required
-  </span>,
-  <span
-    aria-label="Password validation error"
-    data-testid="validation-msg"
-  >
-    Password field is required
-  </span>,
-  <span
-    aria-label="Confirm Password validation error"
-    data-testid="validation-msg"
-  >
-    Password confirmation is required
-  </span>,
-]
-`;
-
-exports[`<RegisterForm></RegisterForm> > validation logic > renders validation errors after pressing on register 1`] = `
-[
-  <span
-    aria-label="Username validation error"
-    data-testid="validation-msg"
-  >
-    Username field is required
-  </span>,
   <span
     aria-label="Email validation error"
     data-testid="validation-msg"

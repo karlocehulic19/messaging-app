@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, act } from "@testing-library/react";
 import RegisterForm from "../RegisterForm";
 import { expect, describe, it, vi, afterEach } from "vitest";
 import userEvent from "@testing-library/user-event";
@@ -9,6 +9,7 @@ import { HttpResponse, http } from "msw";
 
 const mockedNavigate = vi.fn();
 server.listen();
+vi.spyOn(console, "log").mockImplementation(() => null);
 
 const registerHandler = (resolver) =>
   http.post(`${config.url.BACKEND_URL}/register`, resolver);
@@ -16,6 +17,13 @@ const registerHandler = (resolver) =>
 const resolver500 = () =>
   HttpResponse.json({ error: "Internal Server Error" }, { status: 500 });
 
+const resolver422 = () =>
+  HttpResponse.json(
+    {
+      message: ["First validation message", "Second validation message"],
+    },
+    { status: 422 }
+  );
 vi.mock("react-router-dom", async (importOriginal) => {
   return {
     ...(await importOriginal()),
@@ -24,6 +32,7 @@ vi.mock("react-router-dom", async (importOriginal) => {
 });
 
 afterEach(() => {
+  server.resetHandlers();
   vi.clearAllMocks();
 });
 
@@ -99,14 +108,6 @@ describe("<RegisterForm></RegisterForm>", () => {
       expect(screen.queryAllByTestId("validation-msg")).toEqual([]);
     });
 
-    it("renders validation errors after pressing on register", async () => {
-      render(<RegisterForm />);
-      const user = userEvent.setup();
-
-      await user.click(screen.getByRole("button"));
-      expect(screen.getAllByTestId("validation-msg")).toMatchSnapshot();
-    });
-
     it("renders validation errors after interacting with input", async () => {
       render(<RegisterForm />);
       const user = userEvent.setup();
@@ -171,6 +172,17 @@ describe("<RegisterForm></RegisterForm>", () => {
 
       expect(screen.getAllByTestId("validation-msg")).toMatchSnapshot();
     });
+
+    it("makes register button disabled with wrong validation", async () => {
+      render(<RegisterForm />);
+
+      expect(screen.getByRole("button")).toBeDisabled();
+
+      cleanup();
+
+      await setupNearlyCorrect();
+      expect(screen.getByRole("button")).toBeDisabled();
+    });
   });
 
   describe("fetching logic", () => {
@@ -181,7 +193,24 @@ describe("<RegisterForm></RegisterForm>", () => {
       expect(mockedNavigate).toHaveBeenCalledOnce();
     });
 
-    it("doesn't displays a error popup on meant requests", async () => {
+    it("doesn't redirect after bad responses", async () => {
+      server.use(registerHandler(resolver500));
+      const { user: user1 } = await setup();
+
+      await user1.click(screen.getByRole("button"));
+
+      expect(mockedNavigate).not.toHaveBeenCalled();
+
+      cleanup();
+
+      server.use(registerHandler(resolver422));
+      const { user: user2 } = await setup();
+      await user2.click(screen.getByRole("button"));
+
+      expect(mockedNavigate).not.toHaveBeenCalled();
+    });
+
+    it("doesn't displays an error popup on meant requests", async () => {
       const { user: user1 } = await setup();
       await user1.click(screen.getByRole("button"));
 
@@ -190,30 +219,80 @@ describe("<RegisterForm></RegisterForm>", () => {
       cleanup();
 
       const { user: user2 } = await setup();
-      server.use(
-        registerHandler(() =>
-          HttpResponse.json(
-            {
-              message: [
-                "First validation message",
-                "Second validation message",
-              ],
-            },
-            { status: 422 }
-          )
-        )
-      );
+      server.use(registerHandler(resolver422));
       await user2.click(screen.getByRole("button"));
 
       expect(screen.queryByLabelText("Error message")).not.toBeInTheDocument();
     });
 
-    it("displays a error popup on failed requests", async () => {
+    it("displays an error popup on failed requests", async () => {
       const { user } = await setup();
       server.use(registerHandler(resolver500));
       await user.click(screen.getByRole("button"));
 
       expect(screen.getByLabelText("Error message")).toMatchSnapshot();
+    });
+
+    it("displays an error popup on failed network request", async () => {
+      server.use(registerHandler(() => HttpResponse.error()));
+      const { user } = await setup();
+
+      await user.click(screen.getByRole("button"));
+
+      expect(screen.getByLabelText("Error message")).toMatchSnapshot();
+    });
+
+    it("displays validation messages on 422", async () => {
+      server.use(registerHandler(resolver422));
+      const { user } = await setup();
+
+      await user.click(screen.getByRole("button"));
+
+      expect(screen.getByText("First validation message")).toMatchSnapshot();
+      expect(screen.getByText("Second validation message")).toMatchSnapshot();
+    });
+
+    it("displays validation messages anything other than 400", async () => {
+      const { user: user1 } = await setup();
+
+      await user1.click(screen.getByRole("button"));
+
+      expect(screen.queryByText("First validation message")).toBeNull();
+      expect(screen.queryByText("Second validation message")).toBeNull();
+
+      cleanup();
+
+      server.use(registerHandler(resolver500));
+      const { user: user2 } = await setup();
+
+      await user2.click(screen.getByRole("button"));
+
+      expect(screen.queryByText("First validation message")).toBeNull();
+      expect(screen.queryByText("Second validation message")).toBeNull();
+    });
+
+    it("disables register button until request is received", async () => {
+      let requestResolver;
+
+      server.use(
+        registerHandler(
+          async () =>
+            await new Promise((resolve) => {
+              requestResolver = () => resolve(HttpResponse.error());
+            })
+        )
+      );
+
+      const { user } = await setup();
+      await user.click(screen.getByRole("button"));
+
+      expect(screen.getByRole("button")).toBeDisabled();
+
+      await act(async () => {
+        requestResolver();
+      });
+
+      expect(screen.getByRole("button")).toBeEnabled();
     });
   });
 });
