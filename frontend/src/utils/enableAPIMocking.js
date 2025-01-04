@@ -1,6 +1,5 @@
 async function enableAPIMocking() {
-  // eslint-disable-next-line no-undef
-  if (process.env.NODE_ENV !== "development") {
+  if (import.meta.env.VITE_MOCK_BACKEND_API !== "true") {
     return;
   }
 

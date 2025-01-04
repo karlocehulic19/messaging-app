@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:msw": "VITE_MOCK_BACKEND_API=true vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
