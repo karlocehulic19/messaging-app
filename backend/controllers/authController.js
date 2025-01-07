@@ -127,3 +127,10 @@ module.exports.loginPost = [
     });
   },
 ];
+
+module.exports.validatePost = [
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.send({ user: req.user });
+  },
+];

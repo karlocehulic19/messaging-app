@@ -461,3 +461,57 @@ describe("/login", () => {
     ]);
   });
 });
+
+describe("/validate", () => {
+  it("sends 200 and user info on right JWT key(happy path)", async () => {
+    const mockUser2 = {
+      firstName: "Test",
+      lastName: "User",
+      username: "testuser2",
+      email: "testuser2@example.com",
+      password: "TestPassword2@",
+    };
+    await request(app).post("/register").send(mockUser);
+    await request(app).post("/register").send(mockUser2);
+
+    const response1 = await request(app)
+      .post("/login")
+      .send({ username: mockUser.username, password: mockUser.password });
+    const response2 = await request(app)
+      .post("/login")
+      .send({ username: mockUser2.username, password: mockUser2.password });
+
+    const validationRes1 = await request(app)
+      .post("/validate")
+      .set("Authorization", `Bearer ${response1.body.token}`)
+      .send();
+    expect(validationRes1.status).toBe(200);
+    expect(validationRes1.body.user).toMatchObject({
+      ...mockUser,
+      password: expect.anything(),
+    });
+
+    const validationRes2 = await request(app)
+      .post("/validate")
+      .set("Authorization", `Bearer ${response2.body.token}`)
+      .send();
+    expect(validationRes2.status).toBe(200);
+    expect(validationRes2.body.user).toMatchObject({
+      ...mockUser2,
+      password: expect.anything(),
+    });
+  });
+
+  it("sends 401 on missing authorization", async () => {
+    const validationRes1 = await request(app).post("/validate").send();
+    expect(validationRes1.status).toBe(401);
+  });
+
+  it("sends 401 on authorization non bearer token", async () => {
+    const validationRes1 = await request(app)
+      .post("/validate")
+      .set("Authorization", "Bearer randomToken")
+      .send();
+    expect(validationRes1.status).toBe(401);
+  });
+});
