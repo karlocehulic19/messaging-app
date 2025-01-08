@@ -19,7 +19,6 @@ function RegisterForm() {
     RegistrationValidator
   );
 
-  console.log(formData);
   async function handleSubmit(e) {
     e.preventDefault();
 
