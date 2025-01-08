@@ -1,6 +1,6 @@
 import { screen, render } from "@testing-library/react";
 import Login from "../Login";
-import { beforeEach, describe, expect, vitest } from "vitest";
+import { beforeEach, describe, expect, vi, vitest } from "vitest";
 import userEvent from "@testing-library/user-event";
 
 const mockedNavigate = vitest.fn();
@@ -25,6 +25,7 @@ describe("<Login />", () => {
     render(<Login />);
 
     user = userEvent.setup();
+    vi.clearAllMocks();
   });
   describe("rendering", () => {
     it("renders login form", () => {

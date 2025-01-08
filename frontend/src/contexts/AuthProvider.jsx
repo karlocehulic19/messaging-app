@@ -15,7 +15,7 @@ function AuthProvider({ children }) {
     if (!token) return;
     customFetch("/validate", {
       method: "POST",
-      headers: { Authorization: token },
+      headers: { Authorization: `Bearer ${token}` },
       signal: controller.signal,
     })
       .then((res) => res.json())
@@ -47,10 +47,9 @@ function AuthProvider({ children }) {
     }
 
     if (res.token) {
-      console.log(res.user, "weird");
-      localStorage.setItem("site", `Bearer ${res.token}`);
+      localStorage.setItem("site", `${res.token}`);
       setUser(res.user);
-      setToken(`Bearer ${res.token}`);
+      setToken(`${res.token}`);
     }
 
     if (res.messages) return res.messages;
