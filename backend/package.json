@@ -8,6 +8,7 @@
     "test:unit": "dotenv -e .env.test -- vitest -c ./vitest.config.unit.js",
     "test": "npm run test:int run && npm run test:unit run",
     "dev": "dotenv -e .env.test -- node --watch ./app.js",
+    "dev:inspect": "dotenv -e .env.test -- node --watch --inspect ./app.js",
     "inspect": "node --watch --inspect ./app.js",
     "preview": "dotenv -e .env.preview -- node --watch app.js"
   },
