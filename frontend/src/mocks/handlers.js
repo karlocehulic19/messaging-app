@@ -1,8 +1,10 @@
 import { http, HttpResponse } from "msw";
 import { config } from "../Constants";
 
+const BACKEND_URL = config.url.BACKEND_URL;
+
 export const handlers = [
-  http.post(`${config.url.BACKEND_URL}/login`, async ({ request }) => {
+  http.post(`${BACKEND_URL}/login`, async ({ request }) => {
     const body = await request.json();
     if (!body.username || !body.password) {
       return HttpResponse.json(
@@ -34,14 +36,22 @@ export const handlers = [
     );
   }),
 
-  http.post(`${config.url.BACKEND_URL}/register`, async () => {
+  http.post(`${BACKEND_URL}/register`, async () => {
     return new HttpResponse(null);
   }),
 
-  http.all(`${config.url.BACKEND_URL}/test`, async ({ request }) => {
+  http.all(`${BACKEND_URL}/test`, async ({ request }) => {
     return HttpResponse.json({
       passedHeaders: [...request.headers],
       isValid: true,
     });
+  }),
+
+  http.post(`${BACKEND_URL}/validate`, ({ request }) => {
+    const authHeader = request.headers.get("Authorization");
+    if (authHeader === "Bearer randomJWTtoken") {
+      return HttpResponse.json({}, { status: 200 });
+    }
+    return HttpResponse.json({}, { status: 401 });
   }),
 ];

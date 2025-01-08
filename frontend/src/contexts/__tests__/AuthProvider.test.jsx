@@ -1,6 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, renderHook, act } from "@testing-library/react";
 import AuthProvider from "../AuthProvider";
-import { describe, test, expect, vitest, afterEach } from "vitest";
+import { describe, expect, vitest, afterEach } from "vitest";
 import { useAuth } from "../../hooks/useAuth";
 import { MemoryRouter } from "react-router-dom";
 import { useState } from "react";
@@ -43,7 +43,13 @@ const ChildComponent = ({ username, password }) => {
 
   return (
     <>
-      <p data-testid={"user"}>{JSON.stringify(user)}</p>
+      <p data-testid={"user"}>
+        {!user
+          ? user === undefined
+            ? "undefined"
+            : user
+          : JSON.stringify(user)}
+      </p>
       <p data-testid={"token"}>{JSON.stringify(token)}</p>
       <p data-testid={"login-return"}>{JSON.stringify(loginReturn)}</p>
       <p data-testid={"login-error"}>{errorMessage}</p>
@@ -65,14 +71,14 @@ const TestingComponent = ({ username = "", password = "" }) => {
 };
 
 describe("<AuthProvider></AuthProvider>", () => {
-  test("initial values", () => {
-    render(<TestingComponent />);
+  it("initial values", () => {
+    const { result } = renderHook(() => useAuth(), { wrapper: AuthProvider });
 
-    expect(JSON.parse(screen.getByTestId("user").textContent)).toBe(null);
-    expect(JSON.parse(screen.getByTestId("token").textContent)).toBe("");
+    expect(result.current.user).toBeUndefined();
+    expect(result.current.token).toBe("");
   });
 
-  test("login creates token on 200", async () => {
+  it("login creates token on 200", async () => {
     render(
       <TestingComponent username="someUsername" password="somePassword" />
     );
@@ -86,16 +92,17 @@ describe("<AuthProvider></AuthProvider>", () => {
     );
   });
 
-  test("login creates user on 200", async () => {
-    render(
-      <TestingComponent username="someUsername" password="somePassword" />
-    );
+  it("login creates user on 200", async () => {
+    const { result, rerender } = renderHook(() => useAuth(), {
+      wrapper: AuthProvider,
+    });
 
-    const user = userEvent.setup();
+    await act(async () => {
+      await result.current.loginAction("someUsername", "somePassword");
+    });
+    rerender();
 
-    await user.click(screen.getByTestId("login-button"));
-
-    expect(JSON.parse(screen.getByTestId("user").textContent)).toEqual({
+    expect(result.current.user).toEqual({
       firsName: "Some",
       lastName: "Random",
       username: "someUsername",
@@ -106,7 +113,7 @@ describe("<AuthProvider></AuthProvider>", () => {
     });
   });
 
-  test("login returns messages on 401", async () => {
+  it("login returns messages on 401", async () => {
     render(
       <TestingComponent username="notInDbUsername" password="notInDbPassword" />
     );
@@ -120,7 +127,7 @@ describe("<AuthProvider></AuthProvider>", () => {
     ]);
   });
 
-  test("login throws on anything other than 401 and 200", async () => {
+  it("login throws on anything other than 401 and 200", async () => {
     render(
       <TestingComponent username="notInDbUsername" password="notInDbPassword" />
     );
@@ -140,7 +147,7 @@ describe("<AuthProvider></AuthProvider>", () => {
     );
   });
 
-  test("login throws on internet error", async () => {
+  it("login throws on internet error", async () => {
     render(
       <TestingComponent username="notInDbUsername" password="notInDbPassword" />
     );
@@ -158,7 +165,7 @@ describe("<AuthProvider></AuthProvider>", () => {
     );
   });
 
-  test("login stores token in localStorage", async () => {
+  it("login stores token in localStorage", async () => {
     const spy = vitest.spyOn(Storage.prototype, "setItem");
 
     render(
@@ -170,58 +177,58 @@ describe("<AuthProvider></AuthProvider>", () => {
     await user.click(screen.getByTestId("login-button"));
 
     expect(spy).toBeCalledTimes(1);
-    expect(spy).toBeCalledWith("site", "Bearer randomJWTtoken");
+    expect(spy).toBeCalledWith("site", "randomJWTtoken");
   });
 
-  test("logout sets states to initial values if logged", async () => {
+  it("logout sets states to initial values if logged", async () => {
     const spyStorage = vitest.spyOn(Storage.prototype, "removeItem");
 
-    render(
-      <TestingComponent username="someUsername" password="somePassword" />
-    );
-
-    const user = userEvent.setup();
-
-    await user.click(screen.getByTestId("login-button"));
-
-    await user.click(screen.getByTestId("logout-button"));
-
-    expect(JSON.parse(screen.getByTestId("token").textContent)).toBe("");
-    expect(JSON.parse(screen.getByTestId("user").textContent)).toBe(null);
+    const { result, rerender } = renderHook(() => useAuth(), {
+      wrapper: AuthProvider,
+    });
+    act(() => {
+      result.current.loginAction("someUsername", "somePassword");
+      result.current.logout();
+    });
+    rerender();
+    expect(result.current.token).toBe("");
+    expect(result.current.user).toBe(null);
     expect(spyStorage).toBeCalledTimes(1);
     expect(spyStorage).toBeCalledWith("site");
     expect(mockedNavigate).toBeCalledTimes(1);
     expect(mockedNavigate).toBeCalledWith("/login");
   });
 
-  test("logout if user us not logged", async () => {
+  it("logout if user is not logged", async () => {
     const spyStorage = vitest.spyOn(Storage.prototype, "removeItem");
 
-    render(<TestingComponent />);
+    const { result, rerender } = renderHook(() => useAuth(), {
+      wrapper: AuthProvider,
+    });
+    act(() => {
+      result.current.logout();
+    });
 
-    const user = userEvent.setup();
-
-    await user.click(screen.getByTestId("logout-button"));
-
-    expect(JSON.parse(screen.getByTestId("token").textContent)).toBe("");
-    expect(JSON.parse(screen.getByTestId("user").textContent)).toBe(null);
+    rerender();
+    expect(result.current.token).toBe("");
+    expect(result.current.user).toBe(null);
     expect(spyStorage).toBeCalledTimes(1);
     expect(spyStorage).toBeCalledWith("site");
     expect(mockedNavigate).toBeCalledTimes(1);
     expect(mockedNavigate).toBeCalledWith("/login");
   });
 
-  test("token being inserted from local storage if not provided (user logs in different session)", () => {
+  it("token being inserted from local storage if not provided (user logs in different session)", () => {
     global.localStorage = {
       getItem: (item) => {
-        if (item == "site") return "mockedToken";
+        if (item == "site") return "randomJWTtoken";
         throw new Error("Item not stored(probably typo)");
       },
     };
 
     render(<TestingComponent />);
     expect(JSON.parse(screen.getByTestId("token").textContent)).toBe(
-      "mockedToken"
+      "randomJWTtoken"
     );
   });
 });

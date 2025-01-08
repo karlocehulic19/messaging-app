@@ -3,6 +3,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AuthProvider from "./contexts/AuthProvider";
+import NonAuthRoute from "./routes/NonAuthRoute";
 
 function App() {
   return (
@@ -10,8 +11,10 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route element={<NonAuthRoute />}>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+            </Route>
           </Routes>
         </AuthProvider>
       </BrowserRouter>
