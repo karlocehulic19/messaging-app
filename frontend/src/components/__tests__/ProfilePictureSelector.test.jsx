@@ -10,10 +10,11 @@ const mockedInvalidFile = new File(["test"], "test.txt", {
   type: "application/json",
 });
 
-const setup = () => {
-  render(<ProfilePictureSelector />);
+const setup = (userEventOptions = { applyAccept: false }) => {
+  const mockedFormatter = vi.fn(() => "mockBase64");
+  render(<ProfilePictureSelector imageFormatter={mockedFormatter} />);
 
-  return { user: userEvent.setup() };
+  return { user: userEvent.setup(userEventOptions), mockedFormatter };
 };
 
 const setupInvalidFile = async () => {
@@ -34,8 +35,7 @@ const setupValidFile = async () => {
 
 describe("<ProfilePictureSelector />", () => {
   it("displays error message on invalid file type", async () => {
-    render(<ProfilePictureSelector />);
-    const user = userEvent.setup({ applyAccept: false });
+    const { user } = setup();
 
     await user.upload(screen.getByTestId("picture-input"), mockedInvalidFile);
 
@@ -45,8 +45,7 @@ describe("<ProfilePictureSelector />", () => {
   });
 
   it("doesn't displays error message on PNG file type", async () => {
-    const user = userEvent.setup({ applyAccept: false });
-    render(<ProfilePictureSelector />);
+    const { user } = setup();
 
     await user.upload(screen.getByTestId("picture-input"), mockedPNGFile);
 
@@ -56,8 +55,7 @@ describe("<ProfilePictureSelector />", () => {
   });
 
   it("doesn't displays error message on JPEG file type", async () => {
-    const user = userEvent.setup({ applyAccept: false });
-    render(<ProfilePictureSelector />);
+    const { user } = setup();
 
     await user.upload(screen.getByTestId("picture-input"), mockedJPEGFile);
 
@@ -75,7 +73,7 @@ describe("<ProfilePictureSelector />", () => {
   });
 
   it("doesn't display profile picture if non are selected", () => {
-    render(<ProfilePictureSelector />);
+    setup();
 
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
   });
@@ -93,7 +91,7 @@ describe("<ProfilePictureSelector />", () => {
 
     cleanup();
 
-    render(<ProfilePictureSelector />);
+    setup();
 
     expect(screen.getByTestId("profile-picture-container")).toMatchSnapshot();
   });

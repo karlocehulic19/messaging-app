@@ -1,8 +1,11 @@
 import { useDropzone } from "react-dropzone";
 import styles from "./styles/ProfilePictureSelector.module.css";
-import usePictureURL from "../hooks/usePictureURL";
+import { useEffect, useState } from "react";
+import convertSquare from "../utils/convertSquare";
+import PropTypes from "prop-types";
 
-function ProfilePictureSelector() {
+function ProfilePictureSelector({ imageFormatter = convertSquare }) {
+  const [formattedPicture, setFormattedPicture] = useState(null);
   const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
     useDropzone({
       maxFiles: 1,
@@ -12,7 +15,22 @@ function ProfilePictureSelector() {
       },
     });
 
-  const { pictureURL, reset } = usePictureURL(acceptedFiles[0]);
+  const pictureFile = acceptedFiles[0];
+  useEffect(() => {
+    if (pictureFile) {
+      const convert = async () => {
+        try {
+          const base64 = await imageFormatter(pictureFile);
+          setFormattedPicture(base64);
+        } catch (error) {
+          console.log(error);
+          setFormattedPicture(null);
+        }
+      };
+
+      convert();
+    }
+  }, [pictureFile, imageFormatter]);
 
   const fileRejected = !!fileRejections.length;
 
@@ -21,16 +39,18 @@ function ProfilePictureSelector() {
       data-testid="profile-picture-container"
       className="profile-picture-container"
       id={
-        pictureURL
+        formattedPicture
           ? styles["picture-container-demo"]
           : styles["picture-container"]
       }
     >
-      {pictureURL && (
+      {formattedPicture && (
         <div aria-label="Profile picture demonstration">
           <label htmlFor="profile-picture">Profile picture</label>
-          <img src={pictureURL} alt="Current Profile picture" />
-          <button onClick={reset}>Remove Picture</button>
+          <img src={formattedPicture} alt="Current Profile picture" />
+          <button onClick={() => setFormattedPicture(null)}>
+            Remove Picture
+          </button>
         </div>
       )}
 
@@ -58,5 +78,9 @@ function ProfilePictureSelector() {
     </div>
   );
 }
+
+ProfilePictureSelector.propTypes = {
+  imageFormatter: PropTypes.func,
+};
 
 export default ProfilePictureSelector;

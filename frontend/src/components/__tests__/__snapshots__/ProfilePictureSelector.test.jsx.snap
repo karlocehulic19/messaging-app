@@ -11,7 +11,7 @@ exports[`<ProfilePictureSelector /> > displays profile picture with right file t
   </label>
   <img
     alt="Current Profile picture"
-    src="mockedFilePath"
+    src="mockBase64"
   />
   <button>
     Remove Picture
@@ -28,6 +28,9 @@ exports[`<ProfilePictureSelector /> > doesn't use demonstration styling when ima
   <div
     class="picture-dropbox-container"
   >
+    <p>
+      Please select image that is in PNG or JPEG format
+    </p>
     <div
       aria-label="Profile picture dropbox"
       class="dropbox"
@@ -103,7 +106,7 @@ exports[`<ProfilePictureSelector /> > uses demonstration styling when image is i
     </label>
     <img
       alt="Current Profile picture"
-      src="mockedFilePath"
+      src="mockBase64"
     />
     <button>
       Remove Picture
