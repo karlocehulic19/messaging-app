@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 
 function ProfilePictureSelector({ imageFormatter = convertSquare }) {
   const [formattedPicture, setFormattedPicture] = useState(null);
+  const [formatterError, setFormatterError] = useState(false);
   const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
     useDropzone({
       maxFiles: 1,
@@ -16,23 +17,29 @@ function ProfilePictureSelector({ imageFormatter = convertSquare }) {
     });
 
   const pictureFile = acceptedFiles[0];
+  const fileRejected = !!fileRejections.length;
+
   useEffect(() => {
+    setFormatterError(false);
+
     if (pictureFile) {
       const convert = async () => {
         try {
-          const base64 = await imageFormatter(pictureFile);
+          const base64 = await imageFormatter(
+            await pictureFile.arrayBuffer(),
+            pictureFile.type
+          );
           setFormattedPicture(base64);
         } catch (error) {
           console.log(error);
           setFormattedPicture(null);
+          setFormatterError(true);
         }
       };
 
       convert();
     }
   }, [pictureFile, imageFormatter]);
-
-  const fileRejected = !!fileRejections.length;
 
   return (
     <div
@@ -58,6 +65,8 @@ function ProfilePictureSelector({ imageFormatter = convertSquare }) {
         {fileRejected && (
           <p>Please select image that is in PNG or JPEG format</p>
         )}
+
+        {formatterError && <p>Please select another image.</p>}
         <div
           {...getRootProps({
             className: "dropbox",

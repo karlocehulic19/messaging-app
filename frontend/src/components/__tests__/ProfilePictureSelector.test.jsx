@@ -2,7 +2,8 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ProfilePictureSelector from "../ProfilePictureSelector";
 import "../../mocks/URL";
-import { expect } from "vitest";
+import { expect, vi, describe, it } from "vitest";
+import { File } from "node:buffer";
 
 const mockedPNGFile = new File(["test"], "test.png", { type: "image/png" });
 const mockedJPEGFile = new File(["test"], "test.jpeg", { type: "image/jpeg" });
@@ -26,11 +27,11 @@ const setupInvalidFile = async () => {
 };
 
 const setupValidFile = async () => {
-  const { user } = setup();
+  const { user, mockedFormatter } = setup();
 
   await user.upload(screen.getByTestId("picture-input"), mockedPNGFile);
 
-  return { user };
+  return { user, mockedFormatter };
 };
 
 describe("<ProfilePictureSelector />", () => {
@@ -109,5 +110,42 @@ describe("<ProfilePictureSelector />", () => {
     await user.click(screen.getByText("Remove Picture"));
 
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  });
+
+  it("calls convert function correctly", async () => {
+    const { mockedFormatter } = await setupValidFile();
+
+    expect(mockedFormatter).toBeCalledTimes(1);
+    expect(mockedFormatter.mock.calls[0][0].constructor.name).toBe(
+      "ArrayBuffer"
+    );
+    expect(mockedFormatter.mock.calls[0][1]).toBeTypeOf("string");
+  });
+
+  it("props to select new picture on formatter error", async () => {
+    const mockedFormatter = vi.fn();
+    const user = userEvent.setup();
+    mockedFormatter.mockRejectedValue(new Error("Too big crop size"));
+
+    render(<ProfilePictureSelector imageFormatter={mockedFormatter} />);
+
+    await user.upload(screen.getByTestId("picture-input"), mockedJPEGFile);
+
+    expect(
+      screen.getByText("Please select another image.")
+    ).toBeInTheDocument();
+  });
+
+  it("doesn't prop for another image after supplying the right one", async () => {
+    const mockedFormatter = vi.fn(() => "mockBase64");
+    const user = userEvent.setup();
+    render(<ProfilePictureSelector imageFormatter={mockedFormatter} />);
+    mockedFormatter.mockRejectedValueOnce(new Error("Some Error"));
+
+    await user.upload(screen.getByTestId("picture-input"), mockedJPEGFile);
+
+    await user.upload(screen.getByTestId("picture-input"), mockedPNGFile);
+
+    expect(screen.queryByText("Please select another image.")).toBeNull();
   });
 });
