@@ -3,7 +3,6 @@ import userEvent from "@testing-library/user-event";
 import ProfilePictureSelector from "../ProfilePictureSelector";
 import "../../mocks/URL";
 import { expect, vi, describe, it } from "vitest";
-import { File } from "node:buffer";
 
 const mockedPNGFile = new File(["test"], "test.png", { type: "image/png" });
 const mockedJPEGFile = new File(["test"], "test.jpeg", { type: "image/jpeg" });
@@ -13,7 +12,12 @@ const mockedInvalidFile = new File(["test"], "test.txt", {
 
 const setup = (userEventOptions = { applyAccept: false }) => {
   const mockedFormatter = vi.fn(() => "mockBase64");
-  render(<ProfilePictureSelector imageFormatter={mockedFormatter} />);
+  render(
+    <ProfilePictureSelector
+      onImageSelect={() => null}
+      imageFormatter={mockedFormatter}
+    />
+  );
 
   return { user: userEvent.setup(userEventOptions), mockedFormatter };
 };
@@ -127,7 +131,12 @@ describe("<ProfilePictureSelector />", () => {
     const user = userEvent.setup();
     mockedFormatter.mockRejectedValue(new Error("Too big crop size"));
 
-    render(<ProfilePictureSelector imageFormatter={mockedFormatter} />);
+    render(
+      <ProfilePictureSelector
+        onImageSelect={() => null}
+        imageFormatter={mockedFormatter}
+      />
+    );
 
     await user.upload(screen.getByTestId("picture-input"), mockedJPEGFile);
 
@@ -139,7 +148,12 @@ describe("<ProfilePictureSelector />", () => {
   it("doesn't prop for another image after supplying the right one", async () => {
     const mockedFormatter = vi.fn(() => "mockBase64");
     const user = userEvent.setup();
-    render(<ProfilePictureSelector imageFormatter={mockedFormatter} />);
+    render(
+      <ProfilePictureSelector
+        onImageSelect={() => null}
+        imageFormatter={mockedFormatter}
+      />
+    );
     mockedFormatter.mockRejectedValueOnce(new Error("Some Error"));
 
     await user.upload(screen.getByTestId("picture-input"), mockedJPEGFile);

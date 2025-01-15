@@ -68,7 +68,7 @@ describe("convertSquare()", () => {
   it("works with jpg (a filename)", async () => {
     const jpgBuffer = readFileSync(
       // eslint-disable-next-line no-undef
-      resolve(__dirname, "./assets/jpg-file.jpg")
+      resolve(__dirname, "../../tests/assets/jpg-file.jpg")
     );
 
     const base64 = await convertSquare(jpgBuffer, "image/jpeg");

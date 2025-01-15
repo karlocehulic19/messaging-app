@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import convertSquare from "../utils/convertSquare";
 import PropTypes from "prop-types";
 
-function ProfilePictureSelector({ imageFormatter = convertSquare }) {
+function ProfilePictureSelector({
+  imageFormatter = convertSquare,
+  onImageSelect,
+}) {
   const [formattedPicture, setFormattedPicture] = useState(null);
   const [formatterError, setFormatterError] = useState(false);
   const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
@@ -30,16 +33,18 @@ function ProfilePictureSelector({ imageFormatter = convertSquare }) {
             pictureFile.type
           );
           setFormattedPicture(base64);
+          onImageSelect(base64);
         } catch (error) {
           console.log(error);
           setFormattedPicture(null);
           setFormatterError(true);
+          onImageSelect(null);
         }
       };
 
       convert();
     }
-  }, [pictureFile, imageFormatter]);
+  }, [pictureFile, imageFormatter, onImageSelect]);
 
   return (
     <div
@@ -90,6 +95,7 @@ function ProfilePictureSelector({ imageFormatter = convertSquare }) {
 
 ProfilePictureSelector.propTypes = {
   imageFormatter: PropTypes.func,
+  onImageSelect: PropTypes.func.isRequired,
 };
 
 export default ProfilePictureSelector;

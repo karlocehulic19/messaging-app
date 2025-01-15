@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import RegistrationValidator from "../utils/RegistrationValidator";
 import useValidator from "../hooks/useValidator";
 import ProfilePictureSelector from "./ProfilePictureSelector";
@@ -18,6 +18,7 @@ function RegisterForm() {
   const { formData, changeFormData, validationErrors } = useValidator(
     RegistrationValidator
   );
+  const profPicBase64 = useRef(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -26,7 +27,11 @@ function RegisterForm() {
       setLoading(true);
       await customFetch("/register", {
         method: "POST",
-        body: JSON.stringify({ ...formData, passwordConf: undefined }),
+        body: JSON.stringify({
+          ...formData,
+          passwordConf: undefined,
+          pictureBase64: profPicBase64.current,
+        }),
       });
 
       navigate("/login");
@@ -63,8 +68,13 @@ function RegisterForm() {
           changeFormData={changeFormData}
           formData={formData}
         />
-        <ProfilePictureSelector />
+        <ProfilePictureSelector
+          onImageSelect={useCallback((base64) => {
+            profPicBase64.current = base64;
+          }, [])}
+        />
         <button
+          aria-label="Submit Button"
           disabled={firstRender || loading || !isEmpty(validationErrors)}
           type="submit"
         >

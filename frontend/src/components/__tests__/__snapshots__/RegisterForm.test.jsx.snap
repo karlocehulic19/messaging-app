@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<RegisterForm></RegisterForm> > fetching logic > displays an error popup on failed network request 1`] = `
+exports[`fetching logic > displays an error popup on failed network request 1`] = `
 <div
   aria-label="Error message"
 >
@@ -10,7 +10,7 @@ exports[`<RegisterForm></RegisterForm> > fetching logic > displays an error popu
 </div>
 `;
 
-exports[`<RegisterForm></RegisterForm> > fetching logic > displays an error popup on failed requests 1`] = `
+exports[`fetching logic > displays an error popup on failed requests 1`] = `
 <div
   aria-label="Error message"
 >
@@ -20,19 +20,19 @@ exports[`<RegisterForm></RegisterForm> > fetching logic > displays an error popu
 </div>
 `;
 
-exports[`<RegisterForm></RegisterForm> > fetching logic > displays validation messages on 422 1`] = `
+exports[`fetching logic > displays validation messages on 422 1`] = `
 <p>
   First validation message
 </p>
 `;
 
-exports[`<RegisterForm></RegisterForm> > fetching logic > displays validation messages on 422 2`] = `
+exports[`fetching logic > displays validation messages on 422 2`] = `
 <p>
   Second validation message
 </p>
 `;
 
-exports[`<RegisterForm></RegisterForm> > renders empty inputs correctly(non-password) 1`] = `
+exports[`renders empty inputs correctly(non-password) 1`] = `
 [
   <input
     id="username"
@@ -65,7 +65,7 @@ exports[`<RegisterForm></RegisterForm> > renders empty inputs correctly(non-pass
 ]
 `;
 
-exports[`<RegisterForm></RegisterForm> > renders empty inputs correctly(password) 1`] = `
+exports[`renders empty inputs correctly(password) 1`] = `
 [
   <input
     aria-label="Password input"
@@ -88,14 +88,14 @@ exports[`<RegisterForm></RegisterForm> > renders empty inputs correctly(password
 ]
 `;
 
-exports[`<RegisterForm></RegisterForm> > renders form with right attributes 1`] = `
+exports[`renders form with right attributes 1`] = `
 NamedNodeMap {
   "aria-label": "Login form",
   "novalidate": "",
 }
 `;
 
-exports[`<RegisterForm></RegisterForm> > renders labels with right attribute 1`] = `
+exports[`renders labels with right attribute 1`] = `
 [
   NamedNodeMap {
     "data-testid": "input-label",
@@ -124,7 +124,7 @@ exports[`<RegisterForm></RegisterForm> > renders labels with right attribute 1`]
 ]
 `;
 
-exports[`<RegisterForm></RegisterForm> > validation logic > renders many invalid inputs correctly(all of them in nearly correct setup) 1`] = `
+exports[`validation logic > renders many invalid inputs correctly(all of them in nearly correct setup) 1`] = `
 [
   <span
     aria-label="Username validation error"
@@ -159,7 +159,7 @@ exports[`<RegisterForm></RegisterForm> > validation logic > renders many invalid
 ]
 `;
 
-exports[`<RegisterForm></RegisterForm> > validation logic > renders one invalid input correctly(passConfirmation) 1`] = `
+exports[`validation logic > renders one invalid input correctly(passConfirmation) 1`] = `
 <span
   aria-label="Confirm Password validation error"
   data-testid="validation-msg"
@@ -168,7 +168,7 @@ exports[`<RegisterForm></RegisterForm> > validation logic > renders one invalid 
 </span>
 `;
 
-exports[`<RegisterForm></RegisterForm> > validation logic > renders validation errors after interacting with any input 1`] = `
+exports[`validation logic > renders validation errors after interacting with any input 1`] = `
 [
   <span
     aria-label="Username validation error"
@@ -209,7 +209,7 @@ exports[`<RegisterForm></RegisterForm> > validation logic > renders validation e
 ]
 `;
 
-exports[`<RegisterForm></RegisterForm> > validation logic > renders validation errors after interacting with input 1`] = `
+exports[`validation logic > renders validation errors after interacting with input 1`] = `
 [
   <span
     aria-label="Email validation error"
