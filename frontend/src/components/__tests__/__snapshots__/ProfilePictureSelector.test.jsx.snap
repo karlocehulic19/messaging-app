@@ -13,7 +13,10 @@ exports[`<ProfilePictureSelector /> > displays profile picture with right file t
     alt="Current Profile picture"
     src="mockBase64"
   />
-  <button>
+  <button
+    aria-label="Remove Picture"
+    type="button"
+  >
     Remove Picture
   </button>
 </div>
@@ -108,7 +111,10 @@ exports[`<ProfilePictureSelector /> > uses demonstration styling when image is i
       alt="Current Profile picture"
       src="mockBase64"
     />
-    <button>
+    <button
+      aria-label="Remove Picture"
+      type="button"
+    >
       Remove Picture
     </button>
   </div>

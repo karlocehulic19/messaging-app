@@ -30,7 +30,7 @@ function RegisterForm() {
         body: JSON.stringify({
           ...formData,
           passwordConf: undefined,
-          pictureBase64: profPicBase64.current,
+          pictureBase64: profPicBase64.current || undefined,
         }),
       });
 

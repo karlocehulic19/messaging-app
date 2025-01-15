@@ -1,6 +1,6 @@
 import { useDropzone } from "react-dropzone";
 import styles from "./styles/ProfilePictureSelector.module.css";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import convertSquare from "../utils/convertSquare";
 import PropTypes from "prop-types";
 
@@ -22,6 +22,11 @@ function ProfilePictureSelector({
   const pictureFile = acceptedFiles[0];
   const fileRejected = !!fileRejections.length;
 
+  const removePicture = useCallback(() => {
+    onImageSelect(null);
+    setFormattedPicture(null);
+  }, [onImageSelect]);
+
   useEffect(() => {
     setFormatterError(false);
 
@@ -36,15 +41,14 @@ function ProfilePictureSelector({
           onImageSelect(base64);
         } catch (error) {
           console.log(error);
-          setFormattedPicture(null);
+          removePicture();
           setFormatterError(true);
-          onImageSelect(null);
         }
       };
 
       convert();
     }
-  }, [pictureFile, imageFormatter, onImageSelect]);
+  }, [pictureFile, imageFormatter, onImageSelect, removePicture]);
 
   return (
     <div
@@ -60,7 +64,11 @@ function ProfilePictureSelector({
         <div aria-label="Profile picture demonstration">
           <label htmlFor="profile-picture">Profile picture</label>
           <img src={formattedPicture} alt="Current Profile picture" />
-          <button onClick={() => setFormattedPicture(null)}>
+          <button
+            type="button"
+            aria-label="Remove Picture"
+            onClick={removePicture}
+          >
             Remove Picture
           </button>
         </div>

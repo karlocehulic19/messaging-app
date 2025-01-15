@@ -326,5 +326,55 @@ describe("fetching logic", () => {
         }),
       });
     });
+
+    it("doesn't call api with formatted base64 when pic not selected", async () => {
+      const { user } = await setup();
+      const fetchSpy = vi.spyOn(global, "fetch");
+      await user.click(screen.getByLabelText("Submit Button"));
+
+      expect(fetchSpy).toBeCalledTimes(1);
+      expect(fetchSpy).toBeCalledWith(`${config.url.BACKEND_URL}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: "test",
+          firstName: "Karlo",
+          lastName: "Čehulić",
+          email: "karlocehlic@gmail.com",
+          password: "V4l1dP4ssw@rd",
+        }),
+      });
+    });
+
+    it("doesn't call api with formatted base64 when pic is removed", async () => {
+      const { user } = await setup();
+      const fetchSpy = vi.spyOn(global, "fetch");
+      const jpgBuffer = readFileSync(
+        // eslint-disable-next-line no-undef
+        path.resolve(__dirname, "../../tests/assets/jpg-file.jpg")
+      );
+      const jpgTestFile = new File([jpgBuffer], "test.jpg", {
+        type: "image/jpeg",
+      });
+
+      await user.upload(screen.getByTestId("picture-input"), jpgTestFile);
+
+      await user.click(screen.getByLabelText("Remove Picture"));
+
+      await user.click(screen.getByLabelText("Submit Button"));
+
+      expect(fetchSpy).toBeCalledTimes(1);
+      expect(fetchSpy).toBeCalledWith(`${config.url.BACKEND_URL}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: "test",
+          firstName: "Karlo",
+          lastName: "Čehulić",
+          email: "karlocehlic@gmail.com",
+          password: "V4l1dP4ssw@rd",
+        }),
+      });
+    });
   });
 });
