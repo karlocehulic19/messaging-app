@@ -2,13 +2,13 @@ const express = require("express");
 const app = express();
 const authController = require("../../controllers/authController");
 const prisma = require("../../prisma");
-const { vi } = require("vitest");
 const request = require("supertest");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const MockedImageManager = {
+  // eslint-disable-next-line no-undef
   uploadCropped: vi.fn(async (file) => {
     return file === "validDataURL" ? "somePublicId" : null;
   }),
