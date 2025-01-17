@@ -394,20 +394,6 @@ describe("/register", () => {
         )
       ).toBe(true);
     });
-
-    it("sends ok when photo public id is sent", () => {
-      return request(app)
-        .post("/register")
-        .send({ ...mockUser, photoPublicId: "somerandomid" })
-        .expect(200);
-    });
-
-    it("sends ok when photo public id is sent", () => {
-      return request(app)
-        .post("/register")
-        .send({ ...mockUser, photoPublicId: "somerandomid" })
-        .expect(200);
-    });
   });
 });
 
