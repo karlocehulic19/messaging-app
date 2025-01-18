@@ -8,6 +8,7 @@ import ErrorPopup from "./ErrorPopup";
 import customFetch from "../utils/customFetch";
 import useFirstRender from "../hooks/useFirstRender";
 import { isEmpty } from "lodash";
+import styles from "./styles/RegisterForm.module.css";
 
 function RegisterForm() {
   const navigate = useNavigate();
