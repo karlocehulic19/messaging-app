@@ -1,3 +1,13 @@
 input {
   padding: 0.4em;
 }
+
+.register-form {
+  width: 50vw;
+}
+
+@media (max-width: 700px) {
+  .register-form {
+    width: fit-content;
+  }
+}

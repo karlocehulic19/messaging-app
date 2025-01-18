@@ -56,7 +56,12 @@ function RegisterForm() {
         text="An error occurred. Please try again."
         ref={toggleErrorPopup}
       />
-      <form noValidate onSubmit={handleSubmit} aria-label="Login form">
+      <form
+        className={styles["register-form"]}
+        noValidate
+        onSubmit={handleSubmit}
+        aria-label="Login form"
+      >
         {!!serverValidationErrors.length && (
           <div className="server-validation-errors">
             {serverValidationErrors.map((err) => (

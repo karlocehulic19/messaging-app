@@ -1,5 +1,6 @@
 import RegisterForm from "../components/RegisterForm";
 import { useNavigate } from "react-router-dom";
+import styles from "./styles/Register.module.css";
 
 function Register() {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ function Register() {
   }
 
   return (
-    <>
+    <div className={styles["register-container"]}>
       <h1>Register</h1>
       <RegisterForm></RegisterForm>
       <span>
@@ -18,7 +19,7 @@ function Register() {
           HERE
         </a>
       </span>
-    </>
+    </div>
   );
 }
 
