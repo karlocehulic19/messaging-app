@@ -98,12 +98,22 @@ module.exports.userPost = (ImageManager) => {
           .send({ message: validationErrors.array().map((err) => err.msg) });
       }
 
-      await queries.createUser({
-        ...req.body,
-        pictureBase64: undefined,
-        password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync()),
-        photoPublicId: await ImageManager.uploadCropped(req.body.pictureBase64),
-      });
+      const userData = { ...req.body };
+      delete userData.pictureBase64;
+      userData.password = bcrypt.hashSync(
+        req.body.password,
+        bcrypt.genSaltSync()
+      );
+
+      const photoPublicId = req.body.pictureBase64
+        ? await ImageManager.uploadCropped(req.body.pictureBase64)
+        : null;
+
+      if (photoPublicId) {
+        userData.photoPublicId = photoPublicId;
+      }
+
+      await queries.createUser(userData);
 
       res.status(200).send();
     },
