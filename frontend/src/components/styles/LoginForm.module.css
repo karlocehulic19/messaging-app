@@ -5,22 +5,7 @@
   padding: 2rem;
 }
 
-.login-form input {
-  background-color: rgba(49, 54, 63, 0.61);
-  color: var(--quaternary-color);
-  font: inherit;
-  border: none;
-  padding: 0.6rem 0.6rem;
-  border-radius: 0.6rem;
-  border: 2px solid var(--secondary-color);
-}
-
-.login-form input::placeholder {
-  color: rgb(158, 158, 158);
-}
-
 .login-form button {
-  font-size: 1.2em;
   border: none;
   background-color: rgb(236, 236, 236);
   border-radius: 0.5em;

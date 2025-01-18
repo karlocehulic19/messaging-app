@@ -1,10 +1,10 @@
 form {
   display: grid;
   background-color: var(--tertiary-color);
-  padding: 1rem;
+  padding: 1em;
   color: var(--secondary-color);
-  border-radius: 1rem;
-  gap: 1rem;
+  border-radius: 1em;
+  gap: 1em;
 }
 
 a {
@@ -19,7 +19,19 @@ a:hover {
 
 .dropbox {
   text-align: center;
-  border-radius: 0.5rem;
-  border: 0.2rem;
+  border-radius: 0.5em;
+  border: 0.2em;
   border-style: dashed;
+}
+
+input {
+  background-color: rgba(49, 54, 63, 0.61);
+  color: var(--quaternary-color);
+  padding: 0.6em 0.6em;
+  border-radius: 0.6em;
+  border: 2px solid rgb(0, 0, 0);
+}
+
+input::placeholder {
+  color: rgb(236, 236, 236);
 }
