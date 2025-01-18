@@ -55,56 +55,60 @@ const validateUser = [
     }),
 ];
 
-module.exports.userPost = [
-  validateUser,
-  async (req, res) => {
-    const formDataProps = [
-      "username",
-      "firstName",
-      "lastName",
-      "password",
-      "email",
-    ];
+module.exports.userPost = (ImageManager) => {
+  return [
+    validateUser,
+    async (req, res) => {
+      const formDataProps = [
+        "username",
+        "firstName",
+        "lastName",
+        "password",
+        "email",
+      ];
 
-    const missing = [];
-    const surplus = [];
+      const missing = [];
+      const surplus = [];
 
-    for (const prop of formDataProps) {
-      if (!Object.keys(req.body).includes(prop)) missing.push(prop);
-    }
+      for (const prop of formDataProps) {
+        if (!Object.keys(req.body).includes(prop)) missing.push(prop);
+      }
 
-    if (missing.length) {
-      return res
-        .status(400)
-        .send({ error: `Missing body property/ies: ${missing.join(", ")}` });
-    }
+      if (missing.length) {
+        return res
+          .status(400)
+          .send({ error: `Missing body property/ies: ${missing.join(", ")}` });
+      }
 
-    for (const bProp of Object.keys(req.body)) {
-      if (![...formDataProps, "photoPublicId"].includes(bProp))
-        surplus.push(bProp);
-    }
+      for (const bProp of Object.keys(req.body)) {
+        if (![...formDataProps, "pictureBase64"].includes(bProp))
+          surplus.push(bProp);
+      }
 
-    if (surplus.length) {
-      return res.status(400).send({
-        error: `Request sent invalid properties: ${surplus.join(", ")}`,
+      if (surplus.length) {
+        return res.status(400).send({
+          error: `Request sent invalid properties: ${surplus.join(", ")}`,
+        });
+      }
+
+      const validationErrors = validationResult(req);
+      if (!validationErrors.isEmpty()) {
+        return res
+          .status(422)
+          .send({ message: validationErrors.array().map((err) => err.msg) });
+      }
+
+      await queries.createUser({
+        ...req.body,
+        pictureBase64: undefined,
+        password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync()),
+        photoPublicId: await ImageManager.uploadCropped(req.body.pictureBase64),
       });
-    }
 
-    const validationErrors = validationResult(req);
-    if (!validationErrors.isEmpty()) {
-      return res
-        .status(422)
-        .send({ message: validationErrors.array().map((err) => err.msg) });
-    }
-
-    await queries.createUser({
-      ...req.body,
-      password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync()),
-    });
-
-    res.status(200).send();
-  },
-];
+      res.status(200).send();
+    },
+  ];
+};
 
 module.exports.loginPost = [
   (req, res, next) => {

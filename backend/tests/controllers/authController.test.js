@@ -20,7 +20,7 @@ require("../../config/passport").config();
 
 describe("/register", () => {
   it("adds user with photoPublicId when ImageManager returns image publicId", async () => {
-    await request("/register").send({
+    const response = await request(app).post("/register").send({
       username: "Karlo",
       firstName: "Karlo",
       lastName: "Čehulić",
@@ -29,14 +29,13 @@ describe("/register", () => {
       pictureBase64: "validDataURL",
     });
 
-    expect(
-      (
-        await prisma.user.findFirst({
-          where: {
-            username: "Karlo",
-          },
-        })
-      ).photoPublicId
-    ).toBe("somePublicId");
+    const user = await prisma.user.findFirst({
+      where: {
+        username: "Karlo",
+      },
+    });
+
+    expect(response.status).toBe(200);
+    expect(user.photoPublicId).toBe("somePublicId");
   });
 });
