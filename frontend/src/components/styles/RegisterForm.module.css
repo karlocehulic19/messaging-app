@@ -6,6 +6,7 @@ input {
   width: 30vw;
   min-width: fit-content;
   padding: 2.5rem 2rem 1.5rem 2rem;
+  position: relative;
 }
 
 label {
@@ -20,6 +21,6 @@ input {
 
 @media (max-width: 1250px) {
   .register-form {
-    width: 50vw;
+    width: 65vw;
   }
 }
