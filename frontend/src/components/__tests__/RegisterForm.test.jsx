@@ -297,6 +297,30 @@ describe("fetching logic", () => {
     expect(screen.getByRole("button")).toBeEnabled();
   });
 
+  it("sets register button text to loading request is received", async () => {
+    let requestResolver;
+
+    server.use(
+      registerHandler(
+        async () =>
+          await new Promise((resolve) => {
+            requestResolver = () => resolve(HttpResponse.error());
+          })
+      )
+    );
+
+    const { user } = await setup();
+    await user.click(screen.getByRole("button"));
+
+    expect(screen.getByRole("button").textContent).toBe("Loading...");
+
+    await act(async () => {
+      requestResolver();
+    });
+
+    expect(screen.getByRole("button").textContent).toBe("Register");
+  });
+
   describe("profile picture", () => {
     it("calls api with formatted base64 of included picture", async () => {
       const { user } = await setup();

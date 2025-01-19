@@ -84,7 +84,7 @@ function RegisterForm() {
           disabled={firstRender || loading || !isEmpty(validationErrors)}
           type="submit"
         >
-          Register
+          {loading ? "Loading..." : "Register"}
         </button>
       </form>
     </>
