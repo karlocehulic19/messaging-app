@@ -23,7 +23,7 @@ const ErrorPopup = forwardRef(
     return (
       <>
         {toggle && (
-          <div aria-label="Error message">
+          <div aria-label="Error message" className="error-popup">
             <p>{text}</p>
           </div>
         )}

@@ -76,7 +76,7 @@ function LoginForm({ callback }) {
         )}
       </form>
       {error && (
-        <div data-testid="login-server-error">
+        <div data-testid="login-server-error" className="error-popup">
           Error occurred: Please try again!
         </div>
       )}
