@@ -3,11 +3,23 @@ input {
 }
 
 .register-form {
-  width: 50vw;
+  width: 30vw;
+  min-width: fit-content;
+  padding: 2.5rem 2rem 1.5rem 2rem;
 }
 
-@media (max-width: 700px) {
+label {
+  justify-self: center;
+  width: 100%;
+  padding-top: 1em;
+}
+
+input {
+  width: 100%;
+}
+
+@media (max-width: 1250px) {
   .register-form {
-    width: fit-content;
+    width: 50vw;
   }
 }

@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import RegistrationValidator from "../utils/RegistrationValidator";
+import styles from "./styles/RegisterFormInputs.module.css";
 
 class InputShortcut {
   constructor(name, password = false) {
@@ -61,6 +62,7 @@ function RegisterFormInputs({ validationErrors, changeFormData, formData }) {
           >
             {validationErrors[shortcut.getField()] && (
               <span
+                className={styles["client-validation-error"]}
                 aria-label={`${shortcut.getPlaceholder()} validation error`}
                 data-testid={"validation-msg"}
               >
