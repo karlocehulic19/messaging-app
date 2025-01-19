@@ -3,6 +3,7 @@
 exports[`fetching logic > displays an error popup on failed network request 1`] = `
 <div
   aria-label="Error message"
+  class="error-popup"
 >
   <p>
     An error occurred. Please try again.
@@ -13,6 +14,7 @@ exports[`fetching logic > displays an error popup on failed network request 1`] 
 exports[`fetching logic > displays an error popup on failed requests 1`] = `
 <div
   aria-label="Error message"
+  class="error-popup"
 >
   <p>
     An error occurred. Please try again.
@@ -91,6 +93,7 @@ exports[`renders empty inputs correctly(password) 1`] = `
 exports[`renders form with right attributes 1`] = `
 NamedNodeMap {
   "aria-label": "Login form",
+  "class": "_register-form_9e6f01",
   "novalidate": "",
 }
 `;
@@ -128,30 +131,35 @@ exports[`validation logic > renders many invalid inputs correctly(all of them in
 [
   <span
     aria-label="Username validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     Username field is required
   </span>,
   <span
     aria-label="Email validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     Value provided must be an valid email address
   </span>,
   <span
     aria-label="First Name validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     First name is required
   </span>,
   <span
     aria-label="Last Name validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     Last name is required
   </span>,
   <span
     aria-label="Confirm Password validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     Password confirmation must be same as password
@@ -162,6 +170,7 @@ exports[`validation logic > renders many invalid inputs correctly(all of them in
 exports[`validation logic > renders one invalid input correctly(passConfirmation) 1`] = `
 <span
   aria-label="Confirm Password validation error"
+  class="_client-validation-error_4fc6c6"
   data-testid="validation-msg"
 >
   Password confirmation must be same as password
@@ -172,36 +181,42 @@ exports[`validation logic > renders validation errors after interacting with any
 [
   <span
     aria-label="Username validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     Username field is required
   </span>,
   <span
     aria-label="Email validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     Email field is required
   </span>,
   <span
     aria-label="First Name validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     First name is required
   </span>,
   <span
     aria-label="Last Name validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     Last name is required
   </span>,
   <span
     aria-label="Password validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     Password must contain at least one uppercase letter
   </span>,
   <span
     aria-label="Confirm Password validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     Password confirmation is required
@@ -213,30 +228,35 @@ exports[`validation logic > renders validation errors after interacting with inp
 [
   <span
     aria-label="Email validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     Email field is required
   </span>,
   <span
     aria-label="First Name validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     First name is required
   </span>,
   <span
     aria-label="Last Name validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     Last name is required
   </span>,
   <span
     aria-label="Password validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     Password field is required
   </span>,
   <span
     aria-label="Confirm Password validation error"
+    class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
     Password confirmation is required
