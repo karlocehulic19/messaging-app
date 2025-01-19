@@ -19,3 +19,31 @@
 #picture-dropbox-container {
   align-self: center;
 }
+
+label[for="profile-picture"] {
+  padding-top: 0;
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: 700;
+}
+
+#picture-icon-container {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  width: 100%;
+  gap: 0.5em;
+}
+
+#image-demo {
+  display: block;
+  max-width: 50%;
+  border-radius: 99%;
+}
+
+@media (max-width: 750px) {
+  #picture-container-demo {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}

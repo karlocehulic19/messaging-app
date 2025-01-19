@@ -53,7 +53,6 @@ function ProfilePictureSelector({
   return (
     <div
       data-testid="profile-picture-container"
-      className="profile-picture-container"
       id={
         formattedPicture
           ? styles["picture-container-demo"]
@@ -61,9 +60,16 @@ function ProfilePictureSelector({
       }
     >
       {formattedPicture && (
-        <div aria-label="Profile picture demonstration">
+        <div
+          id={styles["picture-icon-container"]}
+          aria-label="Profile picture demonstration"
+        >
           <label htmlFor="profile-picture">Profile picture</label>
-          <img src={formattedPicture} alt="Current Profile picture" />
+          <img
+            id={styles["image-demo"]}
+            src={formattedPicture}
+            alt="Current Profile picture"
+          />
           <button
             type="button"
             aria-label="Remove Picture"
