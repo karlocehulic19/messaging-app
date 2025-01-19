@@ -86,7 +86,9 @@ describe("<ProfilePictureSelector />", () => {
   it("uses demonstration styling when image is imported", async () => {
     await setupValidFile();
 
-    expect(screen.getByTestId("profile-picture-container")).toMatchSnapshot();
+    expect(
+      screen.getByLabelText("Profile picture demonstration")
+    ).toMatchSnapshot();
   });
 
   it("doesn't use demonstration styling when image isn't imported", async () => {
