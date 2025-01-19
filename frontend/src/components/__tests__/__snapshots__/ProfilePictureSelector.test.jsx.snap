@@ -3,6 +3,7 @@
 exports[`<ProfilePictureSelector /> > displays profile picture with right file type 1`] = `
 <div
   aria-label="Profile picture demonstration"
+  id="_picture-icon-container_ee6cb2"
 >
   <label
     for="profile-picture"
@@ -11,6 +12,7 @@ exports[`<ProfilePictureSelector /> > displays profile picture with right file t
   </label>
   <img
     alt="Current Profile picture"
+    id="_image-demo_ee6cb2"
     src="mockBase64"
   />
   <button
@@ -24,12 +26,11 @@ exports[`<ProfilePictureSelector /> > displays profile picture with right file t
 
 exports[`<ProfilePictureSelector /> > doesn't use demonstration styling when image isn't imported 1`] = `
 <div
-  class="profile-picture-container"
   data-testid="profile-picture-container"
   id="_picture-container_ee6cb2"
 >
   <div
-    class="picture-dropbox-container"
+    id="_picture-dropbox-container_ee6cb2"
   >
     <p>
       Please select image that is in PNG or JPEG format
@@ -61,12 +62,11 @@ exports[`<ProfilePictureSelector /> > doesn't use demonstration styling when ima
 
 exports[`<ProfilePictureSelector /> > doesn't use demonstration styling when image isn't imported 2`] = `
 <div
-  class="profile-picture-container"
   data-testid="profile-picture-container"
   id="_picture-container_ee6cb2"
 >
   <div
-    class="picture-dropbox-container"
+    id="_picture-dropbox-container_ee6cb2"
   >
     <div
       aria-label="Profile picture dropbox"
@@ -96,6 +96,7 @@ exports[`<ProfilePictureSelector /> > doesn't use demonstration styling when ima
 exports[`<ProfilePictureSelector /> > uses demonstration styling when image is imported 1`] = `
 <div
   aria-label="Profile picture demonstration"
+  id="_picture-icon-container_ee6cb2"
 >
   <label
     for="profile-picture"
@@ -104,6 +105,7 @@ exports[`<ProfilePictureSelector /> > uses demonstration styling when image is i
   </label>
   <img
     alt="Current Profile picture"
+    id="_image-demo_ee6cb2"
     src="mockBase64"
   />
   <button
