@@ -36,7 +36,21 @@ export const handlers = [
     );
   }),
 
-  http.post(`${BACKEND_URL}/register`, async () => {
+  http.post(`${BACKEND_URL}/register`, async ({ request }) => {
+    const body = await request.json();
+    const message = [];
+
+    if (body.username == "inDatabase") {
+      message.push("User with that username already exists");
+    }
+
+    if (body.email == "indatabase@example.com") {
+      message.push("User with that email already exists");
+    }
+
+    if (message.length) {
+      return HttpResponse.json({ message }, { status: 422 });
+    }
     return new HttpResponse(null);
   }),
 
