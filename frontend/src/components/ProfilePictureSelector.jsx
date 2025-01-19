@@ -74,7 +74,7 @@ function ProfilePictureSelector({
         </div>
       )}
 
-      <div className="picture-dropbox-container">
+      <div id={styles["picture-dropbox-container"]}>
         {fileRejected && (
           <p>Please select image that is in PNG or JPEG format</p>
         )}

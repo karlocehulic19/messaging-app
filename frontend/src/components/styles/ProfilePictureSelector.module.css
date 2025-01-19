@@ -6,10 +6,16 @@
 
 #picture-container-demo {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: 1fr 1fr;
+  align-items: first baseline;
+  justify-items: center;
 }
 
 #picture-container {
   display: grid;
   grid-template-columns: auto;
+}
+
+#picture-dropbox-container {
+  align-self: center;
 }
