@@ -80,6 +80,7 @@ function RegisterForm() {
           }, [])}
         />
         <button
+          className={styles["register-button"]}
           aria-label="Submit Button"
           disabled={firstRender || loading || !isEmpty(validationErrors)}
           type="submit"
