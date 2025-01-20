@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AuthProvider from "./contexts/AuthProvider";
 import NonAuthRoute from "./routes/NonAuthRoute";
+import PrivateRoute from "./routes/PrivateRoute";
 
 function App() {
   return (
@@ -14,6 +15,9 @@ function App() {
             <Route element={<NonAuthRoute />}>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+            </Route>
+            <Route element={<PrivateRoute />}>
+              <Route path="*"></Route>
             </Route>
           </Routes>
         </AuthProvider>
