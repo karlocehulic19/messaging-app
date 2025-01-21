@@ -1,11 +1,5 @@
-const express = require("express");
-const app = express();
 const authController = require("../../controllers/authController");
-const prisma = require("../../prisma");
-const request = require("supertest");
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const { app, request, prisma } = require("../setupApp");
 
 const MockedImageManager = {
   // eslint-disable-next-line no-undef

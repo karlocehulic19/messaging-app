@@ -1,5 +1,4 @@
-const express = require("express");
-const request = require("supertest");
+const { app, request } = require("../setupApp");
 const asyncHandler = require("express-async-handler");
 const errorMiddleware = require("../../middleware/errorMiddleware");
 
@@ -11,9 +10,6 @@ class CustomError extends Error {
 }
 
 const setup = () => {
-  const app = express();
-  app.use(express.json());
-
   app.get("/error/sync", () => {
     // Mocking actual dev error
     // eslint-disable-next-line no-undef, no-unused-vars

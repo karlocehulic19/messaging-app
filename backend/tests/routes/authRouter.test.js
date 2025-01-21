@@ -1,15 +1,8 @@
-const prisma = require("../../prisma");
-const request = require("supertest");
-const express = require("express");
 const authRouter = require("../../routes/authRouter");
 const errorMiddleware = require("../../middleware/errorMiddleware");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
-const app = express();
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const { app, request, prisma } = require("../setupApp");
 
 app.use("/", authRouter);
 
