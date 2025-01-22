@@ -1,6 +1,6 @@
 const prisma = require("../prisma");
 
-afterEach(async () => {
+beforeEach(async () => {
   const deleteUsers = prisma.user.deleteMany();
 
   await prisma.$transaction([deleteUsers]);
