@@ -20,3 +20,14 @@ module.exports.createUser = async (user) => {
     },
   });
 };
+
+module.exports.getUsersByUsername = async (search) => {
+  return await client.user.findMany({
+    take: 5,
+    where: {
+      username: {
+        startsWith: search,
+      },
+    },
+  });
+};
