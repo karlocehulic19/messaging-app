@@ -10,7 +10,8 @@
     "dev": "dotenv -e .env.test -- node --watch ./app.js",
     "dev:inspect": "dotenv -e .env.test -- node --watch --inspect ./app.js",
     "inspect": "node --watch --inspect ./app.js",
-    "preview": "dotenv -e .env.preview -- node --watch app.js"
+    "preview": "dotenv -e .env.preview -- node --watch app.js",
+    "preview:inspect": "dotenv -e .env.preview -- node --watch --inspect ./app.js"
   },
   "keywords": [],
   "author": "",
