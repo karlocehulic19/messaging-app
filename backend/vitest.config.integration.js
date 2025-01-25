@@ -6,5 +6,10 @@ module.exports = defineConfig({
     setupFiles: ["./tests/setup.js"],
     include: ["./tests/**/*.test.js"],
     fileParallelism: false,
+    poolOptions: {
+      forks: {
+        singleFork: true,
+      },
+    },
   },
 });
