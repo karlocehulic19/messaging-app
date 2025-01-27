@@ -2,7 +2,7 @@ const authRouter = require("../../routes/authRouter");
 const errorMiddleware = require("../../middleware/errorMiddleware");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { app, request, prisma } = require("../setupApp");
+const { app, request, prisma } = require("../setupApp")();
 
 app.use("/", authRouter);
 

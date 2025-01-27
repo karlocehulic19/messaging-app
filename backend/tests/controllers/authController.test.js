@@ -1,5 +1,5 @@
 const authController = require("../../controllers/authController");
-const { app, request, prisma } = require("../setupApp");
+const { app, request, prisma } = require("../setupApp")();
 
 const MockedImageManager = {
   // eslint-disable-next-line no-undef

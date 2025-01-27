@@ -1,4 +1,4 @@
-const { app, request } = require("../setupApp");
+const { app, request } = require("../setupApp")();
 const asyncHandler = require("express-async-handler");
 const errorMiddleware = require("../../middleware/errorMiddleware");
 

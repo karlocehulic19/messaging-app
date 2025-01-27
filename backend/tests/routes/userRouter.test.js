@@ -1,4 +1,4 @@
-const { app, request, prisma } = require("../setupApp");
+const { app, request, prisma } = require("../setupApp")();
 const userRouter = require("../../routes/userRouter");
 const { faker } = require("@faker-js/faker");
 
