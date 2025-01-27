@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import AuthProvider from "./contexts/AuthProvider";
 import NonAuthRoute from "./routes/NonAuthRoute";
 import PrivateRoute from "./routes/PrivateRoute";
+import Main from "./pages/Main";
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
               <Route path="/register" element={<Register />} />
             </Route>
             <Route element={<PrivateRoute />}>
-              <Route path="*"></Route>
+              <Route path="*" element={<Main />}></Route>
             </Route>
           </Routes>
         </AuthProvider>
