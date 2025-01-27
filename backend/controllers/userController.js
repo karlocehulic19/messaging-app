@@ -19,6 +19,23 @@ const getUsers = asyncHandler(async (req, res) => {
   return res.send(usersProfiles);
 });
 
+const getProfilePictureByUsername = (ImageManager) =>
+  asyncHandler(async (req, res) => {
+    const user = await queries.getUserByUsername(req.params.username);
+    if (!user) {
+      return res
+        .status(404)
+        .send({ error: "Searched username doesn't exist in the database" });
+    }
+    const photoPublicId = user.photoPublicId;
+    if (!photoPublicId) return res.status(204).send();
+    const [imageBuffer, mimeType] = await ImageManager.getProfilePicture(
+      photoPublicId
+    );
+
+    res.type(mimeType).send(imageBuffer);
+  });
 module.exports = {
   getUsers,
+  getProfilePictureByUsername,
 };
