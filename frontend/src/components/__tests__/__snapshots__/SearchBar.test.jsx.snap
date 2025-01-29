@@ -1,0 +1,22 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<SearchBar /> > display possible search candidates 1`] = `
+<div
+  aria-label="Found users"
+>
+  Something
+</div>
+`;
+
+exports[`<SearchBar /> > renders correctly 1`] = `
+<div
+  role="search"
+>
+  <input
+    name="searchbox"
+    role="searchbox"
+    type="text"
+    value=""
+  />
+</div>
+`;

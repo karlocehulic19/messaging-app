@@ -1,0 +1,15 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<SearchCard /> > renders correctly 1`] = `
+<div
+  aria-label="Test user"
+>
+  <img
+    alt="Test profile picture"
+    src="mockedDataURL"
+  />
+  <span>
+    Test
+  </span>
+</div>
+`;

@@ -17,5 +17,8 @@
     "jimp": "^1.6.0",
     "prop-types": "^15.8.1",
     "react-dropzone": "^14.3.5"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^9.4.0"
   }
 }

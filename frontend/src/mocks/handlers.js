@@ -1,5 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { config } from "../Constants";
+import { Jimp } from "jimp";
 
 const BACKEND_URL = config.url.BACKEND_URL;
 
@@ -68,4 +69,19 @@ export const handlers = [
     }
     return HttpResponse.json({}, { status: 401 });
   }),
+
+  http.get(
+    `${BACKEND_URL}/profile-picture/:photoPublicId`,
+    async ({ params }) => {
+      const profPic1 = new Jimp({ height: 200, width: 200 }, "#FFFFFF");
+      const profPic1Buffer = await profPic1.getBuffer("image/jpeg");
+
+      switch (params.photoPublicId) {
+        case "testid1":
+          return HttpResponse.arrayBuffer(profPic1Buffer, {
+            headers: { "Content-Type": "image/jpeg" },
+          });
+      }
+    }
+  ),
 ];
