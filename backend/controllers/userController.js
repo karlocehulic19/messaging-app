@@ -11,9 +11,6 @@ const getUsers = asyncHandler(async (req, res) => {
 
   const usersProfiles = users.map((user) => ({
     username: user.username,
-    profileUrl: user.photoPublicId
-      ? `/profiles/photos/${user.photoPublicId}`
-      : null,
   }));
 
   return res.send(usersProfiles);

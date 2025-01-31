@@ -68,7 +68,7 @@ describe("/users", () => {
   it("response of user includes only the right data", async () => {
     await setup();
 
-    const expectedData = ["username", "profileUrl"];
+    const expectedData = ["username"];
 
     return request(app)
       .get("/users?s=Jo")
@@ -77,55 +77,6 @@ describe("/users", () => {
         for (let user of response.body) {
           expect(Object.keys(user).sort()).toEqual(expectedData.sort());
           expect(user).toHaveProperty("username", expect.any(String));
-          expect(user).toHaveProperty("profileUrl");
-        }
-      });
-  });
-
-  it("profilePictureUrl is null when photoPublicId is not present", async () => {
-    await setup();
-
-    return request(app)
-      .get("/users?s=Jo")
-      .expect(200)
-      .then((response) => {
-        for (let user of response.body) {
-          expect(user.profileUrl).toBeNull();
-        }
-      });
-  });
-
-  it("profilePictureUrl matches right endpoint", async () => {
-    const usersAndProfPicIDs = {
-      John: "someRandomId1",
-      Jim: "someRandomId2",
-      Josh: "someRandomId3",
-      Joanne: "someRandomId4",
-      Jack: "someRandomId5",
-    };
-
-    for (const [username, photoPublicId] of Object.entries(
-      usersAndProfPicIDs
-    )) {
-      await prisma.user.create({
-        data: {
-          username,
-          photoPublicId,
-          firstName: faker.person.firstName(),
-          lastName: faker.person.lastName(),
-          email: faker.internet.email(),
-          password: faker.internet.password(),
-        },
-      });
-    }
-
-    return request(app)
-      .get("/users?s=J")
-      .expect(200)
-      .then((response) => {
-        for (let user of response.body) {
-          const publicId = usersAndProfPicIDs[user.username];
-          expect(user.profileUrl).toBe(`/profiles/photos/${publicId}`);
         }
       });
   });
