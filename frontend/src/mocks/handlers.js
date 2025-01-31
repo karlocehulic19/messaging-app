@@ -74,7 +74,7 @@ export const handlers = [
   }),
 
   http.get(
-    `${BACKEND_URL}/profile-picture/:photoPublicId`,
+    `${BACKEND_URL}/users/profile-picture/:photoPublicId`,
     async ({ params }) => {
       switch (params.photoPublicId) {
         case "testid1":

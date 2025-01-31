@@ -9,7 +9,7 @@ export default function SearchCard({ username, photoId = null }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    customFetch(`/profile-picture/${photoId}`)
+    customFetch(`/users/profile-picture/${photoId}`)
       .then((res) => res.blob())
       .then((img) => {
         const profPic = URL.createObjectURL(img);
