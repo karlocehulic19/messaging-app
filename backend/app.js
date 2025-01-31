@@ -1,6 +1,7 @@
 const express = require("express");
 const errorMiddleware = require("./middleware/errorMiddleware");
 const authRouter = require("./routes/authRouter");
+const userRouter = require("./routes/userRouter");
 const app = express();
 const cors = require("cors");
 const { corsConfig } = require("./config/cors");
@@ -13,6 +14,7 @@ app.use(express.urlencoded({ extended: false }));
 require("./config/passport").config();
 
 app.use("/", authRouter);
+app.use("/users", userRouter);
 
 app.use(errorMiddleware);
 
