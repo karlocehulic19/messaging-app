@@ -77,12 +77,12 @@ export const handlers = [
     `${BACKEND_URL}/users/profile-picture/:photoPublicId`,
     async ({ params }) => {
       switch (params.photoPublicId) {
-        case "testid1":
+        case "Test":
           return HttpResponse.arrayBuffer(await profPic1Buffer, {
             headers: { "Content-Type": "image/jpeg" },
           });
-        case "nopicture":
-          return HttpResponse.json({ message: "No content" }, { status: 204 });
+        case "NoPictureTest":
+          return HttpResponse.json({}, { status: 204 });
       }
     }
   ),

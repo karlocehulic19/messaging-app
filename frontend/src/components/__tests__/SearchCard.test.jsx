@@ -22,7 +22,7 @@ global.URL.createObjectURL = vi.fn(() => {
 
 describe("<SearchCard />", () => {
   it("renders correctly", async () => {
-    render(<SearchCard username="Test" photoId="testid1" />);
+    render(<SearchCard username="Test" />);
 
     await waitFor(() => {
       expect(global.URL.createObjectURL).toBeCalledTimes(1);
@@ -38,13 +38,13 @@ describe("<SearchCard />", () => {
   });
 
   it("renders default profile page on no profile picture", async () => {
-    render(<SearchCard username="Test" photoId="nopicture" />);
+    render(<SearchCard username="NoPictureTest" />);
 
     await waitFor(() => {
       expect(screen.getByRole("img").src).toBeDefined();
     });
 
-    expect(screen.getByLabelText("Test user")).toMatchSnapshot();
+    expect(screen.getByLabelText("NoPictureTest user")).toMatchSnapshot();
   });
 
   it("redirects to messaging the user after click", async () => {

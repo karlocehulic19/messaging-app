@@ -16,14 +16,14 @@ exports[`<SearchCard /> > renders correctly 1`] = `
 
 exports[`<SearchCard /> > renders default profile page on no profile picture 1`] = `
 <div
-  aria-label="Test user"
+  aria-label="NoPictureTest user"
 >
   <img
-    alt="Test profile picture"
+    alt="NoPictureTest profile picture"
     src="/src/assets/default-profile-picture.jpeg"
   />
   <span>
-    Test
+    NoPictureTest
   </span>
 </div>
 `;

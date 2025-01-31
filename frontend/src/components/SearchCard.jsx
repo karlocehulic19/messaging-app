@@ -4,12 +4,12 @@ import customFetch from "../utils/customFetch";
 import defaultProfilePicture from "../assets/default-profile-picture.jpeg";
 import { useNavigate } from "react-router-dom";
 
-export default function SearchCard({ username, photoId = null }) {
+export default function SearchCard({ username }) {
   const [imgSrc, setImgSrc] = useState();
   const navigate = useNavigate();
 
   useEffect(() => {
-    customFetch(`/users/profile-picture/${photoId}`)
+    customFetch(`/users/profile-picture/${username}`)
       .then((res) => res.blob())
       .then((img) => {
         const profPic = URL.createObjectURL(img);
@@ -18,7 +18,7 @@ export default function SearchCard({ username, photoId = null }) {
       .catch(() => {
         setImgSrc(defaultProfilePicture);
       });
-  }, [photoId]);
+  }, [username]);
 
   return (
     <div
