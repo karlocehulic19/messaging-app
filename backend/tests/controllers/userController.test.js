@@ -5,9 +5,19 @@ const { Buffer } = require("node:buffer");
 
 const setup = () => {
   const mockedBufferImages = {
-    validId1: [Buffer.from("test buffer 1"), "image/jpeg"],
-    validId2: [Buffer.from("test buffer 2"), "image/png"],
-    validId3: [Buffer.from("test buffer 3"), "image/png"],
+    validId1: {
+      imageBuffer: Buffer.from("test buffer 1"),
+      mimeType: "image/jpeg",
+    },
+    validId2: {
+      imageBuffer: Buffer.from("test buffer 2"),
+      mimeType: "image/jpeg",
+    },
+    validId3: {
+      imageBuffer: Buffer.from("test buffer 3"),
+      mimeType: "image/jpeg",
+    },
+    invalidId: null,
   };
 
   const MockedImageManager = {
@@ -50,10 +60,10 @@ describe("/profile-picture", () => {
       );
       expect(response.status).toBe(200);
       expect(response.headers["content-type"]).toBe(
-        setup().mockedBufferImages[tesPhotoPublicId][1]
+        setup().mockedBufferImages[tesPhotoPublicId].mimeType
       );
       expect(response.body).toEqual(
-        setup().mockedBufferImages[tesPhotoPublicId][0]
+        setup().mockedBufferImages[tesPhotoPublicId].imageBuffer
       );
     }
   });
@@ -98,6 +108,25 @@ describe("/profile-picture", () => {
     });
 
     const response = await request(app).get("/profile-picture/noPictureUser");
+
+    expect(response.status).toBe(204);
+  });
+
+  it("sends 204 when ImageManager.getProfilePicture return null", async () => {
+    await prisma.user.create({
+      data: {
+        username: "invalidPictureUser",
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        photoPublicId: "invalidId",
+      },
+    });
+
+    const response = await request(app).get(
+      "/profile-picture/invalidPictureUser"
+    );
 
     expect(response.status).toBe(204);
   });

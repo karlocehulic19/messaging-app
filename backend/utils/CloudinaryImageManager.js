@@ -21,6 +21,20 @@ class CloudinaryImageManager {
       return null;
     }
   }
+
+  static async getProfilePicture(photoPublicId) {
+    try {
+      const pictureURL = cloudinary.url(photoPublicId);
+      const response = await fetch(pictureURL);
+      const imageBuffer = await response.blob();
+      const mimeType = response.headers.get("Content-Type");
+
+      return { imageBuffer, mimeType };
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
 }
 
 module.exports = CloudinaryImageManager;

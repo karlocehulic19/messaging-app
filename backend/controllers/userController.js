@@ -26,11 +26,11 @@ const getProfilePictureByUsername = (ImageManager) =>
     }
     const photoPublicId = user.photoPublicId;
     if (!photoPublicId) return res.status(204).send();
-    const [imageBuffer, mimeType] = await ImageManager.getProfilePicture(
-      photoPublicId
-    );
+    const pictureResponse = await ImageManager.getProfilePicture(photoPublicId);
 
-    res.type(mimeType).send(imageBuffer);
+    if (!pictureResponse) return res.status(204).send();
+
+    res.type(pictureResponse.mimeType).send(pictureResponse.imageBuffer);
   });
 module.exports = {
   getUsers,
