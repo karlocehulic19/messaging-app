@@ -13,3 +13,39 @@ exports[`<SearchCard /> > renders correctly 1`] = `
   </span>
 </div>
 `;
+
+exports[`<SearchCard /> > renders correctly 2`] = `
+Blob {
+  Symbol(kHandle): Blob {},
+  Symbol(kLength): 1708,
+  Symbol(kType): "image/jpeg",
+}
+`;
+
+exports[`<SearchCard /> > renders correctly 3`] = `
+<div
+  aria-label="Test user"
+>
+  <img
+    alt="Test profile picture"
+    src="mockedDataURL"
+  />
+  <span>
+    Test
+  </span>
+</div>
+`;
+
+exports[`<SearchCard /> > renders default profile page on no profile picture 1`] = `
+<div
+  aria-label="Test user"
+>
+  <img
+    alt="Test profile picture"
+    src="/src/assets/default-profile-picture.jpeg"
+  />
+  <span>
+    Test
+  </span>
+</div>
+`;

@@ -4,6 +4,9 @@ import { Jimp } from "jimp";
 
 const BACKEND_URL = config.url.BACKEND_URL;
 
+export const profPic1 = new Jimp({ height: 200, width: 200 }, "#FFFFFF");
+export const profPic1Buffer = profPic1.getBuffer("image/jpeg");
+
 export const handlers = [
   http.post(`${BACKEND_URL}/login`, async ({ request }) => {
     const body = await request.json();
@@ -73,14 +76,13 @@ export const handlers = [
   http.get(
     `${BACKEND_URL}/profile-picture/:photoPublicId`,
     async ({ params }) => {
-      const profPic1 = new Jimp({ height: 200, width: 200 }, "#FFFFFF");
-      const profPic1Buffer = await profPic1.getBuffer("image/jpeg");
-
       switch (params.photoPublicId) {
         case "testid1":
-          return HttpResponse.arrayBuffer(profPic1Buffer, {
+          return HttpResponse.arrayBuffer(await profPic1Buffer, {
             headers: { "Content-Type": "image/jpeg" },
           });
+        case "nopicture":
+          return HttpResponse.json({ message: "No content" }, { status: 204 });
       }
     }
   ),
