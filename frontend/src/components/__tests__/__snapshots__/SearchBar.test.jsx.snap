@@ -4,7 +4,37 @@ exports[`<SearchBar /> > display possible search candidates 1`] = `
 <div
   aria-label="Found users"
 >
-  Something
+  <div
+    aria-label="Test user"
+  >
+    <img
+      alt="Test profile picture"
+      src="/src/assets/default-profile-picture.jpeg"
+    />
+    <span>
+      Test
+    </span>
+  </div>
+  <div
+    aria-label="Test2 user"
+  >
+    <img
+      alt="Test2 profile picture"
+    />
+    <span>
+      Test2
+    </span>
+  </div>
+  <div
+    aria-label="Tim user"
+  >
+    <img
+      alt="Tim profile picture"
+    />
+    <span>
+      Tim
+    </span>
+  </div>
 </div>
 `;
 
@@ -17,6 +47,9 @@ exports[`<SearchBar /> > renders correctly 1`] = `
     role="searchbox"
     type="text"
     value=""
+  />
+  <div
+    aria-label="Found users"
   />
 </div>
 `;
