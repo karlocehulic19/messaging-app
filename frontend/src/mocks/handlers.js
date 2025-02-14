@@ -7,6 +7,36 @@ const BACKEND_URL = config.url.BACKEND_URL;
 export const profPic1 = new Jimp({ height: 200, width: 200 }, "#FFFFFF");
 export const profPic1Buffer = profPic1.getBuffer("image/jpeg");
 
+export const userSearchHandler = ({ request }) => {
+  const url = new URL(request.url);
+  const queries = url.searchParams;
+  if (!queries.has("s")) {
+    return HttpResponse.json(
+      {
+        error: "At least s query is needed to send users get request.",
+      },
+      { status: 400 }
+    );
+  }
+
+  if (queries.has("s", "t")) {
+    return HttpResponse.json([
+      {
+        username: "Test",
+        photoPublicId: "testid1",
+      },
+      {
+        username: "Test2",
+        photoPublicId: null,
+      },
+      {
+        username: "Tim",
+        photoPublicId: null,
+      },
+    ]);
+  }
+};
+
 export const handlers = [
   http.post(`${BACKEND_URL}/login`, async ({ request }) => {
     const body = await request.json();
@@ -87,33 +117,5 @@ export const handlers = [
     }
   ),
 
-  http.get(`${BACKEND_URL}/users`, ({ request }) => {
-    const url = new URL(request.url);
-    const queries = url.searchParams;
-    if (!queries.has("s")) {
-      return HttpResponse.json(
-        {
-          error: "At least s query is needed to send users get request.",
-        },
-        { status: 400 }
-      );
-    }
-
-    if (queries.has("s", "t")) {
-      return HttpResponse.json([
-        {
-          username: "Test",
-          photoPublicId: "testid1",
-        },
-        {
-          username: "Test2",
-          photoPublicId: null,
-        },
-        {
-          username: "Tim",
-          photoPublicId: null,
-        },
-      ]);
-    }
-  }),
+  http.get(`${BACKEND_URL}/users`, userSearchHandler),
 ];

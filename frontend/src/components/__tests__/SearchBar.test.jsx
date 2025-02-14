@@ -1,12 +1,28 @@
 import { describe, expect, vi } from "vitest";
-import { screen, render, waitFor } from "@testing-library/react";
+import { screen, render, waitFor, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import SearchBar from "../SearchBar";
 import { server } from "../../mocks/node";
 import * as customFetch from "../../utils/customFetch";
 import { BrowserRouter } from "react-router-dom";
+import { http } from "msw";
+import { config } from "../../Constants";
+import { userSearchHandler } from "../../mocks/handlers";
 
 server.listen();
+const searchHandler = (handler) =>
+  http.get(`${config.url.BACKEND_URL}/users`, handler);
+
+const setup = async () => {
+  // wrapper is needed bcs im not mocking SearchCard child component
+  render(<SearchBar />, { wrapper: BrowserRouter });
+  const user = userEvent.setup();
+  const customFetchSpy = vi.spyOn(customFetch, "default");
+
+  await user.click(screen.getByRole("searchbox"));
+
+  return { user, customFetchSpy };
+};
 
 describe("<SearchBar />", () => {
   it("renders correctly", () => {
@@ -15,17 +31,10 @@ describe("<SearchBar />", () => {
   });
 
   it("display possible search candidates", async () => {
-    render(<SearchBar />, { wrapper: BrowserRouter });
-    const user = userEvent.setup();
-
-    const customFetchSpy = vi.spyOn(customFetch, "default");
-
-    await user.click(screen.getByRole("searchbox"));
+    const { user, customFetchSpy } = await setup();
     await user.keyboard("t");
 
-    await waitFor(() => expect(customFetchSpy).toBeCalledWith("/users?s=t"), {
-      timeout: 2010,
-    });
+    await waitFor(() => expect(customFetchSpy).toBeCalledWith("/users?s=t"));
 
     const usersFetch = customFetchSpy.mock.calls.filter((call) =>
       call[0].includes("?s=")
@@ -33,5 +42,49 @@ describe("<SearchBar />", () => {
 
     expect(usersFetch.length).toBe(1);
     expect(screen.getByLabelText("Found users")).toMatchSnapshot();
+  });
+
+  it("displays searching text before users are loaded", async () => {
+    const { user, customFetchSpy } = await setup();
+
+    let promiseResolver;
+
+    const responseHandler = ({ request }) => {
+      return new Promise((resolve) => {
+        promiseResolver = (func) => resolve(func({ request }));
+      });
+    };
+
+    server.use(searchHandler(responseHandler));
+
+    await user.keyboard("t");
+
+    await waitFor(() => expect(customFetchSpy).toBeCalledWith("/users?s=t"));
+
+    expect(screen.getByLabelText("Found users")).toMatchSnapshot();
+
+    await act(() => {
+      promiseResolver(userSearchHandler);
+    });
+
+    expect(screen.getByLabelText("Found users")).toMatchSnapshot();
+    server.resetHandlers();
+  });
+
+  it("displays not found when no users are found", async () => {
+    const { user, customFetchSpy } = await setup();
+    await user.keyboard("not in database");
+
+    await waitFor(() =>
+      expect(customFetchSpy).toBeCalledWith("/users?s=not in database")
+    );
+
+    const foundUsersContainer = screen.getByLabelText("Found users");
+    await waitFor(() => {
+      expect(screen.getByText("No users found").parentElement).toBe(
+        foundUsersContainer
+      );
+    });
+    expect(screen.queryByText("Searching")).not.toBeInTheDocument();
   });
 });

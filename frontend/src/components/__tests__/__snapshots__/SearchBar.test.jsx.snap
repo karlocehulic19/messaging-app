@@ -38,6 +38,56 @@ exports[`<SearchBar /> > display possible search candidates 1`] = `
 </div>
 `;
 
+exports[`<SearchBar /> > displays searching text before users are loaded 1`] = `
+<div
+  aria-label="Found users"
+>
+  <span>
+    Searching...
+  </span>
+</div>
+`;
+
+exports[`<SearchBar /> > displays searching text before users are loaded 2`] = `
+<div
+  aria-label="Found users"
+>
+  <div
+    aria-label="Test user"
+  >
+    <img
+      alt="Test profile picture"
+      src="/src/assets/default-profile-picture.jpeg"
+    />
+    <span>
+      Test
+    </span>
+  </div>
+  <div
+    aria-label="Test2 user"
+  >
+    <img
+      alt="Test2 profile picture"
+      src="/src/assets/default-profile-picture.jpeg"
+    />
+    <span>
+      Test2
+    </span>
+  </div>
+  <div
+    aria-label="Tim user"
+  >
+    <img
+      alt="Tim profile picture"
+      src="/src/assets/default-profile-picture.jpeg"
+    />
+    <span>
+      Tim
+    </span>
+  </div>
+</div>
+`;
+
 exports[`<SearchBar /> > renders correctly 1`] = `
 <div
   role="search"
