@@ -26,7 +26,10 @@ class CloudinaryImageManager {
     try {
       const pictureURL = cloudinary.url(photoPublicId);
       const response = await fetch(pictureURL);
-      const imageBuffer = await response.blob();
+      const imageBuffer = Buffer.from(
+        await (await response.blob()).arrayBuffer()
+      );
+
       const mimeType = response.headers.get("Content-Type");
 
       return { imageBuffer, mimeType };
