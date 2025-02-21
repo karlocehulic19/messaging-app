@@ -10,13 +10,21 @@ export default function SearchCard({ username }) {
 
   useEffect(() => {
     customFetch(`/users/profile-picture/${username}`)
-      .then((res) => res.blob())
+      .then((res) => {
+        setImgSrc(defaultProfilePicture);
+        if (res.status != 200) throw new Error("No profile picture found");
+        return res.blob();
+      })
       .then((img) => {
         const profPic = URL.createObjectURL(img);
         setImgSrc(profPic);
       })
-      .catch(() => {
-        setImgSrc(defaultProfilePicture);
+      .catch(async (error) => {
+        if (error.response) {
+          const errJSON = await error.response.json();
+          if (errJSON) console.log("Request JSON: ", errJSON);
+        }
+        console.log(error);
       });
   }, [username]);
 

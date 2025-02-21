@@ -7,6 +7,19 @@ const BACKEND_URL = config.url.BACKEND_URL;
 export const profPic1 = new Jimp({ height: 200, width: 200 }, "#FFFFFF");
 export const profPic1Buffer = profPic1.getBuffer("image/jpeg");
 
+const db = {
+  Test: {
+    username: "Test",
+    profilePicture: profPic1Buffer,
+  },
+  Test2: {
+    username: "Test2",
+  },
+  Tim: {
+    username: "Tim",
+  },
+};
+
 export const userSearchHandler = ({ request }) => {
   const url = new URL(request.url);
   const queries = url.searchParams;
@@ -19,22 +32,11 @@ export const userSearchHandler = ({ request }) => {
     );
   }
 
-  if (queries.has("s", "t")) {
-    return HttpResponse.json([
-      {
-        username: "Test",
-        photoPublicId: "testid1",
-      },
-      {
-        username: "Test2",
-        photoPublicId: null,
-      },
-      {
-        username: "Tim",
-        photoPublicId: null,
-      },
-    ]);
+  if (queries.has("s", "T")) {
+    return HttpResponse.json(Object.values(db));
   }
+
+  return HttpResponse.json([]);
 };
 
 export const handlers = [
@@ -104,15 +106,17 @@ export const handlers = [
   }),
 
   http.get(
-    `${BACKEND_URL}/users/profile-picture/:photoPublicId`,
+    `${BACKEND_URL}/users/profile-picture/:username`,
     async ({ params }) => {
-      switch (params.photoPublicId) {
-        case "Test":
-          return HttpResponse.arrayBuffer(await profPic1Buffer, {
-            headers: { "Content-Type": "image/jpeg" },
-          });
+      if (Object.keys(db).includes(params.username)) {
+        const user = db[params.username];
+        return user.profilePicture
+          ? HttpResponse.arrayBuffer(await user.profilePicture)
+          : new HttpResponse(null, { status: 204 });
+      }
+      switch (params.username) {
         case "NoPictureTest":
-          return HttpResponse.json({}, { status: 204 });
+          return new HttpResponse(null, { status: 204 });
       }
     }
   ),

@@ -32,9 +32,9 @@ describe("<SearchBar />", () => {
 
   it("display possible search candidates", async () => {
     const { user, customFetchSpy } = await setup();
-    await user.keyboard("t");
+    await user.keyboard("T");
 
-    await waitFor(() => expect(customFetchSpy).toBeCalledWith("/users?s=t"));
+    await waitFor(() => expect(customFetchSpy).toBeCalledWith("/users?s=T"));
 
     const usersFetch = customFetchSpy.mock.calls.filter((call) =>
       call[0].includes("?s=")
@@ -57,13 +57,13 @@ describe("<SearchBar />", () => {
 
     server.use(searchHandler(responseHandler));
 
-    await user.keyboard("t");
+    await user.keyboard("T");
 
-    await waitFor(() => expect(customFetchSpy).toBeCalledWith("/users?s=t"));
+    await waitFor(() => expect(customFetchSpy).toBeCalledWith("/users?s=T"));
 
     expect(screen.getByLabelText("Found users")).toMatchSnapshot();
 
-    await act(() => {
+    await act(async () => {
       promiseResolver(userSearchHandler);
     });
 

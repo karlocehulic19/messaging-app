@@ -3,13 +3,6 @@ import useDebounce from "../hooks/useDebounce";
 import SearchCard from "./SearchCard";
 import customFetch from "../utils/customFetch";
 
-// searching state -> while typing, or while fetching
-// not found state -> while something in searchbar but none of the users are found
-// states: empty -> might be controlled with users (when search is empty)
-//         nonempty -> when users are found
-//         loading -> while typing and fetching data, really should be there when users data aren't representing searched ones
-//         notfound -> while users represent right data but that data is empty
-
 export default function SearchBar() {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);

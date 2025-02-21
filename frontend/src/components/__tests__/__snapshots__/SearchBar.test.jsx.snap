@@ -20,6 +20,7 @@ exports[`<SearchBar /> > display possible search candidates 1`] = `
   >
     <img
       alt="Test2 profile picture"
+      src="/src/assets/default-profile-picture.jpeg"
     />
     <span>
       Test2
@@ -30,6 +31,7 @@ exports[`<SearchBar /> > display possible search candidates 1`] = `
   >
     <img
       alt="Tim profile picture"
+      src="/src/assets/default-profile-picture.jpeg"
     />
     <span>
       Tim
