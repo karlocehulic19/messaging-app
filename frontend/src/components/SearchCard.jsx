@@ -5,13 +5,12 @@ import defaultProfilePicture from "../assets/default-profile-picture.jpeg";
 import { useNavigate } from "react-router-dom";
 
 export default function SearchCard({ username }) {
-  const [imgSrc, setImgSrc] = useState();
+  const [imgSrc, setImgSrc] = useState(defaultProfilePicture);
   const navigate = useNavigate();
 
   useEffect(() => {
     customFetch(`/users/profile-picture/${username}`)
       .then((res) => {
-        setImgSrc(defaultProfilePicture);
         if (res.status != 200) throw new Error("No profile picture found");
         return res.blob();
       })

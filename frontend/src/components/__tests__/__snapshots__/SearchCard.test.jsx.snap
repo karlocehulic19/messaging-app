@@ -27,3 +27,33 @@ exports[`<SearchCard /> > renders default profile page on no profile picture 1`]
   </span>
 </div>
 `;
+
+exports[`<SearchCard /> > renders default profile picture before fetch is resolved 1`] = `
+<div
+  aria-label="Test user"
+>
+  <img
+    alt="Test profile picture"
+    src="/src/assets/default-profile-picture.jpeg"
+  />
+  <span>
+    Test
+  </span>
+</div>
+`;
+
+exports[`<SearchCard /> > renders default profile picture if request failed 1`] = `[TypeError: Failed to fetch]`;
+
+exports[`<SearchCard /> > renders default profile picture if request failed 2`] = `
+<div
+  aria-label="Test user"
+>
+  <img
+    alt="Test profile picture"
+    src="/src/assets/default-profile-picture.jpeg"
+  />
+  <span>
+    Test
+  </span>
+</div>
+`;
