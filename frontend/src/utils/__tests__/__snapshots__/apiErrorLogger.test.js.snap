@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`apiErrorLogger() > Logs request.json() if request.json() is present 1`] = `
+{
+  "error": "message",
+}
+`;
+
+exports[`apiErrorLogger() > Logs request.json() if request.json() is present 2`] = `[Error: Bad request]`;
