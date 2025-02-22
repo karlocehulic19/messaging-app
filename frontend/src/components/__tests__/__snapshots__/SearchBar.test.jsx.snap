@@ -6,6 +6,7 @@ exports[`<SearchBar /> > display possible search candidates 1`] = `
 >
   <div
     aria-label="Test user"
+    tabindex="-1"
   >
     <img
       alt="Test profile picture"
@@ -17,6 +18,7 @@ exports[`<SearchBar /> > display possible search candidates 1`] = `
   </div>
   <div
     aria-label="Test2 user"
+    tabindex="-1"
   >
     <img
       alt="Test2 profile picture"
@@ -28,6 +30,7 @@ exports[`<SearchBar /> > display possible search candidates 1`] = `
   </div>
   <div
     aria-label="Tim user"
+    tabindex="-1"
   >
     <img
       alt="Tim profile picture"
@@ -37,6 +40,16 @@ exports[`<SearchBar /> > display possible search candidates 1`] = `
       Tim
     </span>
   </div>
+</div>
+`;
+
+exports[`<SearchBar /> > displays error message on wrong failed requests 1`] = `
+<div
+  aria-label="Found users"
+>
+  <span>
+    Ups! An error occurred!
+  </span>
 </div>
 `;
 
@@ -56,6 +69,7 @@ exports[`<SearchBar /> > displays searching text before users are loaded 2`] = `
 >
   <div
     aria-label="Test user"
+    tabindex="-1"
   >
     <img
       alt="Test profile picture"
@@ -67,6 +81,7 @@ exports[`<SearchBar /> > displays searching text before users are loaded 2`] = `
   </div>
   <div
     aria-label="Test2 user"
+    tabindex="-1"
   >
     <img
       alt="Test2 profile picture"
@@ -78,6 +93,7 @@ exports[`<SearchBar /> > displays searching text before users are loaded 2`] = `
   </div>
   <div
     aria-label="Tim user"
+    tabindex="-1"
   >
     <img
       alt="Tim profile picture"
@@ -93,15 +109,13 @@ exports[`<SearchBar /> > displays searching text before users are loaded 2`] = `
 exports[`<SearchBar /> > renders correctly 1`] = `
 <div
   role="search"
+  tabindex="-1"
 >
   <input
     name="searchbox"
     role="searchbox"
     type="text"
     value=""
-  />
-  <div
-    aria-label="Found users"
   />
 </div>
 `;

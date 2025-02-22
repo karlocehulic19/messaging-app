@@ -3,6 +3,7 @@
 exports[`<SearchCard /> > renders correctly 1`] = `
 <div
   aria-label="Test user"
+  tabindex="-1"
 >
   <img
     alt="Test profile picture"
@@ -17,6 +18,7 @@ exports[`<SearchCard /> > renders correctly 1`] = `
 exports[`<SearchCard /> > renders default profile page on no profile picture 1`] = `
 <div
   aria-label="NoPictureTest user"
+  tabindex="-1"
 >
   <img
     alt="NoPictureTest profile picture"
@@ -31,6 +33,7 @@ exports[`<SearchCard /> > renders default profile page on no profile picture 1`]
 exports[`<SearchCard /> > renders default profile picture before fetch is resolved 1`] = `
 <div
   aria-label="Test user"
+  tabindex="-1"
 >
   <img
     alt="Test profile picture"
@@ -47,6 +50,7 @@ exports[`<SearchCard /> > renders default profile picture if request failed 1`] 
 exports[`<SearchCard /> > renders default profile picture if request failed 2`] = `
 <div
   aria-label="Test user"
+  tabindex="-1"
 >
   <img
     alt="Test profile picture"

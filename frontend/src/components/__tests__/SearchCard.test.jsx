@@ -7,6 +7,7 @@ import userEvent from "@testing-library/user-event";
 import * as customFetch from "../../utils/customFetch";
 import { config } from "../../Constants";
 import { http, HttpResponse } from "msw";
+import { useRef } from "react";
 
 server.listen();
 
@@ -23,9 +24,25 @@ global.URL.createObjectURL = vi.fn(() => {
   return "mockedDataURL";
 });
 
+// eslint-disable-next-line react/prop-types
+const MockedSearchBar = ({ username }) => {
+  const searchBarRef = useRef();
+
+  return (
+    <>
+      <input ref={searchBarRef} type="text" name="searchbar" id="searchbar" />
+      <SearchCard username={username} searchBarRef={searchBarRef} />
+    </>
+  );
+};
+
+const setup = (username) => {
+  render(<MockedSearchBar username={username} />);
+};
+
 describe("<SearchCard />", () => {
   it("renders correctly", async () => {
-    render(<SearchCard username="Test" />);
+    setup("Test");
 
     await waitFor(() => {
       expect(global.URL.createObjectURL).toBeCalledTimes(1);
@@ -41,7 +58,7 @@ describe("<SearchCard />", () => {
   });
 
   it("renders default profile page on no profile picture", async () => {
-    render(<SearchCard username="NoPictureTest" />);
+    setup("NoPictureTest");
 
     await waitFor(() => expect(screen.getByRole("img").src).toBeDefined());
 
@@ -49,7 +66,7 @@ describe("<SearchCard />", () => {
   });
 
   it("redirects to messaging the user after click", async () => {
-    render(<SearchCard username="Test" />);
+    setup("Test");
     const user = userEvent.setup();
 
     await user.click(screen.getByLabelText("Test user"));
@@ -58,7 +75,7 @@ describe("<SearchCard />", () => {
     cleanup();
     vi.clearAllMocks();
 
-    render(<SearchCard username="Test2" />);
+    setup("Test2");
 
     await user.click(screen.getByLabelText("Test2 user"));
 
@@ -66,7 +83,7 @@ describe("<SearchCard />", () => {
   });
 
   it("renders default profile picture before fetch is resolved", async () => {
-    render(<SearchCard username="Test" />);
+    setup("Test");
     const customFetchSpy = vi.spyOn(customFetch, "default");
 
     expect(screen.getByLabelText("Test user")).toMatchSnapshot();
@@ -84,7 +101,7 @@ describe("<SearchCard />", () => {
       )
     );
 
-    render(<SearchCard username="Test" />);
+    setup("Test");
 
     expect(customFetchSpy).toHaveBeenCalledWith(`/users/profile-picture/Test`);
     await expect(

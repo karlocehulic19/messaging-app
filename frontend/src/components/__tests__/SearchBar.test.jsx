@@ -1,11 +1,11 @@
 import { describe, expect, vi } from "vitest";
-import { screen, render, waitFor, act } from "@testing-library/react";
+import { screen, render, waitFor, act, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import SearchBar from "../SearchBar";
 import { server } from "../../mocks/node";
 import * as customFetch from "../../utils/customFetch";
-import { BrowserRouter } from "react-router-dom";
-import { http } from "msw";
+import { MemoryRouter, useLocation } from "react-router-dom";
+import { http, HttpResponse } from "msw";
 import { config } from "../../Constants";
 import { userSearchHandler } from "../../mocks/handlers";
 
@@ -13,9 +13,30 @@ server.listen();
 const searchHandler = (handler) =>
   http.get(`${config.url.BACKEND_URL}/users`, handler);
 
+function TestingComponent() {
+  const location = useLocation();
+  const path = location.pathname;
+
+  return (
+    <>
+      <div data-testid={"path"}>{path}</div>
+    </>
+  );
+}
+
+// eslint-disable-next-line react/prop-types
+function HistoryWrapper({ children }) {
+  return (
+    <MemoryRouter>
+      <TestingComponent />
+      {children}
+    </MemoryRouter>
+  );
+}
+
 const setup = async () => {
   // wrapper is needed bcs im not mocking SearchCard child component
-  render(<SearchBar />, { wrapper: BrowserRouter });
+  render(<SearchBar />, { wrapper: HistoryWrapper });
   const user = userEvent.setup();
   const customFetchSpy = vi.spyOn(customFetch, "default");
 
@@ -86,5 +107,72 @@ describe("<SearchBar />", () => {
       );
     });
     expect(screen.queryByText("Searching")).not.toBeInTheDocument();
+  });
+
+  it("displays error message on wrong failed requests", async () => {
+    server.use(
+      http.get(`${config.url.BACKEND_URL}/users`, () => {
+        return HttpResponse.error();
+      })
+    );
+
+    const { user, customFetchSpy } = await setup();
+
+    await user.keyboard("T");
+
+    await waitFor(() => expect(customFetchSpy).toBeCalled());
+    await expect(customFetchSpy.mock.results[0].value).rejects.toThrow(
+      expect.anything()
+    );
+    expect(screen.getByLabelText("Found users")).toMatchSnapshot();
+  });
+
+  it("removes SearchBar listings when searchbar isn't focused", async () => {
+    const { user: user1 } = await setup();
+
+    expect(screen.getByLabelText("Found users")).toBeInTheDocument();
+    expect(screen.getByRole("searchbox")).toHaveFocus();
+    await user1.tab();
+
+    expect(screen.getByRole("searchbox")).not.toHaveFocus();
+    expect(screen.queryByLabelText("Found users")).not.toBeInTheDocument();
+
+    cleanup();
+    vi.clearAllMocks();
+
+    // Needed since tests focus of only input element and is flaky when SearchCard is clicked
+    const { user: user2, customFetchSpy: customFetchSpy2 } = await setup();
+
+    expect(screen.getByLabelText("Found users")).toBeInTheDocument();
+    expect(screen.getByRole("searchbox")).toHaveFocus();
+
+    await user2.keyboard("T");
+
+    await waitFor(() =>
+      expect(customFetchSpy2.mock.calls[0][0]).toBe("/users?s=T")
+    );
+
+    await user2.click(screen.getByLabelText("Test user"));
+
+    expect(screen.getByTestId("path").textContent).toBe("/Test");
+    expect(screen.queryByLabelText("Found users")).not.toBeInTheDocument();
+
+    cleanup();
+    vi.clearAllMocks();
+
+    const { user: user3, customFetchSpy: customFetchSpy3 } = await setup();
+
+    expect(screen.getByLabelText("Found users")).toBeInTheDocument();
+    expect(screen.getByRole("searchbox")).toHaveFocus();
+
+    await user3.keyboard("T");
+
+    await waitFor(() =>
+      expect(customFetchSpy3.mock.calls[0][0]).toBe("/users?s=T")
+    );
+
+    await user3.click(screen.getByRole("search"));
+
+    expect(screen.getByLabelText("Found users")).toBeInTheDocument();
   });
 });

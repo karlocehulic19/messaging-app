@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 import customFetch from "../utils/customFetch";
 import defaultProfilePicture from "../assets/default-profile-picture.jpeg";
 import { useNavigate } from "react-router-dom";
+import apiErrorLogger from "../utils/apiErrorLogger";
 
-export default function SearchCard({ username }) {
+export default function SearchCard({ username, searchBarRef }) {
   const [imgSrc, setImgSrc] = useState(defaultProfilePicture);
   const navigate = useNavigate();
 
@@ -18,18 +19,19 @@ export default function SearchCard({ username }) {
         const profPic = URL.createObjectURL(img);
         setImgSrc(profPic);
       })
-      .catch(async (error) => {
-        if (error.response) {
-          const errJSON = await error.response.json();
-          if (errJSON) console.log("Request JSON: ", errJSON);
-        }
-        console.log(error);
-      });
+      .catch(apiErrorLogger);
   }, [username]);
+
+  function handleClick(e) {
+    e.preventDefault();
+    navigate(`/${username}`);
+    searchBarRef.current.blur();
+  }
 
   return (
     <div
-      onClick={() => navigate(`/${username}`)}
+      tabIndex={-1}
+      onMouseDown={handleClick}
       aria-label={`${username} user`}
     >
       <img src={imgSrc} alt={`${username} profile picture`} />
@@ -41,4 +43,5 @@ export default function SearchCard({ username }) {
 SearchCard.propTypes = {
   username: PropTypes.string.isRequired,
   photoId: PropTypes.string,
+  searchBarRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
 };

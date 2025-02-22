@@ -39,8 +39,6 @@ describe("apiErrorLogger()", () => {
       "Error text that shouldn't be standard"
     );
 
-    console.log(testingResponse);
-
     const resErr = new ResponseError("Bad request", testingResponse);
 
     await apiErrorLogger(resErr);
