@@ -4,6 +4,7 @@ import customFetch from "../utils/customFetch";
 import defaultProfilePicture from "../assets/default-profile-picture.jpeg";
 import { useNavigate } from "react-router-dom";
 import apiErrorLogger from "../utils/apiErrorLogger";
+import styles from "./styles/SearchCard.module.css";
 
 export default function SearchCard({ username, searchBarRef }) {
   const [imgSrc, setImgSrc] = useState(defaultProfilePicture);
@@ -30,12 +31,17 @@ export default function SearchCard({ username, searchBarRef }) {
 
   return (
     <div
+      className={styles["search-card"]}
       tabIndex={-1}
       onMouseDown={handleClick}
       aria-label={`${username} user`}
     >
-      <img src={imgSrc} alt={`${username} profile picture`} />
-      <span>{username}</span>
+      <img
+        className={`profile-picture ${styles["profile-picture"]}`}
+        src={imgSrc}
+        alt={`${username} profile picture`}
+      />
+      <span className={styles["username-span"]}>{username}</span>
     </div>
   );
 }

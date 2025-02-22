@@ -66,6 +66,7 @@ function ProfilePictureSelector({
         >
           <label htmlFor="profile-picture">Profile picture</label>
           <img
+            className="profile-picture"
             id={styles["image-demo"]}
             src={formattedPicture}
             alt="Current Profile picture"

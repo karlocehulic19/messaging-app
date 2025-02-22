@@ -3,13 +3,17 @@
 exports[`<SearchCard /> > renders correctly 1`] = `
 <div
   aria-label="Test user"
+  class="_search-card_1db872"
   tabindex="-1"
 >
   <img
     alt="Test profile picture"
+    class="profile-picture _profile-picture_1db872"
     src="mockedDataURL"
   />
-  <span>
+  <span
+    class="_username-span_1db872"
+  >
     Test
   </span>
 </div>
@@ -18,13 +22,17 @@ exports[`<SearchCard /> > renders correctly 1`] = `
 exports[`<SearchCard /> > renders default profile page on no profile picture 1`] = `
 <div
   aria-label="NoPictureTest user"
+  class="_search-card_1db872"
   tabindex="-1"
 >
   <img
     alt="NoPictureTest profile picture"
+    class="profile-picture _profile-picture_1db872"
     src="/src/assets/default-profile-picture.jpeg"
   />
-  <span>
+  <span
+    class="_username-span_1db872"
+  >
     NoPictureTest
   </span>
 </div>
@@ -33,13 +41,17 @@ exports[`<SearchCard /> > renders default profile page on no profile picture 1`]
 exports[`<SearchCard /> > renders default profile picture before fetch is resolved 1`] = `
 <div
   aria-label="Test user"
+  class="_search-card_1db872"
   tabindex="-1"
 >
   <img
     alt="Test profile picture"
+    class="profile-picture _profile-picture_1db872"
     src="/src/assets/default-profile-picture.jpeg"
   />
-  <span>
+  <span
+    class="_username-span_1db872"
+  >
     Test
   </span>
 </div>
@@ -50,13 +62,17 @@ exports[`<SearchCard /> > renders default profile picture if request failed 1`] 
 exports[`<SearchCard /> > renders default profile picture if request failed 2`] = `
 <div
   aria-label="Test user"
+  class="_search-card_1db872"
   tabindex="-1"
 >
   <img
     alt="Test profile picture"
+    class="profile-picture _profile-picture_1db872"
     src="/src/assets/default-profile-picture.jpeg"
   />
-  <span>
+  <span
+    class="_username-span_1db872"
+  >
     Test
   </span>
 </div>

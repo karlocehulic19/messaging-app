@@ -38,7 +38,6 @@ label[for="profile-picture"] {
 #image-demo {
   display: block;
   max-width: 50%;
-  border-radius: 99%;
 }
 
 @media (max-width: 750px) {

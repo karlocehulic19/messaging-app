@@ -1,0 +1,20 @@
+.search-card {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: start;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 3px solid black;
+}
+
+.search-card:hover {
+  background-color: rgba(0, 0, 0, 0.164);
+}
+
+.username-span {
+  font-size: 2rem;
+}
+
+.profile-picture {
+  height: 90%;
+}

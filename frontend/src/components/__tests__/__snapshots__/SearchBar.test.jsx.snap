@@ -6,37 +6,49 @@ exports[`<SearchBar /> > display possible search candidates 1`] = `
 >
   <div
     aria-label="Test user"
+    class="_search-card_1db872"
     tabindex="-1"
   >
     <img
       alt="Test profile picture"
+      class="profile-picture _profile-picture_1db872"
       src="/src/assets/default-profile-picture.jpeg"
     />
-    <span>
+    <span
+      class="_username-span_1db872"
+    >
       Test
     </span>
   </div>
   <div
     aria-label="Test2 user"
+    class="_search-card_1db872"
     tabindex="-1"
   >
     <img
       alt="Test2 profile picture"
+      class="profile-picture _profile-picture_1db872"
       src="/src/assets/default-profile-picture.jpeg"
     />
-    <span>
+    <span
+      class="_username-span_1db872"
+    >
       Test2
     </span>
   </div>
   <div
     aria-label="Tim user"
+    class="_search-card_1db872"
     tabindex="-1"
   >
     <img
       alt="Tim profile picture"
+      class="profile-picture _profile-picture_1db872"
       src="/src/assets/default-profile-picture.jpeg"
     />
-    <span>
+    <span
+      class="_username-span_1db872"
+    >
       Tim
     </span>
   </div>
@@ -69,37 +81,49 @@ exports[`<SearchBar /> > displays searching text before users are loaded 2`] = `
 >
   <div
     aria-label="Test user"
+    class="_search-card_1db872"
     tabindex="-1"
   >
     <img
       alt="Test profile picture"
+      class="profile-picture _profile-picture_1db872"
       src="/src/assets/default-profile-picture.jpeg"
     />
-    <span>
+    <span
+      class="_username-span_1db872"
+    >
       Test
     </span>
   </div>
   <div
     aria-label="Test2 user"
+    class="_search-card_1db872"
     tabindex="-1"
   >
     <img
       alt="Test2 profile picture"
+      class="profile-picture _profile-picture_1db872"
       src="/src/assets/default-profile-picture.jpeg"
     />
-    <span>
+    <span
+      class="_username-span_1db872"
+    >
       Test2
     </span>
   </div>
   <div
     aria-label="Tim user"
+    class="_search-card_1db872"
     tabindex="-1"
   >
     <img
       alt="Tim profile picture"
+      class="profile-picture _profile-picture_1db872"
       src="/src/assets/default-profile-picture.jpeg"
     />
-    <span>
+    <span
+      class="_username-span_1db872"
+    >
       Tim
     </span>
   </div>

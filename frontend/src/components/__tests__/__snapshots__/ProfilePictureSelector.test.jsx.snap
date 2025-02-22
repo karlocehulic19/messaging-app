@@ -12,6 +12,7 @@ exports[`<ProfilePictureSelector /> > displays profile picture with right file t
   </label>
   <img
     alt="Current Profile picture"
+    class="profile-picture"
     id="_image-demo_ee6cb2"
     src="mockBase64"
   />
@@ -105,6 +106,7 @@ exports[`<ProfilePictureSelector /> > uses demonstration styling when image is i
   </label>
   <img
     alt="Current Profile picture"
+    class="profile-picture"
     id="_image-demo_ee6cb2"
     src="mockBase64"
   />
