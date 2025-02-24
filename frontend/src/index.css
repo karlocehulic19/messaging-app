@@ -20,8 +20,8 @@
 }
 
 :root {
-  --primary-color: rgb(34, 40, 49);
-  --secondary-color: rgb(49, 54, 63);
+  --primary-color: rgb(49, 54, 63);
+  --secondary-color: rgb(34, 40, 49);
   --tertiary-color: rgb(118, 171, 174);
   --quaternary-color: rgb(238, 238, 238);
 }

@@ -1,0 +1,9 @@
+#navbar {
+  display: grid;
+  position: relative;
+  padding: 0.2rem 0;
+  grid-template-columns: 0.5fr;
+  background-color: var(--secondary-color);
+  justify-content: center;
+  height: 5rem;
+}
