@@ -63,6 +63,7 @@ describe("<SearchBar />", () => {
 
     expect(usersFetch.length).toBe(1);
     expect(screen.getByLabelText("Found users")).toMatchSnapshot();
+    expect(screen.getByRole("search").className).toMatchSnapshot();
   });
 
   it("displays searching text before users are loaded", async () => {
@@ -83,7 +84,7 @@ describe("<SearchBar />", () => {
     await waitFor(() => expect(customFetchSpy).toBeCalledWith("/users?s=T"));
 
     expect(screen.getByLabelText("Found users")).toMatchSnapshot();
-
+    expect(screen.getByRole("search").className).toMatchSnapshot();
     await act(async () => {
       promiseResolver(userSearchHandler);
     });
@@ -106,6 +107,7 @@ describe("<SearchBar />", () => {
         foundUsersContainer
       );
     });
+    expect(screen.getByRole("search").className).toMatchSnapshot();
     expect(screen.queryByText("Searching")).not.toBeInTheDocument();
   });
 
@@ -125,6 +127,7 @@ describe("<SearchBar />", () => {
       expect.anything()
     );
     expect(screen.getByLabelText("Found users")).toMatchSnapshot();
+    expect(screen.getByRole("search").className).toMatchSnapshot();
   });
 
   it("removes SearchBar listings when searchbar isn't focused", async () => {
@@ -136,6 +139,7 @@ describe("<SearchBar />", () => {
 
     expect(screen.getByRole("searchbox")).not.toHaveFocus();
     expect(screen.queryByLabelText("Found users")).not.toBeInTheDocument();
+    expect(screen.getByRole("search").className).toBeFalsy();
 
     cleanup();
     vi.clearAllMocks();

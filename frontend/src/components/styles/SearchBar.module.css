@@ -1,0 +1,26 @@
+.open {
+  border-radius: 0.5rem;
+  display: grid;
+  gap: 1rem;
+  box-shadow: 0 0 10px 5px black;
+}
+
+#user-search-bar {
+  position: absolute;
+  transform: translate(-50%, 0%);
+  width: 40vw;
+  left: 50%;
+  top: 20%;
+  background-color: var(--secondary-color);
+  outline: 0.4rem solid var(--secondary-color);
+  display: flex;
+  flex-direction: column;
+  padding: 0.2rem;
+}
+
+#user-search-listings {
+  top: 100%;
+  width: 100%;
+  border-radius: 0rem 0rem 0.2rem 0.2rem;
+  padding-bottom: 0.2rem;
+}

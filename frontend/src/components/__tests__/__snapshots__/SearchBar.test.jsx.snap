@@ -3,6 +3,7 @@
 exports[`<SearchBar /> > display possible search candidates 1`] = `
 <div
   aria-label="Found users"
+  id="_listing-div_45bafb"
 >
   <div
     aria-label="Test user"
@@ -55,9 +56,12 @@ exports[`<SearchBar /> > display possible search candidates 1`] = `
 </div>
 `;
 
+exports[`<SearchBar /> > display possible search candidates 2`] = `"_open_45bafb"`;
+
 exports[`<SearchBar /> > displays error message on wrong failed requests 1`] = `
 <div
   aria-label="Found users"
+  id="_listing-div_45bafb"
 >
   <span>
     Ups! An error occurred!
@@ -65,9 +69,14 @@ exports[`<SearchBar /> > displays error message on wrong failed requests 1`] = `
 </div>
 `;
 
+exports[`<SearchBar /> > displays error message on wrong failed requests 2`] = `"_open_45bafb"`;
+
+exports[`<SearchBar /> > displays not found when no users are found 1`] = `"_open_45bafb"`;
+
 exports[`<SearchBar /> > displays searching text before users are loaded 1`] = `
 <div
   aria-label="Found users"
+  id="_listing-div_45bafb"
 >
   <span>
     Searching...
@@ -75,9 +84,12 @@ exports[`<SearchBar /> > displays searching text before users are loaded 1`] = `
 </div>
 `;
 
-exports[`<SearchBar /> > displays searching text before users are loaded 2`] = `
+exports[`<SearchBar /> > displays searching text before users are loaded 2`] = `"_open_45bafb"`;
+
+exports[`<SearchBar /> > displays searching text before users are loaded 3`] = `
 <div
   aria-label="Found users"
+  id="_listing-div_45bafb"
 >
   <div
     aria-label="Test user"
@@ -132,6 +144,7 @@ exports[`<SearchBar /> > displays searching text before users are loaded 2`] = `
 
 exports[`<SearchBar /> > renders correctly 1`] = `
 <div
+  id="_user-search-bar_45bafb"
   role="search"
   tabindex="-1"
 >

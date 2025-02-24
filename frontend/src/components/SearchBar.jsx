@@ -3,6 +3,7 @@ import useDebounce from "../hooks/useDebounce";
 import SearchCard from "./SearchCard";
 import customFetch from "../utils/customFetch";
 import apiErrorLogger from "../utils/apiErrorLogger";
+import styles from "./styles/SearchBar.module.css";
 
 export default function SearchBar() {
   const [search, setSearch] = useState("");
@@ -10,6 +11,13 @@ export default function SearchBar() {
   const [searchBarState, setSearchBarState] = useState("result");
   const [focused, setFocus] = useState(false);
   const searchBarRef = useRef();
+
+  const isOpen =
+    (users.length ||
+      searchBarState == "loading" ||
+      searchBarState == "notfound" ||
+      searchBarState == "error") &&
+    focused;
 
   if (!users.length && search && searchBarState == "result")
     setSearchBarState("notfound");
@@ -51,6 +59,8 @@ export default function SearchBar() {
       onFocus={() => setFocus(true)}
       onBlur={handleBlur}
       role="search"
+      id={styles["user-search-bar"]}
+      className={isOpen ? styles.open : null}
     >
       <input
         ref={searchBarRef}
@@ -61,7 +71,7 @@ export default function SearchBar() {
         name="searchbox"
       />
       {focused && (
-        <div aria-label="Found users">
+        <div id={styles["user-search-listings"]} aria-label="Found users">
           {searchBarState == "error" && <span>Ups! An error occurred!</span>}
           {searchBarState == "loading" && <span>Searching...</span>}
           {searchBarState == "notfound" && <span>No users found</span>}
