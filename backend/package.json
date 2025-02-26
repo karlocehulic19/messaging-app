@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test:int": "dotenv -e .env.test -- npx prisma migrate deploy && dotenv -e .env.test -- vitest -c ./vitest.config.integration.js",
+    "test:int:debug": "dotenv -e .env.test -- npx prisma migrate deploy && dotenv -e .env.test -- vitest -c ./vitest.config.integration.js --testTimeout 0",
     "test:unit": "dotenv -e .env.test -- vitest -c ./vitest.config.unit.js",
     "test": "npm run test:int run && npm run test:unit run",
     "dev": "dotenv -e .env.test -- node --watch ./app.js",
