@@ -100,7 +100,17 @@ export const handlers = [
   http.post(`${BACKEND_URL}/validate`, ({ request }) => {
     const authHeader = request.headers.get("Authorization");
     if (authHeader === "Bearer randomJWTtoken") {
-      return HttpResponse.json({}, { status: 200 });
+      return HttpResponse.json(
+        {
+          user: {
+            username: "TestUser",
+            firstName: "First",
+            lastName: "Last",
+            email: "test@email.com",
+          },
+        },
+        { status: 200 }
+      );
     }
     return HttpResponse.json({}, { status: 401 });
   }),
