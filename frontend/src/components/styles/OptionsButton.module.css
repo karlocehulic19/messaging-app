@@ -1,0 +1,72 @@
+#options-menu {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  list-style-type: none;
+  height: 5rem;
+  right: 5rem;
+}
+
+#options-button {
+  display: block;
+  height: 3.5rem;
+  width: 3.5rem;
+  padding: 0.4rem;
+  background-color: var(--tertiary-color);
+  box-shadow: 0 0 10px -2px black;
+  border-radius: 50%;
+  max-height: 100%;
+  transition: background-color 0.2s ease-in-out;
+}
+
+#options-button:hover {
+  background-color: rgb(74, 107, 109);
+}
+
+#options-container {
+  position: absolute;
+  padding: 1rem;
+  border-radius: 0.2rem;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  top: 95%;
+  background-color: var(--secondary-color);
+  box-shadow: 0 0 4px 0px black;
+  gap: 1rem;
+}
+
+#options-container a {
+  position: relative;
+  font-size: 1.3rem;
+  text-decoration: none;
+  --text-color: var(--quaternary-color);
+  color: var(--text-color);
+}
+
+#options-container #logout-button {
+  --text-color: rgb(226, 105, 105);
+}
+
+#options-container a::after {
+  content: "";
+  width: 0%;
+  height: 0.2rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: var(--text-color);
+  transition: width 0.1s ease-in-out;
+}
+
+#options-container a:hover::after {
+  width: 100%;
+}
+
+#options-button svg {
+  max-height: 100%;
+  filter: brightness(0) saturate(100%) invert(14%) sepia(20%) saturate(566%)
+    hue-rotate(176deg) brightness(92%) contrast(94%);
+}
