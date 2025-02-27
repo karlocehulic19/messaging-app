@@ -1,4 +1,3 @@
-const { request, app, prisma } = require("../setupApp")();
 const userController = require("../../controllers/userController");
 const { faker } = require("@faker-js/faker");
 const { Buffer } = require("node:buffer");
@@ -29,10 +28,12 @@ const setup = () => {
   return { MockedImageManager, mockedBufferImages };
 };
 
-app.get(
-  "/profile-picture/:username",
-  userController.getProfilePictureByUsername(setup().MockedImageManager)
-);
+const { request, app, prisma } = require("../setupApp")((app) => {
+  app.get(
+    "/profile-picture/:username",
+    userController.getProfilePictureByUsername(setup().MockedImageManager)
+  );
+});
 
 describe("/profile-picture", () => {
   it("sends picture blob if photoPublicId is present in user", async () => {

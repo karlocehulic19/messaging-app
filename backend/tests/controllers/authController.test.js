@@ -1,5 +1,4 @@
 const authController = require("../../controllers/authController");
-const { app, request, prisma } = require("../setupApp")();
 
 const MockedImageManager = {
   // eslint-disable-next-line no-undef
@@ -8,9 +7,10 @@ const MockedImageManager = {
   }),
 };
 
-app.post("/register", authController.userPost(MockedImageManager));
-
-require("../../config/passport").config();
+const { app, request, prisma } = require("../setupApp")((app) => {
+  require("../../config/passport").config();
+  app.post("/register", authController.userPost(MockedImageManager));
+});
 
 beforeEach(() => {
   // eslint-disable-next-line no-undef

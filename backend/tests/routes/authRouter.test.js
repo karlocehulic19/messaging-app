@@ -1,14 +1,10 @@
 const authRouter = require("../../routes/authRouter");
-const errorMiddleware = require("../../middleware/errorMiddleware");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { app, request, prisma } = require("../setupApp")();
-
-app.use("/", authRouter);
-
-require("../../config/passport").config();
-
-app.use(errorMiddleware);
+const { app, request, prisma } = require("../setupApp")((app) => {
+  require("../../config/passport").config();
+  app.use(authRouter);
+});
 
 const mockUser = {
   firstName: "Test",

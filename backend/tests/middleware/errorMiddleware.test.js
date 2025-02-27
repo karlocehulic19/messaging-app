@@ -1,6 +1,8 @@
-const { app, request } = require("../setupApp")();
+const request = require("supertest");
 const asyncHandler = require("express-async-handler");
 const errorMiddleware = require("../../middleware/errorMiddleware");
+const express = require("express");
+const app = express();
 
 class CustomError extends Error {
   constructor(message, statusCode) {

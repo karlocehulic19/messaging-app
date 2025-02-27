@@ -1,8 +1,8 @@
-const { app, request, prisma } = require("../setupApp")();
 const userRouter = require("../../routes/userRouter");
 const { faker } = require("@faker-js/faker");
-
-app.use("/users", userRouter);
+const { app, request, prisma } = require("../setupApp")((app) => {
+  app.use("/users", userRouter);
+});
 
 const setup = async () => {
   faker.seed(123);
