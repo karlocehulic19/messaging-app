@@ -31,3 +31,10 @@ module.exports.getUsersByUsername = async (search) => {
     },
   });
 };
+
+module.exports.updateUser = async (originalUsername, updatedValues) => {
+  return await client.user.update({
+    where: { username: originalUsername },
+    data: updatedValues,
+  });
+};

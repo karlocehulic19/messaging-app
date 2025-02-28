@@ -32,7 +32,35 @@ const getProfilePictureByUsername = (ImageManager) =>
 
     res.type(pictureResponse.mimeType).send(pictureResponse.imageBuffer);
   });
+
+const putUser = (ImageManager) => {
+  return asyncHandler(async (req, res) => {
+    let newPhotoPublicId;
+    if (req.body.newPictureBase64) {
+      newPhotoPublicId = await ImageManager.uploadCropped(
+        req.body.newPictureBase64
+      );
+    }
+    const originalUser = await queries.getUserByUsername(
+      req.body.senderUsername
+    );
+    const updatedUser = await queries.updateUser(req.body.senderUsername, {
+      username: req.body.newUsername,
+      email: req.body.newEmail,
+      photoPublicId: newPhotoPublicId,
+    });
+    if (req.body.newPictureBase64) {
+      ImageManager.deletePicture(originalUser.photoPublicId);
+    }
+    return res.send({
+      username: req.body.newUsername ? updatedUser.username : undefined,
+      email: req.body.newEmail ? updatedUser.email : undefined,
+    });
+  });
+};
+
 module.exports = {
   getUsers,
   getProfilePictureByUsername,
+  putUser,
 };

@@ -8,5 +8,6 @@ router.get(
   userController.getProfilePictureByUsername(CloudinaryImageManager)
 );
 router.get("*", userController.getUsers);
+router.put("/update", userController.putUser(CloudinaryImageManager));
 
 module.exports = router;
