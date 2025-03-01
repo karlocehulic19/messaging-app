@@ -224,6 +224,8 @@ describe("<AuthProvider></AuthProvider>", () => {
         if (item == "site") return "randomJWTtoken";
         throw new Error("Item not stored(probably typo)");
       },
+      // Needed for setup cleanup, otherwise error is thrown
+      clear: () => undefined,
     };
 
     render(<TestingComponent />);
