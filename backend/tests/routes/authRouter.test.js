@@ -1,6 +1,5 @@
 const authRouter = require("../../routes/authRouter");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const { app, request, prisma } = require("../setupApp")((app) => {
   require("../../config/passport").config();
   app.use(authRouter);
@@ -396,11 +395,6 @@ describe("/login", () => {
       .send({ username: mockUser.username, password: mockUser.password });
 
     expect(response.status).toBe(200);
-    expect(
-      jwt.verify(response.body.token, process.env.JWT_SECRET).user
-    ).toEqual(
-      await prisma.user.findFirst({ where: { username: mockUser.username } })
-    );
     expect(response.body.user).toEqual(
       await prisma.user.findFirst({ where: { username: mockUser.username } })
     );

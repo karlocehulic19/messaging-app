@@ -39,9 +39,7 @@ module.exports.config = () => {
       },
       async (jwt_payload, done) => {
         try {
-          const user = await queries.getUserByUsername(
-            jwt_payload.user.username
-          );
+          const user = await queries.getUserById(jwt_payload.sub);
           done(null, user);
         } catch (error) {
           done(error, false);

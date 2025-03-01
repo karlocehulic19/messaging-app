@@ -136,7 +136,7 @@ module.exports.loginPost = [
   },
   (req, res) => {
     res.status(200).send({
-      token: jwt.sign({ user: req.user }, process.env.JWT_SECRET),
+      token: jwt.sign({ sub: req.user.id }, process.env.JWT_SECRET),
       user: req.user,
     });
   },

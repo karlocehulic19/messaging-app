@@ -32,6 +32,10 @@ module.exports.getUsersByUsername = async (search) => {
   });
 };
 
+module.exports.getUserById = async (id) => {
+  return await client.user.findFirst({ where: { id } });
+};
+
 module.exports.updateUser = async (originalUsername, updatedValues) => {
   return await client.user.update({
     where: { username: originalUsername },
