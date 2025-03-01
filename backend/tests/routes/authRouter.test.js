@@ -274,7 +274,7 @@ describe("/register", () => {
         .expect(422)
         .then((response) => {
           expect(response.body).toEqual({
-            message: ["Email must be have form username@example.com"],
+            message: ["Email must have format username@example.com"],
           });
         });
     });

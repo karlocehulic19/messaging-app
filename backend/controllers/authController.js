@@ -8,19 +8,15 @@ const validator = require("validator");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
+const {
+  getBaseEmailVC,
+  getBaseUsernameVC,
+} = require("../utils/baseValidationChains");
 
 const validateUser = [
+  getBaseUsernameVC(),
   body("firstName").custom(customIsAlpha("First Name")),
   body("lastName").custom(customIsAlpha("Last Name")),
-  body("username")
-    .isAscii()
-    .withMessage("Username contains invalid characters")
-    .custom(async (value) => {
-      const user = await queries.getUserByUsername(value);
-      if (user) {
-        throw new Error("User with that username already exists");
-      }
-    }),
   body("password")
     .isLength({ min: 8 })
     .withMessage("Password must contain at least 8 characters")
@@ -43,16 +39,7 @@ const validateUser = [
     // eslint-disable-next-line no-useless-escape
     .matches(/[-!$%@^&*()_+|~=`{}\[\]:";'<>?,.\/]/)
     .withMessage("Password must contain at least one symbol"),
-  body("email")
-    .isEmail()
-    .withMessage("Email must be have form username@example.com")
-    .custom(async (email) => {
-      if (await queries.getUserByEmail(email)) {
-        throw new Error("User with that email already exists");
-      }
-
-      return true;
-    }),
+  getBaseEmailVC(),
 ];
 
 module.exports.userPost = (ImageManager) => {

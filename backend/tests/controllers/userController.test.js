@@ -63,11 +63,20 @@ const setupLogged = async () => {
   };
 
   await request(app).post("/register").send(originalLoggedUser);
-  const token = await request(app)
-    .post("/login")
-    .send({ username: "TestUser", password: "testPassword@1" });
+  const token = (
+    await request(app)
+      .post("/login")
+      .send({ username: "TestUser", password: "testPassword@1" })
+  ).body.token;
 
-  return { originalImage, originalLoggedUser, token };
+  const putWrapper = (data) => {
+    return request(app)
+      .put("/users/update")
+      .send(data)
+      .set("Authorization", `Bearer ${token}`);
+  };
+
+  return { originalImage, originalLoggedUser, putWrapper };
 };
 
 const { request, app, prisma } = require("../setupApp")((app) => {
@@ -183,7 +192,8 @@ describe("putUser", () => {
   it("updates all updatable values", async () => {
     // Need right JWT authentication
     // Need right user to authenticate
-    const { originalImage, originalLoggedUser, token } = await setupLogged();
+    const { originalImage, originalLoggedUser, putWrapper } =
+      await setupLogged();
     const newImg = new Jimp({ width: 400, height: 400 }, "#EEEEEE");
     const newImgBase64 = getRealBase64(await newImg.getBase64("image/jpeg"));
     const newImgBuffer = await newImg.getBuffer("image/jpeg");
@@ -194,15 +204,12 @@ describe("putUser", () => {
       })
     ).photoPublicId;
 
-    const res = await request(app)
-      .put("/users/update")
-      .send({
-        senderUsername: originalLoggedUser.username,
-        newUsername: "UpdatedUser",
-        newEmail: "email@test.com",
-        newPictureBase64: newImgBase64,
-      })
-      .set("Authentication", `Bearer ${token}`);
+    const res = await putWrapper({
+      senderUsername: originalLoggedUser.username,
+      newUsername: "UpdatedUser",
+      newEmail: "email@test.com",
+      newPictureBase64: newImgBase64,
+    });
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({
       username: "UpdatedUser",
@@ -224,15 +231,13 @@ describe("putUser", () => {
   });
 
   it("updates updatable values separately", async () => {
-    const { originalLoggedUser, originalImage, token } = await setupLogged();
+    const { originalLoggedUser, originalImage, putWrapper } =
+      await setupLogged();
 
-    const res1 = await request(app)
-      .put("/users/update")
-      .send({
-        senderUsername: originalLoggedUser.username,
-        newUsername: "UpdatedUsername1",
-      })
-      .set("Authentication", `Bearer ${token}`);
+    const res1 = await putWrapper({
+      senderUsername: originalLoggedUser.username,
+      newUsername: "UpdatedUsername1",
+    });
     expect(res1.statusCode).toBe(200);
     expect(res1.body).toEqual({ username: "UpdatedUsername1" });
     expect(
@@ -245,13 +250,10 @@ describe("putUser", () => {
     );
     expect(imageRes1.body).toEqual(await originalImage.getBuffer("image/jpeg"));
 
-    const res2 = await request(app)
-      .put("/users/update")
-      .send({
-        senderUsername: "UpdatedUsername1",
-        newEmail: "updated@email.com",
-      })
-      .set("Authentication", `Bearer ${token}`);
+    const res2 = await putWrapper({
+      senderUsername: "UpdatedUsername1",
+      newEmail: "updated@email.com",
+    });
     expect(res2.statusCode).toBe(200);
     expect(res2.body).toEqual({ email: "updated@email.com" });
     expect(
@@ -273,13 +275,10 @@ describe("putUser", () => {
     const newImg = new Jimp({ width: 200, height: 200 }, "#FFFFFF");
     const newImgBase64 = getRealBase64(await newImg.getBase64("image/jpeg"));
 
-    const res3 = await request(app)
-      .put("/users/update")
-      .send({
-        senderUsername: "UpdatedUsername1",
-        newPictureBase64: newImgBase64,
-      })
-      .set("Authentication", `Bearer ${token}`);
+    const res3 = await putWrapper({
+      senderUsername: "UpdatedUsername1",
+      newPictureBase64: newImgBase64,
+    });
     expect(res3.statusCode).toBe(200);
     expect(res3.body).toEqual({});
     const imageRes3 = await request(app).get(
@@ -291,49 +290,136 @@ describe("putUser", () => {
     ).toBeNull();
   });
 
-  it("updates updatable values concurrently", async () => {
-    const { originalImage, originalLoggedUser, token } = await setupLogged();
-    let currUser = { ...originalLoggedUser };
-    let currProfile = originalImage;
+  it("sends 401 on wrong user authentication", async () => {
+    const { putWrapper } = await setupLogged();
 
-    const conResUsernameEmail = await request(app)
-      .put("/users/update")
-      .send({
-        senderUsername: originalLoggedUser.username,
-        newUsername: "UpdatedUsername",
-        newEmail: "updated@email.com",
-      })
-      .set("Authentication", `Bearer ${token}`);
-
-    expect(conResUsernameEmail.status).toBe(200);
-    expect(conResUsernameEmail.body).toEqual({
-      username: "UpdatedUsername",
-      email: "updated@email.com",
+    await request(app).post("/register").send({
+      username: "SomeUsername",
+      firstName: "First",
+      lastName: "Last",
+      password: "Password@1",
+      email: "some@email.com",
     });
-    currUser = { ...currUser, ...conResUsernameEmail.body };
-    expect(
-      await prisma.user.findFirst({
-        where: { username: originalLoggedUser.username },
-      })
-    ).toBeNull();
-    expect(
-      await prisma.user.findFirst({
-        where: { email: originalLoggedUser.email },
-      })
-    ).toBeNull();
-    expect(
-      await prisma.user.findFirst({ where: { username: "UpdatedUsername" } })
-    ).not.toBeNull();
-    expect(
-      await prisma.user.findFirst({ where: { username: "UpdatedUsername" } })
-    ).toEqual(
-      await prisma.user.findFirst({ where: { email: "updated@email.com" } })
+
+    const res = await putWrapper({
+      senderUsername: "SomeUsername",
+      newUsername: "AnotherUsername",
+    });
+    expect(res.status).toBe(401);
+  });
+
+  it("sends 400 on missing senderUsername", async () => {
+    const { putWrapper } = await setupLogged();
+    const res = await putWrapper({
+      newUsername: "SomeOtherUsername",
+      newEmail: "OtherEmail",
+    });
+    expect(res.status).toBe(400);
+    expect(res.body.error.message).toBe(
+      'Missing required property: "senderUsername"'
     );
-    const imgResponse1 = await request(app).get(
-      "/profile-picture/UpdatedUsername"
+  });
+
+  it("sends 400 on no updated data", async () => {
+    const { putWrapper, originalLoggedUser } = await setupLogged();
+
+    const res = await putWrapper({
+      senderUsername: originalLoggedUser.username,
+    });
+    expect(res.status).toBe(400);
+    expect(res.body.error.message).toBe(
+      "Missing update data. Request must contain at lest one of: newUsername, newEmail, newPictureBase64"
     );
-    expect(imgResponse1.body).toEqual(
-      await originalImage.getBuffer("image/jpeg")
-    );
+  });
+
+  it("sends 422 on invalid email", async () => {
+    const { originalLoggedUser, putWrapper } = await setupLogged();
+    const res = await putWrapper({
+      senderUsername: originalLoggedUser.username,
+      newEmail: "invalid",
+    });
+    expect(res.status).toBe(422);
+    expect(res.body).toEqual({
+      error: {
+        validation: [
+          {
+            field: "email",
+            message: "Email must have format username@example.com",
+          },
+        ],
+      },
+    });
+  });
+
+  it("sends 422 on if user with updated email exists", async () => {
+    const { originalLoggedUser, putWrapper } = await setupLogged();
+
+    await request(app).post("/register").send({
+      firstName: "First",
+      lastName: "Last",
+      username: "SomeUsername",
+      password: "Password@1",
+      email: "inuse@email.com",
+    });
+
+    const res = await putWrapper({
+      senderUsername: originalLoggedUser.username,
+      newEmail: "inuse@email.com",
+    });
+    expect(res.status).toBe(422);
+    expect(res.body).toEqual({
+      error: {
+        validation: [
+          {
+            field: "email",
+            message: "User with that email already exists",
+          },
+        ],
+      },
+    });
+  });
+
+  it("sends 422 if user with username already exists", async () => {
+    const { originalLoggedUser, putWrapper } = await setupLogged();
+
+    await request(app).post("/register").send({
+      username: "inuse",
+      firstName: "First",
+      lastName: "Last",
+      password: "Password@1",
+      email: "some@email.com",
+    });
+
+    const res = await putWrapper({
+      senderUsername: originalLoggedUser.username,
+      newUsername: "inuse",
+    });
+    expect(res.status).toBe(422);
+    expect(res.body).toEqual({
+      error: {
+        validation: [
+          {
+            field: "username",
+            message: "User with that username already exists",
+          },
+        ],
+      },
+    });
+  });
+
+  it("sends 422 on non ascii characters in username", async () => {
+    const { originalLoggedUser, putWrapper } = await setupLogged();
+    const res = await putWrapper({
+      senderUsername: originalLoggedUser.username,
+      newUsername: "Žiko",
+    });
+
+    expect(res.status).toBe(422);
+    expect(res.body.error.validation).toEqual([
+      {
+        field: "username",
+        message: "Username contains invalid characters",
+      },
+    ]);
   });
 });
