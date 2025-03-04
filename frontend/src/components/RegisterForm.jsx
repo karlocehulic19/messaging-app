@@ -9,6 +9,7 @@ import customFetch from "../utils/customFetch";
 import useFirstRender from "../hooks/useFirstRender";
 import { isEmpty } from "lodash";
 import styles from "./styles/RegisterForm.module.css";
+import apiErrorLogger from "../utils/apiErrorLogger";
 
 function RegisterForm() {
   const navigate = useNavigate();
@@ -41,10 +42,7 @@ function RegisterForm() {
         return setServerValidationErrors((await error.response.json()).message);
       }
       toggleErrorPopup.current?.toggle();
-      if (!error.response) {
-        return console.log(error.message);
-      }
-      console.log((await error.response.json()).error || error.message);
+      apiErrorLogger(error);
     } finally {
       setLoading(false);
     }

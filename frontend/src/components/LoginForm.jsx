@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import PropTypes from "prop-types";
 import styles from "./styles/LoginForm.module.css";
+import apiErrorLogger from "../utils/apiErrorLogger";
 
 function LoginForm({ callback }) {
   const [emptyErrors, setEmptyErrors] = useState({});
@@ -25,7 +26,7 @@ function LoginForm({ callback }) {
         if (!messages) return callback();
         setLoginMessage(messages[0]);
       } catch (error) {
-        console.log(error);
+        apiErrorLogger(error);
         setError("Error occurred: Please try again!");
       }
 

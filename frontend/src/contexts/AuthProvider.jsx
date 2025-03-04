@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
 import { config } from "../Constants";
 import customFetch from "../utils/customFetch";
+import apiErrorLogger from "../utils/apiErrorLogger";
 
 function AuthProvider({ children }) {
   const [user, setUser] = useState();
@@ -24,7 +25,7 @@ function AuthProvider({ children }) {
         localStorage.removeItem("site");
         setUser(null);
         setToken("");
-        console.log(error);
+        apiErrorLogger(error);
       });
   }, [token]);
 
