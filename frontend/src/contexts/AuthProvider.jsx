@@ -23,6 +23,7 @@ function AuthProvider({ children }) {
       .catch((error) => {
         localStorage.removeItem("site");
         setUser(null);
+        setToken("");
         console.log(error);
       });
   }, [token]);
