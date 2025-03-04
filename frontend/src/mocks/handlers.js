@@ -4,6 +4,16 @@ import { Jimp } from "jimp";
 
 const BACKEND_URL = config.url.BACKEND_URL;
 
+export const defaultTestUser = {
+  firsName: "Some",
+  lastName: "Random",
+  username: "someUsername",
+  password: "somePassword",
+  email: "someemail@some.com",
+  photoPublicId: null,
+  id: "someUUID",
+};
+
 export const profPic1 = new Jimp({ height: 200, width: 200 }, "#FFFFFF");
 export const profPic1Buffer = profPic1.getBuffer("image/jpeg");
 
@@ -58,15 +68,7 @@ export const handlers = [
     return HttpResponse.json(
       {
         token: "randomJWTtoken",
-        user: {
-          firsName: "Some",
-          lastName: "Random",
-          username: "someUsername",
-          password: "somePassword",
-          email: "someemail@some.com",
-          photoPublicId: null,
-          id: "someUUID",
-        },
+        user: defaultTestUser,
       },
       { status: 200 }
     );
@@ -102,12 +104,7 @@ export const handlers = [
     if (authHeader === "Bearer randomJWTtoken") {
       return HttpResponse.json(
         {
-          user: {
-            username: "TestUser",
-            firstName: "First",
-            lastName: "Last",
-            email: "test@email.com",
-          },
+          user: defaultTestUser,
         },
         { status: 200 }
       );

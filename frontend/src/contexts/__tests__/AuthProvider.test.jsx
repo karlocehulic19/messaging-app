@@ -8,6 +8,7 @@ import userEvent from "@testing-library/user-event";
 import { server } from "../../mocks/node";
 import { http, HttpResponse } from "msw";
 import { config } from "../../Constants";
+import { defaultTestUser } from "../../mocks/handlers";
 
 const mockedNavigate = vitest.fn();
 
@@ -102,15 +103,7 @@ describe("<AuthProvider></AuthProvider>", () => {
     });
     rerender();
 
-    expect(result.current.user).toEqual({
-      firsName: "Some",
-      lastName: "Random",
-      username: "someUsername",
-      password: "somePassword",
-      email: "someemail@some.com",
-      photoPublicId: null,
-      id: "someUUID",
-    });
+    expect(result.current.user).toEqual(defaultTestUser);
   });
 
   it("login returns messages on 401", async () => {
