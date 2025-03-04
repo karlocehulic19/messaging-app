@@ -9,6 +9,14 @@ import { http, HttpResponse } from "msw";
 import { config } from "../../Constants";
 import { userSearchHandler } from "../../mocks/handlers";
 
+function getConsoleErrorSpy() {
+  const consoleErrorSpy = vi
+    .spyOn(console, "error")
+    .mockImplementation(() => {});
+
+  return { consoleErrorSpy };
+}
+
 server.listen();
 const searchHandler = (handler) =>
   http.get(`${config.url.BACKEND_URL}/users`, handler);
@@ -52,6 +60,7 @@ describe("<SearchBar />", () => {
   });
 
   it("display possible search candidates", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
     const { user, customFetchSpy } = await setup();
     await user.keyboard("T");
 
@@ -67,6 +76,7 @@ describe("<SearchBar />", () => {
   });
 
   it("displays searching text before users are loaded", async () => {
+    getConsoleErrorSpy();
     const { user, customFetchSpy } = await setup();
 
     let promiseResolver;
@@ -112,6 +122,7 @@ describe("<SearchBar />", () => {
   });
 
   it("displays error message on wrong failed requests", async () => {
+    getConsoleErrorSpy();
     server.use(
       http.get(`${config.url.BACKEND_URL}/users`, () => {
         return HttpResponse.error();
@@ -131,6 +142,7 @@ describe("<SearchBar />", () => {
   });
 
   it("removes SearchBar listings when searchbar isn't focused", async () => {
+    getConsoleErrorSpy();
     const { user: user1 } = await setup();
 
     expect(screen.getByLabelText("Found users")).toBeInTheDocument();

@@ -58,6 +58,7 @@ describe("<SearchCard />", () => {
   });
 
   it("renders default profile page on no profile picture", async () => {
+    vi.spyOn(console, "error").mockImplementationOnce(() => undefined);
     setup("NoPictureTest");
 
     await waitFor(() => expect(screen.getByRole("img").src).toBeDefined());
@@ -65,7 +66,8 @@ describe("<SearchCard />", () => {
     expect(screen.getByLabelText("NoPictureTest user")).toMatchSnapshot();
   });
 
-  it("redirects to messaging the user after click", async () => {
+  it("eedirects to messaging the user after click", async () => {
+    vi.spyOn(console, "error").mockImplementationOnce(() => undefined);
     setup("Test");
     const user = userEvent.setup();
 
@@ -91,6 +93,7 @@ describe("<SearchCard />", () => {
   });
 
   it("renders default profile picture if request failed", async () => {
+    vi.spyOn(console, "error").mockImplementationOnce(() => undefined);
     const customFetchSpy = vi.spyOn(customFetch, "default");
     server.use(
       http.get(

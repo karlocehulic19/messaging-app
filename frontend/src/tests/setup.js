@@ -5,14 +5,13 @@ import { server } from "../mocks/node";
 import "blob-polyfill";
 
 expect.extend(matchers);
-vi.spyOn(console, "log").mockImplementation(() => undefined);
-vi.spyOn(console, "error").mockImplementation(() => undefined);
 
 beforeAll(() => {
   server.listen();
 });
 
 afterEach(() => {
+  vi.restoreAllMocks();
   server.resetHandlers();
   localStorage.clear();
   cleanup();

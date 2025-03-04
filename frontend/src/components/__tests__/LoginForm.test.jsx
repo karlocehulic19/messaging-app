@@ -1,5 +1,5 @@
 import LoginForm from "../LoginForm";
-import { describe, it, expect, afterEach, beforeEach } from "vitest";
+import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
 import { screen, render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { config } from "../../Constants";
@@ -230,6 +230,7 @@ describe("<LoginForm />", () => {
     });
 
     it("displays error message after failed loginAction", async () => {
+      vi.spyOn(console, "error").mockImplementation(() => undefined);
       useAuth.mockImplementation(() => ({
         loginAction: () =>
           Promise.reject("Some error that should be consoled!"),

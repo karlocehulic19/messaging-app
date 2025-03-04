@@ -129,6 +129,7 @@ describe("<ProfilePictureSelector />", () => {
   });
 
   it("props to select new picture on formatter error", async () => {
+    vi.spyOn(console, "log").mockImplementationOnce(() => undefined);
     const mockedFormatter = vi.fn();
     const user = userEvent.setup();
     mockedFormatter.mockRejectedValue(new Error("Too big crop size"));
@@ -148,6 +149,7 @@ describe("<ProfilePictureSelector />", () => {
   });
 
   it("doesn't prop for another image after supplying the right one", async () => {
+    vi.spyOn(console, "log").mockImplementationOnce(() => undefined);
     const mockedFormatter = vi.fn(() => "mockBase64");
     const user = userEvent.setup();
     render(

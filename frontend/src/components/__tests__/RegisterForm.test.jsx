@@ -12,7 +12,6 @@ import convertSquare from "../../utils/convertSquare";
 
 const mockedNavigate = vi.fn();
 server.listen();
-vi.spyOn(console, "log").mockImplementation(() => null);
 
 const registerHandler = (resolver) =>
   http.post(`${config.url.BACKEND_URL}/register`, resolver);
@@ -196,6 +195,8 @@ describe("fetching logic", () => {
   });
 
   it("doesn't redirect after bad responses", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+
     server.use(registerHandler(resolver500));
     const { user: user1 } = await setup();
 
@@ -228,6 +229,7 @@ describe("fetching logic", () => {
   });
 
   it("displays an error popup on failed requests", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
     const { user } = await setup();
     server.use(registerHandler(resolver500));
     await user.click(screen.getByRole("button"));
@@ -236,6 +238,7 @@ describe("fetching logic", () => {
   });
 
   it("displays an error popup on failed network request", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
     server.use(registerHandler(() => HttpResponse.error()));
     const { user } = await setup();
 
@@ -255,6 +258,7 @@ describe("fetching logic", () => {
   });
 
   it("displays validation messages anything other than 400", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
     const { user: user1 } = await setup();
 
     await user1.click(screen.getByRole("button"));
@@ -274,6 +278,7 @@ describe("fetching logic", () => {
   });
 
   it("disables register button until request is received", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
     let requestResolver;
 
     server.use(
@@ -298,6 +303,7 @@ describe("fetching logic", () => {
   });
 
   it("sets register button text to loading request is received", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
     let requestResolver;
 
     server.use(
