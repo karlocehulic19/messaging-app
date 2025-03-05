@@ -5,7 +5,7 @@ import { Jimp } from "jimp";
 const BACKEND_URL = config.url.BACKEND_URL;
 
 export const defaultTestUser = {
-  firsName: "Some",
+  firstName: "Some",
   lastName: "Random",
   username: "someUsername",
   password: "somePassword",

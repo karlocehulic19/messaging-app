@@ -7,6 +7,7 @@ import NonAuthRoute from "./routes/NonAuthRoute";
 import PrivateRoute from "./routes/PrivateRoute";
 import Main from "./pages/Main";
 import Logout from "./pages/Logout";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             </Route>
             <Route element={<PrivateRoute />}>
               <Route path="/logout" element={<Logout />} />
+              <Route path="/settings" element={<Settings />} />
               <Route path="*" element={<Main />}></Route>
             </Route>
           </Routes>
