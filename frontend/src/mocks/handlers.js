@@ -16,6 +16,8 @@ export const defaultTestUser = {
 
 export const profPic1 = new Jimp({ height: 200, width: 200 }, "#FFFFFF");
 export const profPic1Buffer = profPic1.getBuffer("image/jpeg");
+export const defaultProfPic = new Jimp({ height: 200, width: 200 }, "#AAAAAA");
+export const defaultPicBuffer = defaultProfPic.getBuffer("image/jpeg");
 
 const db = {
   Test: {
@@ -27,6 +29,10 @@ const db = {
   },
   Tim: {
     username: "Tim",
+  },
+  [defaultTestUser.username]: {
+    username: defaultTestUser.username,
+    profilePicture: defaultPicBuffer,
   },
 };
 
@@ -41,12 +47,9 @@ export const userSearchHandler = ({ request }) => {
       { status: 400 }
     );
   }
-
-  if (queries.has("s", "T")) {
-    return HttpResponse.json(Object.values(db));
-  }
-
-  return HttpResponse.json([]);
+  return HttpResponse.json(
+    Object.values(db).filter((usr) => usr.username.includes(queries.get("s")))
+  );
 };
 
 export const handlers = [

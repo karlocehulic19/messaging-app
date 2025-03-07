@@ -7,6 +7,7 @@ import PropTypes from "prop-types";
 function ProfilePictureSelector({
   imageFormatter = convertSquare,
   onImageSelect,
+  defaultFormattedPicture = null,
 }) {
   const [formattedPicture, setFormattedPicture] = useState(null);
   const [formatterError, setFormatterError] = useState(false);
@@ -18,6 +19,10 @@ function ProfilePictureSelector({
         "image/png": [],
       },
     });
+
+  useEffect(() => {
+    setFormattedPicture(defaultFormattedPicture);
+  }, [defaultFormattedPicture]);
 
   const pictureFile = acceptedFiles[0];
   const fileRejected = !!fileRejections.length;
@@ -111,6 +116,7 @@ function ProfilePictureSelector({
 ProfilePictureSelector.propTypes = {
   imageFormatter: PropTypes.func,
   onImageSelect: PropTypes.func.isRequired,
+  defaultFormattedPicture: PropTypes.string,
 };
 
 export default ProfilePictureSelector;

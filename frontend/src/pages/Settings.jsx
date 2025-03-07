@@ -2,13 +2,16 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { useAuth } from "../hooks/useAuth";
+import ProfilePictureSelector from "../components/ProfilePictureSelector";
+import apiErrorLogger from "../utils/apiErrorLogger";
 
 export default function Settings() {
-  const { user, token } = useAuth();
+  const { user, token, logout } = useAuth();
   const [updatedData, setUpdatedData] = useState({
     username: user?.username || "Loading...",
     email: user?.email || "Loading...",
   });
+  const [prevPicture, setPrevPicture] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -16,6 +19,16 @@ export default function Settings() {
         username: user.username,
         email: user.email,
       });
+      customFetch(`/users/profile-picture/${user.username}`)
+        .then((res) => {
+          if (res.status != 200) throw new Error("No profile picture found");
+          return res.blob();
+        })
+        .then((img) => {
+          const picUrl = URL.createObjectURL(img);
+          setPrevPicture(picUrl);
+        })
+        .catch(apiErrorLogger);
     }
   }, [user]);
 
@@ -25,15 +38,16 @@ export default function Settings() {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      body: {
+      body: JSON.stringify({
         senderUsername: user.username,
-        newUsername:
-          updatedData.username != user.username
-            ? updatedData.username
-            : undefined,
-        newEmail:
-          updatedData.email != user.email ? updatedData.email : undefined,
-      },
+        ...(updatedData.username != user.username && {
+          newUsername: updatedData.username,
+        }),
+        ...(updatedData.email != user.email && { newEmail: updatedData.email }),
+        ...(updatedData.newPicBase64URI && {
+          newPictureBase64: updatedData.newPicBase64URI,
+        }),
+      }),
     });
   }
 
@@ -42,6 +56,10 @@ export default function Settings() {
       ...prevData,
       [e.target.id]: e.target.value,
     }));
+  }
+
+  function handleProfPicSelect(newPicBase64URI) {
+    setUpdatedData((prevData) => ({ ...prevData, newPicBase64URI }));
   }
 
   return (
@@ -65,7 +83,12 @@ export default function Settings() {
         id="email"
         aria-label="Email input"
       />
+      <ProfilePictureSelector
+        onImageSelect={handleProfPicSelect}
+        defaultFormattedPicture={prevPicture}
+      />
       <button onClick={handleUpdate}>Update</button>
+      <button onClick={logout}>Log Out</button>
     </div>
   );
 }
