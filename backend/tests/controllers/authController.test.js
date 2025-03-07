@@ -3,7 +3,9 @@ const authController = require("../../controllers/authController");
 const MockedImageManager = {
   // eslint-disable-next-line no-undef
   uploadCropped: vi.fn(async (file) => {
-    return file === "validDataURL" ? "somePublicId" : null;
+    return file === "data:text/plain;base64,dataURLbase64"
+      ? "somePublicId"
+      : null;
   }),
 };
 
@@ -25,7 +27,7 @@ describe("/register", () => {
       lastName: "Čehulić",
       email: "karlocehlic@gmail.com",
       password: "V4l1dP4ssw@rd",
-      pictureBase64: "validDataURL",
+      pictureBase64: "data:text/plain;base64,dataURLbase64",
     });
 
     const user = await prisma.user.findFirst({
@@ -45,7 +47,7 @@ describe("/register", () => {
       lastName: "Čehulić",
       email: "karlocehlic@gmail.com",
       password: "V4l1dP4ssw@rd",
-      pictureBase64: "invalidDataURL",
+      pictureBase64: "data:someGibberish,base64",
     });
 
     const user = await prisma.user.findFirst({
@@ -75,5 +77,21 @@ describe("/register", () => {
 
     expect(MockedImageManager.uploadCropped).not.toBeCalled();
     expect(user.photoPublicId).toBeNull();
+  });
+
+  it("responds with 422 when pictureBase64 isn't base64", () => {
+    return request(app)
+      .post("/register")
+      .send({
+        username: "Karlo",
+        firstName: "Karlo",
+        lastName: "Čehulić",
+        email: "karlocehlic@gmail.com",
+        password: "V4l1dP4ssw@rd",
+        pictureBase64: "someOtherFalseString",
+      })
+      .expect(422, {
+        error: "Provided picture string isn't in data URI base64 format",
+      });
   });
 });

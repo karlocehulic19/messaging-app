@@ -46,6 +46,11 @@ module.exports.userPost = (ImageManager) => {
   return [
     validateUser,
     async (req, res) => {
+      if (req.body.pictureBase64 && !req.body.pictureBase64.includes(","))
+        return res.status(422).send({
+          error: "Provided picture string isn't in data URI base64 format",
+        });
+
       const formDataProps = [
         "username",
         "firstName",

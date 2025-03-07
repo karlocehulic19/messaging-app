@@ -20,13 +20,21 @@ const mockedBufferImages = {
   },
 };
 
+function getRealBase64(dataURIBase64) {
+  const base = dataURIBase64.split(",")[1];
+  if (!base) {
+    throw new Error("Provided dataURI isn't data URL");
+  }
+  return base;
+}
+
 const MockedImageManager = (() => {
   const profPictures = { ...mockedBufferImages };
 
-  const uploadCropped = async (base64) => {
+  const uploadCropped = async (dataURIBase64) => {
     const id = randomUUID();
     profPictures[id] = {
-      imageBuffer: Buffer.from(base64, "base64"),
+      imageBuffer: Buffer.from(getRealBase64(dataURIBase64), "base64"),
       mimeType: "image/jpeg",
     };
     return id;
@@ -44,22 +52,16 @@ const MockedImageManager = (() => {
   return { uploadCropped, getProfilePicture, deletePicture };
 })();
 
-function getRealBase64(JimpBase64) {
-  return JimpBase64.split(",")[1];
-}
-
 const setupLogged = async () => {
   const originalImage = new Jimp({ width: 400, height: 400 }, "#FFFFFF");
-  const originalImageBase64 = getRealBase64(
-    await originalImage.getBase64("image/jpeg")
-  );
+  const dataURIImageBase64 = await originalImage.getBase64("image/jpeg");
   const originalLoggedUser = {
     username: "TestUser",
     firstName: "First",
     lastName: "Last",
     email: "test@email.com",
     password: "testPassword@1",
-    pictureBase64: originalImageBase64,
+    pictureBase64: dataURIImageBase64,
   };
 
   await request(app).post("/register").send(originalLoggedUser);
@@ -195,7 +197,7 @@ describe("putUser", () => {
     const { originalImage, originalLoggedUser, putWrapper } =
       await setupLogged();
     const newImg = new Jimp({ width: 400, height: 400 }, "#EEEEEE");
-    const newImgBase64 = getRealBase64(await newImg.getBase64("image/jpeg"));
+    const newImgDataURIBase64 = await newImg.getBase64("image/jpeg");
     const newImgBuffer = await newImg.getBuffer("image/jpeg");
     const oldImgBuffer = await originalImage.getBuffer("image/jpeg");
     const oldProfPicId = (
@@ -208,7 +210,7 @@ describe("putUser", () => {
       senderUsername: originalLoggedUser.username,
       newUsername: "UpdatedUser",
       newEmail: "email@test.com",
-      newPictureBase64: newImgBase64,
+      newPictureBase64: newImgDataURIBase64,
     });
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({
@@ -273,11 +275,10 @@ describe("putUser", () => {
       await prisma.user.findFirst({ where: { username: "UpdatedUsername1" } })
     ).photoPublicId;
     const newImg = new Jimp({ width: 200, height: 200 }, "#FFFFFF");
-    const newImgBase64 = getRealBase64(await newImg.getBase64("image/jpeg"));
 
     const res3 = await putWrapper({
       senderUsername: "UpdatedUsername1",
-      newPictureBase64: newImgBase64,
+      newPictureBase64: await newImg.getBase64("image/jpeg"),
     });
     expect(res3.statusCode).toBe(200);
     expect(res3.body).toEqual({});
