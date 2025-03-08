@@ -38,6 +38,10 @@ class CloudinaryImageManager {
       return null;
     }
   }
+
+  static deletePicture(public_id) {
+    cloudinary.uploader.destroy(public_id);
+  }
 }
 
 module.exports = CloudinaryImageManager;
