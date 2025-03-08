@@ -1,17 +1,27 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { useAuth } from "../hooks/useAuth";
 import ProfilePictureSelector from "../components/ProfilePictureSelector";
 import apiErrorLogger from "../utils/apiErrorLogger";
+import ErrorPopup from "../components/ErrorPopup";
 
 export default function Settings() {
-  const { user, token, logout } = useAuth();
+  const { user, token, logout, validate } = useAuth();
   const [updatedData, setUpdatedData] = useState({
     username: user?.username || "Loading...",
     email: user?.email || "Loading...",
   });
   const [prevPicture, setPrevPicture] = useState(null);
+  const [updateInfo, setUpdateInfo] = useState("editing");
+  const errorPopup = useRef();
+
+  const isUpdated =
+    user &&
+    updateInfo != "loading" &&
+    (updatedData.email != user?.email ||
+      updatedData.username != user?.username ||
+      updatedData.newPicBase64URI);
 
   useEffect(() => {
     if (user) {
@@ -33,6 +43,7 @@ export default function Settings() {
   }, [user]);
 
   function handleUpdate() {
+    setUpdateInfo("loading");
     customFetch("/users/update", {
       method: "PUT",
       headers: {
@@ -48,7 +59,13 @@ export default function Settings() {
           newPictureBase64: updatedData.newPicBase64URI,
         }),
       }),
-    });
+    })
+      .then(() => validate())
+      .catch((error) => {
+        apiErrorLogger(error);
+        errorPopup.current.toggle();
+      })
+      .finally(() => setUpdateInfo("editing"));
   }
 
   function handleInputChange(e) {
@@ -58,15 +75,16 @@ export default function Settings() {
     }));
   }
 
-  function handleProfPicSelect(newPicBase64URI) {
+  const handleProfPicSelect = useCallback((newPicBase64URI) => {
     setUpdatedData((prevData) => ({ ...prevData, newPicBase64URI }));
-  }
+  }, []);
 
   return (
     <div>
       <Link to={"/"}></Link>
       <span>{user?.firstName || "Loading..."}</span>
       <span>{user?.lastName || "Loading..."}</span>
+      <ErrorPopup ref={errorPopup} />
       <input
         value={updatedData.username}
         onChange={handleInputChange}
@@ -87,7 +105,9 @@ export default function Settings() {
         onImageSelect={handleProfPicSelect}
         defaultFormattedPicture={prevPicture}
       />
-      <button onClick={handleUpdate}>Update</button>
+      <button disabled={!isUpdated} onClick={handleUpdate}>
+        {updateInfo == "loading" ? "Loading..." : "Update"}
+      </button>
       <button onClick={logout}>Log Out</button>
     </div>
   );

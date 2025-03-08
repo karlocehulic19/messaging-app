@@ -4,6 +4,7 @@ exports[`fetching logic > displays an error popup on failed network request 1`] 
 <div
   aria-label="Error message"
   class="error-popup"
+  role="alert"
 >
   <p>
     An error occurred. Please try again.
@@ -15,6 +16,7 @@ exports[`fetching logic > displays an error popup on failed requests 1`] = `
 <div
   aria-label="Error message"
   class="error-popup"
+  role="alert"
 >
   <p>
     An error occurred. Please try again.

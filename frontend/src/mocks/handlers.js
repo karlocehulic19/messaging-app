@@ -132,4 +132,12 @@ export const handlers = [
   ),
 
   http.get(`${BACKEND_URL}/users`, userSearchHandler),
+
+  http.put(`${BACKEND_URL}/users/update`, async ({ request }) => {
+    const reqBody = await request.json();
+    return HttpResponse.json({
+      newUsername: reqBody.newUsername,
+      newEmail: reqBody.newEmail,
+    });
+  }),
 ];

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
@@ -11,7 +11,7 @@ function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem("site") || "");
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const validate = useCallback(() => {
     const controller = new AbortController();
     if (!token) return;
     customFetch("/validate", {
@@ -27,7 +27,13 @@ function AuthProvider({ children }) {
         setToken("");
         apiErrorLogger(error);
       });
+
+    return () => controller.abort();
   }, [token]);
+
+  useEffect(() => {
+    validate();
+  }, [validate]);
 
   const loginAction = async (username, password) => {
     const response = await fetch(`${config.url.BACKEND_URL}/login`, {
@@ -65,7 +71,9 @@ function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loginAction, logout }}>
+    <AuthContext.Provider
+      value={{ user, token, loginAction, logout, validate }}
+    >
       {children}
     </AuthContext.Provider>
   );

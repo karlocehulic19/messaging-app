@@ -1,5 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor, getByTestId } from "@testing-library/react";
+import {
+  render,
+  screen,
+  waitFor,
+  getByTestId,
+  cleanup,
+} from "@testing-library/react";
 import Settings from "../Settings.jsx";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
@@ -65,6 +71,36 @@ const setup = async () => {
     customFetchSpy,
     defaultFetchArguments,
   };
+};
+
+const setupImg = async () => {
+  const utils = await setup();
+
+  const newProfPic = new Jimp({ width: 400, height: 400 }, "#FFFFFF");
+
+  const profPicFile = new File(
+    [await newProfPic.getBuffer("image/jpeg")],
+    "newProfPic.jpg",
+    { type: "image/jpeg" }
+  );
+
+  const dropboxInput = getByTestId(
+    screen.getByRole("presentation"),
+    "picture-input"
+  );
+
+  return { ...utils, newProfPic, profPicFile, dropboxInput };
+};
+
+const setupChanged = async () => {
+  const { user, usernameInput, emailInput, ...utils } = await setup();
+  await user.click(usernameInput);
+  await user.keyboard("changed");
+
+  await user.click(emailInput);
+  await user.keyboard("changed");
+
+  return { user, usernameInput, emailInput, ...utils };
 };
 
 describe("<Settings>", () => {
@@ -147,21 +183,16 @@ describe("<Settings>", () => {
     expect(screen.getByText(defaultTestUser.lastName)).toBeInTheDocument();
   });
 
-  it("updates user profile picture correctly", async () => {
-    const { user, customFetchSpy, updateButton, defaultFetchArguments } =
-      await setup();
-    const newProfPic = new Jimp({ width: 400, height: 400 }, "#FFFFFF");
-
-    const profPicFile = new File(
-      [await newProfPic.getBuffer("image/jpeg")],
-      "newProfPic.jpg",
-      { type: "image/jpeg" }
-    );
-
-    const dropboxInput = getByTestId(
-      screen.getByRole("presentation"),
-      "picture-input"
-    );
+  it("updates user profile picture", async () => {
+    const {
+      user,
+      customFetchSpy,
+      updateButton,
+      defaultFetchArguments,
+      newProfPic,
+      profPicFile,
+      dropboxInput,
+    } = await setupImg();
     await user.upload(dropboxInput, profPicFile);
     await user.click(updateButton);
 
@@ -189,5 +220,86 @@ describe("<Settings>", () => {
     expect(
       screen.queryByRole("button", { name: "Log Out" })
     ).toBeInTheDocument();
+  });
+
+  it("should disable update button if none of the values change", async () => {
+    const { updateButton } = await setup();
+    expect(updateButton).toBeDisabled();
+  });
+
+  it("removes newly inserted picture", async () => {
+    const { user, profPicFile, dropboxInput } = await setupImg();
+    await user.upload(dropboxInput, profPicFile);
+
+    await user.click(screen.getByRole("button", { name: "Remove Picture" }));
+
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  });
+
+  it("disables and shows loading text on update button while fetching update", async () => {
+    let promiseResolver;
+    server.use(
+      http.put(
+        `${config.url.BACKEND_URL}/users/update`,
+        () =>
+          new Promise((resolve) => {
+            promiseResolver = resolve;
+          })
+      )
+    );
+    const { user, updateButton } = await setupChanged();
+
+    await user.click(updateButton);
+
+    expect(updateButton).toHaveTextContent("Loading...");
+    expect(updateButton).toBeDisabled();
+
+    promiseResolver();
+
+    await waitFor(() => expect(updateButton).toHaveTextContent("Update"));
+  });
+
+  it("displays error popup after failed update", async () => {
+    const { user, updateButton } = await setupChanged();
+
+    await user.click(updateButton);
+
+    waitFor(() => expect(updateButton).not.toHaveTextContent("Loading..."));
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+
+    cleanup();
+
+    vi.spyOn(console, "error").mockImplementationOnce(() => undefined);
+    const { user: user2, updateButton: updateButton2 } = await setupChanged();
+
+    server.use(
+      http.put(`${config.url.BACKEND_URL}/users/update`, () =>
+        HttpResponse.error()
+      )
+    );
+
+    await user2.click(updateButton2);
+
+    waitFor(() => expect(updateButton2).not.toHaveTextContent("Loading..."));
+    expect(screen.queryByRole("alert")).toBeInTheDocument();
+  });
+
+  it("disables update button after successful update", async () => {
+    const { user, updateButton, customFetchSpy, defaultFetchArguments } =
+      await setupChanged();
+
+    await user.click(updateButton);
+
+    await waitFor(() =>
+      expect(customFetchSpy).toBeCalledWith(
+        ...defaultFetchArguments({
+          senderUsername: "someUsername",
+          newUsername: defaultTestUser.username + "changed",
+          newEmail: defaultTestUser.email + "changed",
+        })
+      )
+    );
+
+    expect(updateButton).toBeDisabled();
   });
 });
