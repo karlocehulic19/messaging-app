@@ -33,7 +33,7 @@ test("returns message on non email", async () => {
       email: "invlid@email",
     })
   ).toEqual({
-    email: "Value provided must be an valid email address",
+    email: "Value provided must be valid email address",
   });
 });
 

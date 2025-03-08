@@ -143,7 +143,7 @@ exports[`validation logic > renders many invalid inputs correctly(all of them in
     class="_client-validation-error_4fc6c6"
     data-testid="validation-msg"
   >
-    Value provided must be an valid email address
+    Value provided must be valid email address
   </span>,
   <span
     aria-label="First Name validation error"

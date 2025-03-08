@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 import ProfilePictureSelector from "../components/ProfilePictureSelector";
 import apiErrorLogger from "../utils/apiErrorLogger";
 import ErrorPopup from "../components/ErrorPopup";
+import UpdateFormInputs from "../components/UpdateFormInputs";
 
 export default function Settings() {
   const { user, token, logout, validate } = useAuth();
@@ -85,21 +86,10 @@ export default function Settings() {
       <span>{user?.firstName || "Loading..."}</span>
       <span>{user?.lastName || "Loading..."}</span>
       <ErrorPopup ref={errorPopup} />
-      <input
-        value={updatedData.username}
-        onChange={handleInputChange}
-        type="text"
-        name="username"
-        id="username"
-        aria-label="Username input"
-      />
-      <input
-        value={updatedData.email}
-        onChange={handleInputChange}
-        type="email"
-        name="email"
-        id="email"
-        aria-label="Email input"
+      <UpdateFormInputs
+        username={updatedData.username}
+        email={updatedData.email}
+        handleInputChange={handleInputChange}
       />
       <ProfilePictureSelector
         onImageSelect={handleProfPicSelect}

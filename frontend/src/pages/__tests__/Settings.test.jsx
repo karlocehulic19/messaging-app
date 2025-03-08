@@ -302,4 +302,44 @@ describe("<Settings>", () => {
 
     expect(updateButton).toBeDisabled();
   });
+
+  it("validates username", async () => {
+    const { user, usernameInput } = await setup();
+
+    expect(
+      screen.queryByLabelText("Username input error")
+    ).not.toBeInTheDocument();
+
+    await user.click(usernameInput);
+    await user.keyboard("{Backspace}".repeat(defaultTestUser.username.length));
+
+    const usernameValidation = screen.getByLabelText("Username input error");
+    expect(usernameValidation).toHaveTextContent("Username field is required");
+
+    // representing non ascii character
+    await user.keyboard("ć");
+    expect(usernameValidation).toHaveTextContent(
+      "Invalid characters are provided"
+    );
+  });
+
+  it("validates email", async () => {
+    const { user, emailInput } = await setup();
+
+    expect(
+      screen.queryByLabelText("Email input error")
+    ).not.toBeInTheDocument();
+
+    await user.click(emailInput);
+    await user.keyboard("{Backspace}".repeat(defaultTestUser.email.length));
+
+    const emailValidationError = screen.getByLabelText("Email input error");
+
+    expect(emailValidationError).toHaveTextContent("Email field is required");
+    await user.keyboard("invalidEmail");
+
+    expect(emailValidationError).toHaveTextContent(
+      "Value provided must be valid email address"
+    );
+  });
 });

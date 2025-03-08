@@ -1,4 +1,5 @@
 import { hasGlobalAlpha } from "../../../common/utils/customIsAlpha";
+import { emailRules, usernameRules } from "./baseValidationRules";
 import { ValidatorBuilder } from "./CustomValidator";
 import {
   isRequired,
@@ -10,9 +11,8 @@ import validator from "validator";
 
 const RegistrationValidatorBuilder = new ValidatorBuilder();
 
-RegistrationValidatorBuilder.field("username")
-  .addRule(isRequired, "Username field is required")
-  .addRule(validator.isAscii, "Invalid characters are provided");
+usernameRules(RegistrationValidatorBuilder);
+emailRules(RegistrationValidatorBuilder);
 
 RegistrationValidatorBuilder.field("firstName")
   .addRule(isRequired, "First name is required")
@@ -21,10 +21,6 @@ RegistrationValidatorBuilder.field("firstName")
 RegistrationValidatorBuilder.field("lastName")
   .addRule(isRequired, "Last name is required")
   .addRule(hasGlobalAlpha, "Last name must contain only letters");
-
-RegistrationValidatorBuilder.field("email")
-  .addRule(isRequired, "Email field is required")
-  .addRule(validator.isEmail, "Value provided must be an valid email address");
 
 RegistrationValidatorBuilder.field("password")
   .addRule(isRequired, "Password field is required")
