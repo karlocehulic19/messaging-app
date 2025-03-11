@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { useAuth } from "../hooks/useAuth";
 import ProfilePictureSelector from "../components/ProfilePictureSelector";
 import apiErrorLogger from "../utils/apiErrorLogger";
 import ErrorPopup from "../components/ErrorPopup";
 import UpdateFormInputs from "../components/UpdateFormInputs";
+import BackButton from "../components/BackButton";
 
 export default function Settings() {
   const { user, token, logout, validate } = useAuth();
@@ -88,7 +88,7 @@ export default function Settings() {
 
   return (
     <div>
-      <Link to={"/"}></Link>
+      <BackButton />
       <span>{user?.firstName || "Loading..."}</span>
       <span>{user?.lastName || "Loading..."}</span>
       <ErrorPopup ref={errorPopup} />

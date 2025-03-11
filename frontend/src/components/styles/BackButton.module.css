@@ -1,0 +1,19 @@
+.back-button {
+  position: fixed;
+  top: 2rem;
+  left: 2rem;
+  border-radius: 50%;
+  width: 4rem;
+  height: 4rem;
+  background-color: var(--secondary-color);
+  box-shadow: 0 0 2px black;
+}
+
+.back-button svg {
+  max-width: 90%;
+  max-height: 90%;
+  top: 5%;
+  right: 2%;
+  fill: white;
+  position: relative;
+}
