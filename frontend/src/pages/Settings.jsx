@@ -62,9 +62,15 @@ export default function Settings() {
       }),
     })
       .then(() => validate())
-      .catch((error) => {
-        apiErrorLogger(error);
-        errorPopup.current.toggle();
+      .catch(async (error) => {
+        const resJSON = await apiErrorLogger(error);
+        errorPopup.current.toggle(
+          resJSON?.error.validation
+            ? resJSON.error.validation.map(
+                (validationError) => validationError.message
+              )
+            : null
+        );
       })
       .finally(() => setUpdateInfo("editing"));
   }

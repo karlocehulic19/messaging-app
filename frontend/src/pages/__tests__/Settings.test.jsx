@@ -4,6 +4,7 @@ import {
   screen,
   waitFor,
   getByTestId,
+  queryByText,
   cleanup,
 } from "@testing-library/react";
 import Settings from "../Settings.jsx";
@@ -303,43 +304,87 @@ describe("<Settings>", () => {
     expect(updateButton).toBeDisabled();
   });
 
-  it("validates username", async () => {
-    const { user, usernameInput } = await setup();
+  describe("validation", () => {
+    it("validates username", async () => {
+      const { user, usernameInput } = await setup();
 
-    expect(
-      screen.queryByLabelText("Username input error")
-    ).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText("Username input error")
+      ).not.toBeInTheDocument();
 
-    await user.click(usernameInput);
-    await user.keyboard("{Backspace}".repeat(defaultTestUser.username.length));
+      await user.click(usernameInput);
+      await user.keyboard(
+        "{Backspace}".repeat(defaultTestUser.username.length)
+      );
 
-    const usernameValidation = screen.getByLabelText("Username input error");
-    expect(usernameValidation).toHaveTextContent("Username field is required");
+      const usernameValidation = screen.getByLabelText("Username input error");
+      expect(usernameValidation).toHaveTextContent(
+        "Username field is required"
+      );
 
-    // representing non ascii character
-    await user.keyboard("ć");
-    expect(usernameValidation).toHaveTextContent(
-      "Invalid characters are provided"
-    );
-  });
+      // representing non ascii character
+      await user.keyboard("ć");
+      expect(usernameValidation).toHaveTextContent(
+        "Invalid characters are provided"
+      );
+    });
 
-  it("validates email", async () => {
-    const { user, emailInput } = await setup();
+    it("validates email", async () => {
+      const { user, emailInput } = await setup();
 
-    expect(
-      screen.queryByLabelText("Email input error")
-    ).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText("Email input error")
+      ).not.toBeInTheDocument();
 
-    await user.click(emailInput);
-    await user.keyboard("{Backspace}".repeat(defaultTestUser.email.length));
+      await user.click(emailInput);
+      await user.keyboard("{Backspace}".repeat(defaultTestUser.email.length));
 
-    const emailValidationError = screen.getByLabelText("Email input error");
+      const emailValidationError = screen.getByLabelText("Email input error");
 
-    expect(emailValidationError).toHaveTextContent("Email field is required");
-    await user.keyboard("invalidEmail");
+      expect(emailValidationError).toHaveTextContent("Email field is required");
+      await user.keyboard("invalidEmail");
 
-    expect(emailValidationError).toHaveTextContent(
-      "Value provided must be valid email address"
-    );
+      expect(emailValidationError).toHaveTextContent(
+        "Value provided must be valid email address"
+      );
+    });
+
+    it("displays server side validation inside error popup", async () => {
+      vi.spyOn(console, "error").mockImplementation(() => undefined);
+      server.use(
+        http.put(`${config.url.BACKEND_URL}/users/update`, () => {
+          return HttpResponse.json(
+            {
+              error: {
+                validation: [
+                  {
+                    field: "username",
+                    message: "User with that username already exists",
+                  },
+                  {
+                    field: "email",
+                    message: "User with that email already exists",
+                  },
+                ],
+              },
+            },
+            { status: 422 }
+          );
+        })
+      );
+
+      const { user, updateButton } = await setupChanged();
+
+      await user.click(updateButton);
+      const alertPopup = screen.getByRole("alert");
+
+      expect(
+        queryByText(alertPopup, "User with that username already exists")
+      ).toBeInTheDocument();
+
+      expect(
+        queryByText(alertPopup, "User with that email already exists")
+      ).toBeInTheDocument();
+    });
   });
 });
