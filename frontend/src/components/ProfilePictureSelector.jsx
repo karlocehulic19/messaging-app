@@ -8,6 +8,7 @@ function ProfilePictureSelector({
   imageFormatter = convertSquare,
   onImageSelect,
   defaultFormattedPicture = null,
+  direction = "row",
 }) {
   const [formattedPicture, setFormattedPicture] = useState(null);
   const [formatterError, setFormatterError] = useState(false);
@@ -60,9 +61,10 @@ function ProfilePictureSelector({
       data-testid="profile-picture-container"
       id={
         formattedPicture
-          ? styles["picture-container-demo"]
+          ? styles[`picture-container-demo-${direction}`]
           : styles["picture-container"]
       }
+      style={{ gridAutoFlow: direction }}
     >
       {formattedPicture && (
         <div
@@ -117,6 +119,7 @@ ProfilePictureSelector.propTypes = {
   imageFormatter: PropTypes.func,
   onImageSelect: PropTypes.func.isRequired,
   defaultFormattedPicture: PropTypes.string,
+  direction: PropTypes.oneOf(["row", "column"]),
 };
 
 export default ProfilePictureSelector;

@@ -29,6 +29,7 @@ exports[`<ProfilePictureSelector /> > doesn't use demonstration styling when ima
 <div
   data-testid="profile-picture-container"
   id="_picture-container_ee6cb2"
+  style="grid-auto-flow: row;"
 >
   <div
     id="_picture-dropbox-container_ee6cb2"
@@ -65,6 +66,7 @@ exports[`<ProfilePictureSelector /> > doesn't use demonstration styling when ima
 <div
   data-testid="profile-picture-container"
   id="_picture-container_ee6cb2"
+  style="grid-auto-flow: row;"
 >
   <div
     id="_picture-dropbox-container_ee6cb2"

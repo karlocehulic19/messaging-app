@@ -6,6 +6,7 @@ import apiErrorLogger from "../utils/apiErrorLogger";
 import ErrorPopup from "../components/ErrorPopup";
 import UpdateFormInputs from "../components/UpdateFormInputs";
 import BackButton from "../components/BackButton";
+import styles from "./styles/Settings.module.css";
 
 export default function Settings() {
   const { user, token, logout, validate } = useAuth();
@@ -87,24 +88,29 @@ export default function Settings() {
   }, []);
 
   return (
-    <div>
+    <div id={styles.settings}>
       <BackButton />
-      <span>{user?.firstName || "Loading..."}</span>
-      <span>{user?.lastName || "Loading..."}</span>
       <ErrorPopup ref={errorPopup} />
-      <UpdateFormInputs
-        username={updatedData.username}
-        email={updatedData.email}
-        handleInputChange={handleInputChange}
-      />
       <ProfilePictureSelector
         onImageSelect={handleProfPicSelect}
         defaultFormattedPicture={prevPicture}
+        direction="column"
       />
-      <button disabled={!isUpdated} onClick={handleUpdate}>
-        {updateInfo == "loading" ? "Loading..." : "Update"}
-      </button>
-      <button onClick={logout}>Log Out</button>
+      <div>
+        <span>{user?.firstName || "Loading..."}</span>
+        <span>{user?.lastName || "Loading..."}</span>
+        <UpdateFormInputs
+          username={updatedData.username}
+          email={updatedData.email}
+          handleInputChange={handleInputChange}
+        />
+      </div>
+      <div className={styles["button-container"]}>
+        <button disabled={!isUpdated} onClick={handleUpdate}>
+          {updateInfo == "loading" ? "Loading..." : "Update"}
+        </button>
+        <button onClick={logout}>Log Out</button>
+      </div>
     </div>
   );
 }
