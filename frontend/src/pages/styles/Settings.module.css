@@ -1,9 +1,51 @@
 #settings {
+  position: absolute;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 80%;
+  grid-template-columns: auto 1fr;
+  width: 60%;
+  top: 8rem;
+  left: 50%;
+  translate: -50% 0;
+  gap: 1rem;
 }
 
 .button-container {
+  display: flex;
+  gap: 0.7em;
+  font-size: 1.5em;
   grid-column: 2;
+  justify-self: end;
+}
+
+.image-update-container {
+  background-color: black;
+}
+
+.info-container {
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 0.5rem;
+  font-size: 1.5em;
+  justify-self: end;
+  width: 90%;
+}
+
+.data-container {
+  display: grid;
+  grid-template-columns: min-content auto;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+label {
+  text-wrap: nowrap;
+  padding: 0;
+  flex-shrink: 4;
+}
+
+span.user-data {
+  flex-grow: 1;
+  background-color: var(--secondary-color);
+  padding: 0.2em;
+  width: 100%;
 }

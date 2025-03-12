@@ -1,0 +1,15 @@
+span.validation-error {
+  font-size: 0.7em;
+  color: red;
+  position: absolute;
+  top: -22%;
+}
+
+.input-container {
+  padding-top: 0.5em;
+  position: relative;
+}
+
+.invalid-input {
+  border-color: red;
+}

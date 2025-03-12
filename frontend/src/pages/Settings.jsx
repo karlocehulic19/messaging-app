@@ -88,29 +88,41 @@ export default function Settings() {
   }, []);
 
   return (
-    <div id={styles.settings}>
+    <>
       <BackButton />
-      <ErrorPopup ref={errorPopup} />
-      <ProfilePictureSelector
-        onImageSelect={handleProfPicSelect}
-        defaultFormattedPicture={prevPicture}
-        direction="column"
-      />
-      <div>
-        <span>{user?.firstName || "Loading..."}</span>
-        <span>{user?.lastName || "Loading..."}</span>
-        <UpdateFormInputs
-          username={updatedData.username}
-          email={updatedData.email}
-          handleInputChange={handleInputChange}
+      <div id={styles.settings}>
+        <ErrorPopup ref={errorPopup} />
+        <ProfilePictureSelector
+          onImageSelect={handleProfPicSelect}
+          defaultFormattedPicture={prevPicture}
+          direction="column"
+          className={styles["image-update-container"]}
         />
+        <div className={styles["info-container"]}>
+          <div className={styles["data-container"]}>
+            <label htmlFor="firstName">First Name:</label>
+            <span className={styles["user-data"]}>
+              {user?.firstName || "Loading..."}
+            </span>
+            <label htmlFor="lastName">Last Name:</label>
+
+            <span className={styles["user-data"]}>
+              {user?.lastName || "Loading..."}
+            </span>
+          </div>
+          <UpdateFormInputs
+            username={updatedData.username}
+            email={updatedData.email}
+            handleInputChange={handleInputChange}
+          />
+        </div>
+        <div className={styles["button-container"]}>
+          <button disabled={!isUpdated} onClick={handleUpdate}>
+            {updateInfo == "loading" ? "Loading..." : "Update"}
+          </button>
+          <button onClick={logout}>Log Out</button>
+        </div>
       </div>
-      <div className={styles["button-container"]}>
-        <button disabled={!isUpdated} onClick={handleUpdate}>
-          {updateInfo == "loading" ? "Loading..." : "Update"}
-        </button>
-        <button onClick={logout}>Log Out</button>
-      </div>
-    </div>
+    </>
   );
 }
