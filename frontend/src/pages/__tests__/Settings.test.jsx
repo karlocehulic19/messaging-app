@@ -43,14 +43,13 @@ function HistoryWrapper({ children }) {
   );
 }
 
-const setup = async () => {
+const setupNonFetched = () => {
   const user = userEvent.setup();
   localStorage.setItem("site", "randomJWTtoken");
   render(<Settings />, { wrapper: HistoryWrapper });
 
   const customFetchSpy = vi.spyOn(customFetch, "default");
 
-  const updateButton = screen.getByRole("button", { name: "Update" });
   const usernameInput = screen.getByRole("textbox", { name: "Username input" });
   const emailInput = screen.getByRole("textbox", { name: "Email input" });
   const defaultFetchArguments = (body) => [
@@ -66,11 +65,21 @@ const setup = async () => {
 
   return {
     user,
-    updateButton,
+    customFetchSpy,
     usernameInput,
     emailInput,
-    customFetchSpy,
     defaultFetchArguments,
+  };
+};
+
+const setup = async () => {
+  const utils = setupNonFetched();
+
+  const updateButton = await screen.findByRole("button", { name: "Update" });
+
+  return {
+    ...utils,
+    updateButton,
   };
 };
 
@@ -159,17 +168,14 @@ describe("<Settings>", () => {
 
   it("updates user values after validation fetches user info", async () => {
     let promiseResolver;
+    const validationPromise = new Promise((resolve) => {
+      promiseResolver = resolve;
+    });
     server.use(
-      http.post(
-        `${config.url.BACKEND_URL}/validate`,
-        () =>
-          new Promise((resolve) => {
-            promiseResolver = resolve;
-          })
-      )
+      http.post(`${config.url.BACKEND_URL}/validate`, () => validationPromise)
     );
 
-    const { usernameInput, emailInput } = await setup();
+    const { usernameInput, emailInput } = setupNonFetched();
 
     expect(usernameInput.value).toBe("Loading...");
     expect(emailInput.value).toBe("Loading...");

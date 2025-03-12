@@ -15,11 +15,10 @@ export default function Settings() {
     email: user?.email || "Loading...",
   });
   const [prevPicture, setPrevPicture] = useState(null);
-  const [updateInfo, setUpdateInfo] = useState("editing");
+  const [updateInfo, setUpdateInfo] = useState("loading");
   const errorPopup = useRef();
 
   const isUpdated =
-    user &&
     updateInfo != "loading" &&
     (updatedData.email != user?.email ||
       updatedData.username != user?.username ||
@@ -39,6 +38,7 @@ export default function Settings() {
         .then((img) => {
           const picUrl = URL.createObjectURL(img);
           setPrevPicture(picUrl);
+          setUpdateInfo("editing");
         })
         .catch(apiErrorLogger);
     }
@@ -111,6 +111,7 @@ export default function Settings() {
             </span>
           </div>
           <UpdateFormInputs
+            infoState={updateInfo}
             username={updatedData.username}
             email={updatedData.email}
             handleInputChange={handleInputChange}
