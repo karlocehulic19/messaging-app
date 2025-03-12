@@ -5,13 +5,15 @@ import { useEffect } from "react";
 import styles from "./styles/UpdateFormInputs.module.css";
 
 export default function UpdateFormInputs({
+  infoState,
   username,
   email,
   handleInputChange,
 }) {
   const { validationErrors, changeFormData } = useValidator(UpdateValidator);
-  const isUsernameValid = !!validationErrors.username;
-  const isEmailValid = !!validationErrors.email;
+  const isUsernameInvalid =
+    infoState == "editing" && !!validationErrors.username;
+  const isEmailInvalid = infoState == "editing" && !!validationErrors.email;
 
   useEffect(() => {
     changeFormData("username", username);
@@ -22,7 +24,7 @@ export default function UpdateFormInputs({
     <>
       <label htmlFor="username">Username: </label>
       <div className={styles["input-container"]}>
-        {isUsernameValid && (
+        {isUsernameInvalid && (
           <span
             className={styles["validation-error"]}
             aria-label="Username input error"
@@ -33,7 +35,7 @@ export default function UpdateFormInputs({
         <input
           value={username}
           onChange={handleInputChange}
-          className={isUsernameValid ? styles["invalid-input"] : null}
+          className={isUsernameInvalid ? styles["invalid-input"] : null}
           type="text"
           name="username"
           id="username"
@@ -43,7 +45,7 @@ export default function UpdateFormInputs({
 
       <label htmlFor="email">Email: </label>
       <div className={styles["input-container"]}>
-        {isEmailValid && (
+        {isEmailInvalid && (
           <span
             className={styles["validation-error"]}
             aria-label="Email input error"
@@ -54,7 +56,7 @@ export default function UpdateFormInputs({
         <input
           value={email}
           onChange={handleInputChange}
-          className={isEmailValid ? styles["invalid-input"] : null}
+          className={isEmailInvalid ? styles["invalid-input"] : null}
           type="email"
           name="email"
           id="email"
@@ -68,4 +70,5 @@ UpdateFormInputs.propTypes = {
   username: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
   handleInputChange: PropTypes.func.isRequired,
+  infoState: PropTypes.oneOf(["loading", "editing"]),
 };
