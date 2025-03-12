@@ -25,6 +25,7 @@
   display: grid;
   grid-auto-rows: min-content;
   gap: 0.5rem;
+  padding-top: 6rem;
   font-size: 1.5em;
   justify-self: end;
   width: 90%;
@@ -35,6 +36,7 @@
   grid-template-columns: min-content auto;
   width: 100%;
   gap: 0.5rem;
+  align-items: center;
 }
 
 label {
@@ -74,4 +76,23 @@ span.user-data {
 #logout-button {
   color: tomato;
   outline-color: tomato;
+}
+
+@media (max-width: 950px) {
+  #settings {
+    grid-template-columns: auto;
+  }
+
+  .info-container {
+    grid-row: 1;
+    padding-top: 0;
+    padding-bottom: 5rem;
+    width: 100%;
+  }
+
+  .button-container {
+    grid-column: 1;
+
+    padding-bottom: 5rem;
+  }
 }

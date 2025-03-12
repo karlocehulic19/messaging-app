@@ -96,7 +96,6 @@ export default function Settings() {
           onImageSelect={handleProfPicSelect}
           defaultFormattedPicture={prevPicture}
           direction="column"
-          className={styles["image-update-container"]}
         />
         <div className={styles["info-container"]}>
           <div className={styles["data-container"]}>
