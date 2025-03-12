@@ -49,3 +49,29 @@ span.user-data {
   padding: 0.2em;
   width: 100%;
 }
+
+.settings-button {
+  background-color: var(--secondary-color);
+  box-shadow: 0px 0px 2px black;
+  padding: 0.7em;
+}
+
+.settings-button:enabled:hover {
+  outline-offset: 2px;
+  outline-width: 2px;
+  outline-style: solid;
+}
+
+#update-button {
+  color: white;
+  outline-color: white;
+}
+
+#update-button:disabled {
+  color: gray;
+}
+
+#logout-button {
+  color: tomato;
+  outline-color: tomato;
+}

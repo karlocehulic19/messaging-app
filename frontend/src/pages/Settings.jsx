@@ -117,10 +117,21 @@ export default function Settings() {
           />
         </div>
         <div className={styles["button-container"]}>
-          <button disabled={!isUpdated} onClick={handleUpdate}>
+          <button
+            className={styles["settings-button"]}
+            id={styles["update-button"]}
+            disabled={!isUpdated}
+            onClick={handleUpdate}
+          >
             {updateInfo == "loading" ? "Loading..." : "Update"}
           </button>
-          <button onClick={logout}>Log Out</button>
+          <button
+            className={styles["settings-button"]}
+            id={styles["logout-button"]}
+            onClick={logout}
+          >
+            Log Out
+          </button>
         </div>
       </div>
     </>
