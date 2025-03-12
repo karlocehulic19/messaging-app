@@ -74,8 +74,12 @@ function ProfilePictureSelector({
           <label htmlFor="profile-picture">Profile picture</label>
           <img
             className="profile-picture"
-            id={styles["image-demo"]}
             src={formattedPicture}
+            id={
+              direction === "column"
+                ? styles["image-demo-column"]
+                : styles["image-demo"]
+            }
             alt="Current Profile picture"
           />
           <button

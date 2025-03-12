@@ -47,6 +47,12 @@ label[for="profile-picture"] {
   max-width: 50%;
 }
 
+#image-demo-column {
+  display: block;
+  max-width: 100%;
+  padding: 1rem;
+}
+
 @media (max-width: 750px) {
   #picture-container-demo {
     grid-template-columns: 1fr;

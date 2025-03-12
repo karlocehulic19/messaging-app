@@ -11,5 +11,5 @@ span.validation-error {
 }
 
 .invalid-input {
-  border-color: red;
+  outline: 2px solid red;
 }

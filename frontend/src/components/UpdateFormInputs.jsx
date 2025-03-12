@@ -33,7 +33,7 @@ export default function UpdateFormInputs({
         <input
           value={username}
           onChange={handleInputChange}
-          className={isUsernameValid && styles["invalid-input"]}
+          className={isUsernameValid ? styles["invalid-input"] : null}
           type="text"
           name="username"
           id="username"
@@ -54,7 +54,7 @@ export default function UpdateFormInputs({
         <input
           value={email}
           onChange={handleInputChange}
-          className={isEmailValid && styles["invalid-input"]}
+          className={isEmailValid ? styles["invalid-input"] : null}
           type="email"
           name="email"
           id="email"
