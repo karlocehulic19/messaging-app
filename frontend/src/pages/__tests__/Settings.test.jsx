@@ -13,7 +13,7 @@ import userEvent from "@testing-library/user-event";
 import AuthProvider from "../../contexts/AuthProvider.jsx";
 import * as customFetch from "../../utils/customFetch.js";
 import { server } from "../../mocks/node.js";
-import { http, HttpResponse } from "msw";
+import { delay, http, HttpResponse } from "msw";
 import { config } from "../../Constants.jsx";
 import { defaultTestUser, defaultPicBuffer } from "../../mocks/handlers.js";
 import { Jimp } from "jimp";
@@ -154,6 +154,7 @@ describe("<Settings>", () => {
     waitFor(() => expect(emailInput.value).toBe("someemail@some.com"));
     await user.click(emailInput);
     await user.keyboard("{Backspace}{Backspace}{Backspace}net");
+    expect(updateButton).toBeEnabled();
     await user.click(updateButton);
 
     await waitFor(() =>
@@ -391,6 +392,43 @@ describe("<Settings>", () => {
       expect(
         queryByText(alertPopup, "User with that email already exists")
       ).toBeInTheDocument();
+    });
+
+    it("disables update button on when validation errors are present", async () => {
+      const { updateButton, user, usernameInput, emailInput } = await setup();
+
+      await user.click(usernameInput);
+      await user.keyboard(
+        "{Backspace}".repeat(defaultTestUser.username.length)
+      );
+
+      expect(updateButton).toBeDisabled();
+      await user.keyboard("smth");
+
+      await user.click(emailInput);
+      await user.keyboard("{Backspace}".repeat(defaultTestUser.email.length));
+
+      expect(updateButton).toBeDisabled();
+
+      await user.keyboard("invalid");
+
+      expect(updateButton).toBeDisabled();
+    });
+
+    it("doesn't show validation error on validation fetching", async () => {
+      server.use(
+        http.post(`${config.url.BACKEND_URL}/validate`, async () => {
+          await delay("infinite");
+        })
+      );
+
+      setupNonFetched();
+
+      await expect(
+        screen.findByLabelText("Email input error", {})
+      ).rejects.toThrow(
+        /Unable to find a label with the text of: Email input error/
+      );
     });
   });
 });

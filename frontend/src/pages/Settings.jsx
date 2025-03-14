@@ -19,7 +19,7 @@ export default function Settings() {
   const errorPopup = useRef();
 
   const isUpdated =
-    updateInfo != "loading" &&
+    updateInfo == "editing" &&
     (updatedData.email != user?.email ||
       updatedData.username != user?.username ||
       updatedData.newPicBase64URI);
@@ -114,6 +114,7 @@ export default function Settings() {
             username={updatedData.username}
             email={updatedData.email}
             handleInputChange={handleInputChange}
+            changeInfoState={setUpdateInfo}
           />
         </div>
         <div className={styles["button-container"]}>

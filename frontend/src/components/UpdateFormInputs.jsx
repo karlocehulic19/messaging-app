@@ -3,22 +3,35 @@ import UpdateValidator from "../utils/UpdateValidator";
 import useValidator from "../hooks/useValidator";
 import { useEffect } from "react";
 import styles from "./styles/UpdateFormInputs.module.css";
+import { isEmpty } from "lodash";
 
 export default function UpdateFormInputs({
   infoState,
+  changeInfoState,
   username,
   email,
   handleInputChange,
 }) {
   const { validationErrors, changeFormData } = useValidator(UpdateValidator);
   const isUsernameInvalid =
-    infoState == "editing" && !!validationErrors.username;
-  const isEmailInvalid = infoState == "editing" && !!validationErrors.email;
+    infoState != "loading" && !!validationErrors.username;
+  const isEmailInvalid = infoState != "loading" && !!validationErrors.email;
 
   useEffect(() => {
-    changeFormData("username", username);
-    changeFormData("email", email);
-  }, [username, email, changeFormData]);
+    if (infoState != "loading") {
+      changeFormData("username", username);
+      changeFormData("email", email);
+    }
+  }, [username, email, changeFormData, infoState]);
+
+  useEffect(() => {
+    if (infoState == "loading") return;
+    if (!isEmpty(validationErrors)) {
+      changeInfoState("invalid");
+      return;
+    }
+    changeInfoState("editing");
+  }, [validationErrors, changeInfoState, infoState]);
 
   return (
     <>
@@ -70,5 +83,6 @@ UpdateFormInputs.propTypes = {
   username: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
   handleInputChange: PropTypes.func.isRequired,
-  infoState: PropTypes.oneOf(["loading", "editing"]),
+  infoState: PropTypes.oneOf(["loading", "editing", "invalid"]),
+  changeInfoState: PropTypes.func.isRequired,
 };

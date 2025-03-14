@@ -102,7 +102,7 @@ export const handlers = [
     });
   }),
 
-  http.post(`${BACKEND_URL}/validate`, ({ request }) => {
+  http.post(`${BACKEND_URL}/validate`, async ({ request }) => {
     const authHeader = request.headers.get("Authorization");
     if (authHeader === "Bearer randomJWTtoken") {
       return HttpResponse.json(
