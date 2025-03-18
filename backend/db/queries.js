@@ -42,3 +42,22 @@ module.exports.updateUser = async (originalUsername, updatedValues) => {
     data: updatedValues,
   });
 };
+
+module.exports.sendMessage = async (sender, receiver, message) => {
+  return await client.message.create({
+    data: {
+      sender,
+      receiver,
+      message,
+      date: new Date(),
+    },
+  });
+};
+
+module.exports.getNewMessages = async (receiver) => {
+  return await client.message.findMany({
+    where: {
+      receiver,
+    },
+  });
+};

@@ -22,3 +22,11 @@ model User {
   photoPublicId String? @unique
   id            String  @id @default(uuid())
 }
+
+model Message {
+  sender   String
+  receiver String
+  message  String
+  date     DateTime
+  id       String   @id @default(uuid())
+}
