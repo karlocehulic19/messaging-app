@@ -3,7 +3,7 @@ const authRouter = require("../../routes/authRouter");
 
 const { app, request } = require("../setupApp")((app) => {
   require("../../config/passport").config();
-  app.use("/message", messageRouter);
+  app.use("/messages", messageRouter);
   app.use("/", authRouter);
 });
 
@@ -46,13 +46,13 @@ const setupUsers = async () => {
   };
 };
 
-describe("/message router", () => {
+describe("messages router", () => {
   it("send an message to an user", async () => {
     const { user1, user2, bearerToken1, bearerToken2 } = await setupUsers();
     // eslint-disable-next-line no-undef
     vitest.setSystemTime("2025-03-18T13:08:43.024Z");
     const sendReq = await request(app)
-      .post("/message")
+      .post("/messages")
       .send({
         sender: user1.username,
         receiver: user2.username,
@@ -62,7 +62,7 @@ describe("/message router", () => {
     expect(sendReq.status).toBe(200);
 
     const receiverReq = await request(app)
-      .get(`/message?user=${user2.username}`)
+      .get(`/messages?user=${user2.username}`)
       .set("Authorization", bearerToken2);
     expect(receiverReq.status).toBe(200);
     expect(receiverReq.body).toMatchSnapshot();
@@ -72,7 +72,7 @@ describe("/message router", () => {
     const { user1, user2, bearerToken1, bearerToken2 } = await setupUsers();
 
     const sendReq = await request(app)
-      .post("/message")
+      .post("/messages")
       .send({
         sender: user1.username,
         receiver: user2.username,
@@ -81,11 +81,11 @@ describe("/message router", () => {
       .set("Authorization", bearerToken1);
     expect(sendReq.status).toBe(200);
     await request(app)
-      .get(`/message?user=${user2.username}`)
+      .get(`/messages?user=${user2.username}`)
       .set("Authorization", bearerToken2);
 
     const receiverReq = await request(app)
-      .get(`/message?user=${user2.username}`)
+      .get(`/messages?user=${user2.username}`)
       .set("Authorization", bearerToken2);
 
     expect(receiverReq.statusCode).toBe(204);
