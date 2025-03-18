@@ -55,9 +55,13 @@ module.exports.sendMessage = async (sender, receiver, message) => {
 };
 
 module.exports.getNewMessages = async (receiver) => {
-  return await client.message.findMany({
+  return await client.message.updateManyAndReturn({
     where: {
       receiver,
+      opened: false,
+    },
+    data: {
+      opened: true,
     },
   });
 };

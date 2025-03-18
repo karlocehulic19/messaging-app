@@ -14,6 +14,9 @@ module.exports.messageGet = asyncHandler(async (req, res) => {
   const messages = (await queries.getNewMessages(req.query.user)).map(
     (msg) => ({ date: msg.date, message: msg.message })
   );
+  if (!messages.length) {
+    return res.sendStatus(204);
+  }
 
   res.send(messages);
 });

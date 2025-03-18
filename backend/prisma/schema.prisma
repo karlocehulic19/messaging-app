@@ -28,5 +28,6 @@ model Message {
   receiver String
   message  String
   date     DateTime
+  opened   Boolean  @default(false)
   id       String   @id @default(uuid())
 }
