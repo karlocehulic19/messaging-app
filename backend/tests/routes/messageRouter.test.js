@@ -7,7 +7,20 @@ const { app, request } = require("../setupApp")((app) => {
   app.use("/", authRouter);
 });
 
+const setup = () => {
+  const messagesPost = () => request(app).post("/messages");
+  const messagesGet = (username, bearerToken) => {
+    return request(app)
+      .get(`/messages?user=${username}`)
+      .set("Authorization", bearerToken);
+  };
+
+  return { messagesPost, messagesGet };
+};
+
 const setupUsers = async () => {
+  const utils = setup();
+
   await request(app).post("/register").send({
     username: "TestUser1",
     firstName: "Test",
@@ -38,21 +51,28 @@ const setupUsers = async () => {
     })
   ).body;
 
+  const bearerToken1 = `Bearer ${token1}`;
+  const bearerToken2 = `Bearer ${token2}`;
+  const user2MessagesGet = () =>
+    utils.messagesGet(user2.username, bearerToken2);
+
   return {
+    ...utils,
     user1,
     user2,
-    bearerToken1: `Bearer ${token1}`,
-    bearerToken2: `Bearer ${token2}`,
+    bearerToken1,
+    bearerToken2,
+    user2MessagesGet,
   };
 };
 
 describe("messages router", () => {
   it("send an message to an user", async () => {
-    const { user1, user2, bearerToken1, bearerToken2 } = await setupUsers();
+    const { user1, user2, bearerToken1, messagesPost, user2MessagesGet } =
+      await setupUsers();
     // eslint-disable-next-line no-undef
     vitest.setSystemTime("2025-03-18T13:08:43.024Z");
-    const sendReq = await request(app)
-      .post("/messages")
+    const sendReq = await messagesPost()
       .send({
         sender: user1.username,
         receiver: user2.username,
@@ -61,18 +81,16 @@ describe("messages router", () => {
       .set("Authorization", bearerToken1);
     expect(sendReq.status).toBe(200);
 
-    const receiverReq = await request(app)
-      .get(`/messages?user=${user2.username}`)
-      .set("Authorization", bearerToken2);
+    const receiverReq = await user2MessagesGet();
     expect(receiverReq.status).toBe(200);
     expect(receiverReq.body).toMatchSnapshot();
   });
 
   it("doesn't send opened messages", async () => {
-    const { user1, user2, bearerToken1, bearerToken2 } = await setupUsers();
+    const { user1, user2, bearerToken1, messagesPost, user2MessagesGet } =
+      await setupUsers();
 
-    const sendReq = await request(app)
-      .post("/messages")
+    const sendReq = await messagesPost()
       .send({
         sender: user1.username,
         receiver: user2.username,
@@ -80,15 +98,64 @@ describe("messages router", () => {
       })
       .set("Authorization", bearerToken1);
     expect(sendReq.status).toBe(200);
-    await request(app)
-      .get(`/messages?user=${user2.username}`)
-      .set("Authorization", bearerToken2);
 
-    const receiverReq = await request(app)
-      .get(`/messages?user=${user2.username}`)
-      .set("Authorization", bearerToken2);
+    await user2MessagesGet();
+    const receiverReq = await user2MessagesGet();
 
     expect(receiverReq.statusCode).toBe(204);
     expect(receiverReq.body).toEqual({});
+  });
+
+  it("returns 401 for sending messages with wrong authorization", async () => {
+    const { user1, user2, messagesPost } = await setupUsers();
+    return messagesPost()
+      .send({
+        sender: user1.username,
+        receiver: user2.username,
+        message: "Some message",
+      })
+      .expect(401);
+  });
+
+  it("POST sends 401 for sending messages as wrong sender", async () => {
+    const { user1, user2, bearerToken2, messagesPost } = await setupUsers();
+    return messagesPost()
+      .send({
+        sender: user1.username,
+        receiver: user2.username,
+        message: "Some message",
+      })
+      .set("Authorization", bearerToken2)
+      .expect(401);
+  });
+
+  it("GET sends 401 for wanting to receive messages as wrong user", async () => {
+    const { user1, bearerToken2 } = await setupUsers();
+    return request(app)
+      .get(`/messages?user=${user1.username}`)
+      .set("Authorization", bearerToken2)
+      .expect(401);
+  });
+
+  it("POST sends 400 if any of necessary body props are missing", async () => {
+    const { user1, user2, bearerToken1, messagesPost } = await setupUsers();
+    const req1 = await messagesPost()
+      .send({
+        receiver: user2.username,
+        message: "Some message",
+      })
+      .set("Authorization", bearerToken1);
+
+    expect(req1.statusCode).toBe(400);
+    expect(req1.body).toMatchSnapshot();
+
+    const req2 = await messagesPost()
+      .send({
+        sender: user1.username,
+        message: "Some message",
+      })
+      .set("Authorization", bearerToken1);
+
+    expect(req2.statusCode).toBe(400);
   });
 });

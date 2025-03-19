@@ -12,6 +12,7 @@ const {
   getBaseEmailVC,
   getBaseUsernameVC,
 } = require("../utils/baseValidationChains");
+const validateBodyProps = require("../middleware/validateBodyProps");
 
 const validateUser = [
   getBaseUsernameVC(),
@@ -42,47 +43,27 @@ const validateUser = [
   getBaseEmailVC(),
 ];
 
+const userPostBodyProps = [
+  "username",
+  "firstName",
+  "lastName",
+  "password",
+  "email",
+];
+
 module.exports.userPost = (ImageManager) => {
   return [
     validateUser,
-    async (req, res) => {
+    async (req, res, next) => {
       if (req.body.pictureBase64 && !req.body.pictureBase64.includes(","))
         return res.status(422).send({
           error: "Provided picture string isn't in data URI base64 format",
         });
 
-      const formDataProps = [
-        "username",
-        "firstName",
-        "lastName",
-        "password",
-        "email",
-      ];
-
-      const missing = [];
-      const surplus = [];
-
-      for (const prop of formDataProps) {
-        if (!Object.keys(req.body).includes(prop)) missing.push(prop);
-      }
-
-      if (missing.length) {
-        return res
-          .status(400)
-          .send({ error: `Missing body property/ies: ${missing.join(", ")}` });
-      }
-
-      for (const bProp of Object.keys(req.body)) {
-        if (![...formDataProps, "pictureBase64"].includes(bProp))
-          surplus.push(bProp);
-      }
-
-      if (surplus.length) {
-        return res.status(400).send({
-          error: `Request sent invalid properties: ${surplus.join(", ")}`,
-        });
-      }
-
+      next();
+    },
+    validateBodyProps(userPostBodyProps),
+    async (req, res) => {
       const validationErrors = validationResult(req);
       if (!validationErrors.isEmpty()) {
         return res
