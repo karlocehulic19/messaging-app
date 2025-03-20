@@ -2,12 +2,22 @@ const queries = require("../db/queries");
 const asyncHandler = require("express-async-handler");
 const validateBodyProps = require("../middleware/validateBodyProps");
 
+const constructMessages = async (sender, receiver) => {
+  return (await queries.getNewMessages(sender, receiver)).map((msg) => ({
+    date: msg.date,
+    message: msg.message,
+  }));
+};
+
 const messagePostBodyProps = ["sender", "receiver", "message"];
 
 module.exports.messagePost = [
   validateBodyProps(messagePostBodyProps),
   asyncHandler(async (req, res) => {
-    if (req.body.sender != req.user.username) {
+    const userUsername = req.body.sender;
+    const messagePartner = req.body.receiver;
+
+    if (userUsername != req.user.username) {
       return res.sendStatus(401);
     }
 
@@ -16,24 +26,28 @@ module.exports.messagePost = [
       req.body.receiver,
       req.body.message
     );
-    res.send(200);
+
+    const messages = await constructMessages(messagePartner, userUsername);
+    res.status(200).send(messages);
   }),
 ];
 
-module.exports.messageGet = asyncHandler(async (req, res) => {
-  const searchUser = req.query.user;
-  if (searchUser != req.user.username) {
-    return res.sendStatus(401);
-  }
+const messageGetBodyProps = ["sender", "receiver"];
 
-  const messages = (await queries.getNewMessages(searchUser)).map((msg) => ({
-    date: msg.date,
-    message: msg.message,
-  }));
+module.exports.messageGet = [
+  validateBodyProps(messageGetBodyProps),
+  asyncHandler(async (req, res) => {
+    const userUsername = req.body.receiver;
+    const messagePartner = req.body.sender;
+    if (userUsername != req.user.username) {
+      return res.sendStatus(401);
+    }
 
-  if (!messages.length) {
-    return res.sendStatus(204);
-  }
+    const messages = await constructMessages(messagePartner, userUsername);
+    if (!messages.length) {
+      return res.sendStatus(204);
+    }
 
-  res.send(messages);
-});
+    res.send(messages);
+  }),
+];

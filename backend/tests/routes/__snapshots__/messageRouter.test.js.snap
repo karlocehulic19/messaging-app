@@ -1,5 +1,14 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`messages router > POST checks for new messages from receiver between requests 1`] = `
+[
+  {
+    "date": "2025-03-18T13:08:43.024Z",
+    "message": "Meantime message",
+  },
+]
+`;
+
 exports[`messages router > POST sends 400 if any of necessary body props are missing 1`] = `
 {
   "error": "Missing body property/ies: sender",

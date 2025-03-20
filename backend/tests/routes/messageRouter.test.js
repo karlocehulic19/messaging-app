@@ -9,9 +9,13 @@ const { app, request } = require("../setupApp")((app) => {
 
 const setup = () => {
   const messagesPost = () => request(app).post("/messages");
-  const messagesGet = (username, bearerToken) => {
+  const messagesGet = (sender, receiver, bearerToken) => {
     return request(app)
-      .get(`/messages?user=${username}`)
+      .get(`/messages`)
+      .send({
+        sender,
+        receiver,
+      })
       .set("Authorization", bearerToken);
   };
 
@@ -54,7 +58,7 @@ const setupUsers = async () => {
   const bearerToken1 = `Bearer ${token1}`;
   const bearerToken2 = `Bearer ${token2}`;
   const user2MessagesGet = () =>
-    utils.messagesGet(user2.username, bearerToken2);
+    utils.messagesGet(user1.username, user2.username, bearerToken2);
 
   return {
     ...utils,
@@ -106,6 +110,54 @@ describe("messages router", () => {
     expect(receiverReq.body).toEqual({});
   });
 
+  it("POST checks for new messages from receiver between requests", async () => {
+    const { user1, user2, bearerToken1, bearerToken2, messagesPost } =
+      await setupUsers();
+
+    await messagesPost()
+      .send({
+        sender: user2.username,
+        receiver: user1.username,
+        message: "Meantime message",
+      })
+      .set("Authorization", bearerToken2);
+
+    const afterMeantimeReq = await messagesPost()
+      .send({
+        sender: user1.username,
+        receiver: user2.username,
+        message: "Some message",
+      })
+      .set("Authorization", bearerToken1);
+    expect(afterMeantimeReq.body).toMatchSnapshot();
+  });
+
+  it("GET responses with specific sender messages", async () => {
+    const {
+      user1,
+      bearerToken1,
+      user2,
+      bearerToken2,
+      messagesGet,
+      messagesPost,
+    } = await setupUsers();
+
+    await messagesPost()
+      .send({
+        sender: user1.username,
+        receiver: user2.username,
+        message: "Some message that shouldn't be fetched",
+      })
+      .set("Authorization", bearerToken1);
+
+    const response = await messagesGet(
+      "nonExistentUser",
+      user2.username,
+      bearerToken2
+    );
+    expect(response.body).toEqual({});
+  });
+
   it("returns 401 for sending messages with wrong authorization", async () => {
     const { user1, user2, messagesPost } = await setupUsers();
     return messagesPost()
@@ -130,11 +182,10 @@ describe("messages router", () => {
   });
 
   it("GET sends 401 for wanting to receive messages as wrong user", async () => {
-    const { user1, bearerToken2 } = await setupUsers();
-    return request(app)
-      .get(`/messages?user=${user1.username}`)
-      .set("Authorization", bearerToken2)
-      .expect(401);
+    const { user1, bearerToken2, messagesGet } = await setupUsers();
+    return messagesGet("someRandomUser", user1.username, bearerToken2).expect(
+      401
+    );
   });
 
   it("POST sends 400 if any of necessary body props are missing", async () => {
@@ -157,5 +208,12 @@ describe("messages router", () => {
       .set("Authorization", bearerToken1);
 
     expect(req2.statusCode).toBe(400);
+  });
+
+  it("GET sends 400 if any of necessary body props are missing", async () => {
+    const { user1, bearerToken1, messagesGet } = await setupUsers();
+    const response = await messagesGet(undefined, user1.username, bearerToken1);
+
+    expect(response.statusCode).toBe(400);
   });
 });
