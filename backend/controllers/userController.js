@@ -8,10 +8,17 @@ const {
 } = require("../utils/baseValidationChains");
 
 const getUsers = asyncHandler(async (req, res) => {
+  if (req.query.exists)
+    return res.sendStatus(
+      (await queries.getUserByUsername(req.query.exists)) ? 200 : 404
+    );
   if (!req.query.s)
     return res
       .status(400)
-      .send({ error: "At least s query is needed to send users get request." });
+      .send({
+        error:
+          "At least s or exists query is needed to send users get request.",
+      });
   const usernameSearch = req.query.s;
   const users = await queries.getUsersByUsername(usernameSearch);
 

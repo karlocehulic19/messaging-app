@@ -8,7 +8,7 @@ const setup = async () => {
   faker.seed(123);
 
   // Ensures stable test(five usernames with "Jo" must be created)
-  for (let firstName of [
+  const usernames = [
     "John",
     "Josh",
     "Joanne",
@@ -19,7 +19,9 @@ const setup = async () => {
     "Ash",
     "Ana",
     "Amanda",
-  ]) {
+  ];
+
+  for (let firstName of usernames) {
     await prisma.user.create({
       data: {
         username: faker.internet.username({ firstName }),
@@ -30,6 +32,8 @@ const setup = async () => {
       },
     });
   }
+
+  return { usernames };
 };
 
 describe("/users", () => {
@@ -122,8 +126,28 @@ describe("/users", () => {
       .expect(400)
       .then((response) => {
         expect(response.body.error).toBe(
-          "At least s query is needed to send users get request."
+          "At least s or exists query is needed to send users get request."
         );
       });
+  });
+
+  describe("exists query", () => {
+    it("sends 200 if user exists in db", async () => {
+      await prisma.user.create({
+        data: {
+          username: "inDatabase",
+          firstName: "In",
+          lastName: "Database",
+          password: "Password@1",
+          email: "some@email.com",
+        },
+      });
+
+      return request(app).get("/users?exists=inDatabase").expect(200);
+    });
+
+    it("sends 404 if user doesn't exist in db", () => {
+      return request(app).get("/users?exists=notInDb").expect(404);
+    });
   });
 });
