@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<Main /> > displays default profile picture on users without one 1`] = `"http://localhost:3000/src/assets/default-profile-picture.jpeg"`;
+
+exports[`<Main /> > displays messaging interface when correct username is displayed 1`] = `"http://localhost:3000/mockedFilePath"`;

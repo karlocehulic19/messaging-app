@@ -66,7 +66,7 @@ describe("<SearchCard />", () => {
     expect(screen.getByLabelText("NoPictureTest user")).toMatchSnapshot();
   });
 
-  it("eedirects to messaging the user after click", async () => {
+  it("redirects to messaging the user after click", async () => {
     vi.spyOn(console, "error").mockImplementationOnce(() => undefined);
     setup("Test");
     const user = userEvent.setup();

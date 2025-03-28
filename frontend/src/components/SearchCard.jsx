@@ -1,27 +1,11 @@
 import PropTypes from "prop-types";
-import { useState, useEffect } from "react";
-import customFetch from "../utils/customFetch";
-import defaultProfilePicture from "../assets/default-profile-picture.jpeg";
 import { useNavigate } from "react-router-dom";
-import apiErrorLogger from "../utils/apiErrorLogger";
 import styles from "./styles/SearchCard.module.css";
+import { useProfilePicture } from "../hooks/useProfilePicture";
 
 export default function SearchCard({ username, searchBarRef }) {
-  const [imgSrc, setImgSrc] = useState(defaultProfilePicture);
+  const profilePictureSrc = useProfilePicture(username);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    customFetch(`/users/profile-picture/${username}`)
-      .then((res) => {
-        if (res.status != 200) throw new Error("No profile picture found");
-        return res.blob();
-      })
-      .then((img) => {
-        const profPic = URL.createObjectURL(img);
-        setImgSrc(profPic);
-      })
-      .catch(apiErrorLogger);
-  }, [username]);
 
   function handleClick(e) {
     e.preventDefault();
@@ -38,7 +22,7 @@ export default function SearchCard({ username, searchBarRef }) {
     >
       <img
         className={`profile-picture ${styles["profile-picture"]}`}
-        src={imgSrc}
+        src={profilePictureSrc}
         alt={`${username} profile picture`}
       />
       <span className={styles["username-span"]}>{username}</span>

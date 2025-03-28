@@ -36,20 +36,29 @@ const db = {
   },
 };
 
-export const userSearchHandler = ({ request }) => {
+export const userGetHandler = ({ request }) => {
   const url = new URL(request.url);
   const queries = url.searchParams;
-  if (!queries.has("s")) {
+
+  if (!queries.has("s") && !queries.has("exists")) {
     return HttpResponse.json(
       {
-        error: "At least s query is needed to send users get request.",
+        error:
+          "At least s or exists query is needed to send users get request.",
       },
       { status: 400 }
     );
   }
-  return HttpResponse.json(
-    Object.values(db).filter((usr) => usr.username.includes(queries.get("s")))
-  );
+
+  if (queries.has("s")) {
+    return HttpResponse.json(
+      Object.values(db).filter((usr) => usr.username.includes(queries.get("s")))
+    );
+  }
+
+  return new HttpResponse(null, {
+    status: queries.get("exists") in db ? 200 : 400,
+  });
 };
 
 export const handlers = [
@@ -131,8 +140,7 @@ export const handlers = [
     }
   ),
 
-  http.get(`${BACKEND_URL}/users`, userSearchHandler),
-
+  http.get(`${BACKEND_URL}/users`, userGetHandler),
   http.put(`${BACKEND_URL}/users/update`, async ({ request }) => {
     const reqBody = await request.json();
     return HttpResponse.json({

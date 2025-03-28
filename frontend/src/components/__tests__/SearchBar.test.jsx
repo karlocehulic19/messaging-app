@@ -7,7 +7,7 @@ import * as customFetch from "../../utils/customFetch";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { http, HttpResponse } from "msw";
 import { config } from "../../Constants";
-import { userSearchHandler } from "../../mocks/handlers";
+import { userGetHandler } from "../../mocks/handlers";
 
 function getConsoleErrorSpy() {
   const consoleErrorSpy = vi
@@ -96,7 +96,7 @@ describe("<SearchBar />", () => {
     expect(screen.getByLabelText("Found users")).toMatchSnapshot();
     expect(screen.getByRole("search").className).toMatchSnapshot();
     await act(async () => {
-      promiseResolver(userSearchHandler);
+      promiseResolver(userGetHandler);
     });
 
     expect(screen.getByLabelText("Found users")).toMatchSnapshot();

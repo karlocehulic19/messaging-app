@@ -8,11 +8,14 @@ import PrivateRoute from "./routes/PrivateRoute";
 import Main from "./pages/Main";
 import Logout from "./pages/Logout";
 import Settings from "./pages/Settings";
+import PropTypes from "prop-types";
 
-function App() {
+function App({
+  routerRender = (children) => <BrowserRouter>{children}</BrowserRouter>,
+}) {
   return (
     <>
-      <BrowserRouter>
+      {routerRender(
         <AuthProvider>
           <Routes>
             <Route element={<NonAuthRoute />}>
@@ -22,13 +25,17 @@ function App() {
             <Route element={<PrivateRoute />}>
               <Route path="/logout" element={<Logout />} />
               <Route path="/settings" element={<Settings />} />
-              <Route path="*" element={<Main />}></Route>
+              <Route path=":receiverUsername?" element={<Main />}></Route>
             </Route>
           </Routes>
         </AuthProvider>
-      </BrowserRouter>
+      )}
     </>
   );
 }
+
+App.propTypes = {
+  routerRender: PropTypes.func,
+};
 
 export default App;
