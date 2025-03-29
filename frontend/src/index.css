@@ -20,6 +20,7 @@
 }
 
 :root {
+  --input-height: 2.5rem;
   --primary-color: rgb(49, 54, 63);
   --secondary-color: rgb(34, 40, 49);
   --tertiary-color: rgb(118, 171, 174);
