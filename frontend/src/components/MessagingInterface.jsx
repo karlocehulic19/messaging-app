@@ -22,6 +22,7 @@ export default function MessagingInterface({ receiverUsername }) {
             id={styles["message-input"]}
             type="text"
             aria-label="Message input"
+            placeholder="Type your message here..."
           />
           <button id={styles["send-button"]} aria-label="Send button">
             <SendIcon className={styles["send-icon"]} />

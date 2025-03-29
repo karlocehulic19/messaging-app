@@ -149,7 +149,9 @@ exports[`<SearchBar /> > renders correctly 1`] = `
   tabindex="-1"
 >
   <input
+    id="_searchbar_45bafb"
     name="searchbox"
+    placeholder="Search for users by username..."
     role="searchbox"
     type="text"
     value=""

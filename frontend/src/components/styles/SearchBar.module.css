@@ -24,3 +24,8 @@
   border-radius: 0rem 0rem 0.2rem 0.2rem;
   padding-bottom: 0.2rem;
 }
+
+#searchbar::placeholder {
+  font-size: 1.3em;
+  color: white;
+}

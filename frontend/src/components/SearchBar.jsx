@@ -69,6 +69,8 @@ export default function SearchBar() {
         role="searchbox"
         type="text"
         name="searchbox"
+        placeholder="Search for users by username..."
+        id={styles.searchbar}
       />
       {focused && (
         <div id={styles["user-search-listings"]} aria-label="Found users">

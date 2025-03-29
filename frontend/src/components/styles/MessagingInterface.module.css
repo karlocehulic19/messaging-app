@@ -45,6 +45,10 @@
   background-color: var(--secondary-color);
 }
 
+#message-input::placeholder {
+  color: rgb(180, 180, 180);
+}
+
 #send-button {
   background-color: var(--secondary-color);
   aspect-ratio: 1;
