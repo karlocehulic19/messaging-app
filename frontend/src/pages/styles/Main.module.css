@@ -1,0 +1,10 @@
+.main-container {
+  position: relative;
+}
+
+#selection-text {
+  position: absolute;
+  top: 20vh;
+  left: 50%;
+  transform: translate(-50%, 0);
+}

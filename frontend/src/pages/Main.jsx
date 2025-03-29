@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import MessagingInterface from "../components/MessagingInterface";
 import customFetch from "../utils/customFetch";
+import styles from "./styles/Main.module.css";
 
 export default function Main() {
   const params = useParams();
@@ -21,7 +22,11 @@ export default function Main() {
       {isSelected ? (
         <MessagingInterface receiverUsername={params.receiverUsername} />
       ) : (
-        <h1>Select user to message in the search bar</h1>
+        <div className={styles["main-container"]}>
+          <h1 id={styles["selection-text"]}>
+            Select user to message in the search bar
+          </h1>
+        </div>
       )}
     </>
   );
