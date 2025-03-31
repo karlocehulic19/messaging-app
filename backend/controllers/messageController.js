@@ -51,3 +51,19 @@ module.exports.messageGet = [
     res.send(messages);
   }),
 ];
+
+const oldMessagesGetBodyProps = ["user", "partner"];
+
+module.exports.oldMessagesGet = [
+  validateBodyProps(oldMessagesGetBodyProps),
+  async (req, res) => {
+    if (req.user.username != req.body.user) return res.sendStatus(401);
+    res.send(
+      await queries.getOldMessages(
+        req.body.user,
+        req.body.partner,
+        req.query.page
+      )
+    );
+  },
+];

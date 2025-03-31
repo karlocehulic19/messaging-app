@@ -1,5 +1,14 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`messages router > GET sends an message to an user 1`] = `
+[
+  {
+    "date": "2025-03-18T13:08:43.024Z",
+    "message": "Some random message",
+  },
+]
+`;
+
 exports[`messages router > POST checks for new messages from receiver between requests 1`] = `
 [
   {
@@ -13,13 +22,4 @@ exports[`messages router > POST sends 400 if any of necessary body props are mis
 {
   "error": "Missing body property/ies: sender",
 }
-`;
-
-exports[`messages router > send an message to an user 1`] = `
-[
-  {
-    "date": "2025-03-18T13:08:43.024Z",
-    "message": "Some random message",
-  },
-]
 `;

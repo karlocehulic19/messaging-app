@@ -18,8 +18,17 @@ const setup = () => {
       })
       .set("Authorization", bearerToken);
   };
+  const messagesOldGet = (user, partner, bearerToken) => {
+    return request(app)
+      .get("/messages/old")
+      .send({
+        user,
+        partner,
+      })
+      .set("Authorization", bearerToken);
+  };
 
-  return { messagesPost, messagesGet };
+  return { messagesPost, messagesGet, messagesOldGet };
 };
 
 const setupUsers = async () => {
@@ -70,12 +79,14 @@ const setupUsers = async () => {
   };
 };
 
+const MOCK_SYSTEM_TIME = "2025-03-18T13:08:43.024Z";
+
 describe("messages router", () => {
-  it("send an message to an user", async () => {
+  it("GET sends an message to an user", async () => {
     const { user1, user2, bearerToken1, messagesPost, user2MessagesGet } =
       await setupUsers();
     // eslint-disable-next-line no-undef
-    vitest.setSystemTime("2025-03-18T13:08:43.024Z");
+    vitest.setSystemTime(MOCK_SYSTEM_TIME);
     const sendReq = await messagesPost()
       .send({
         sender: user1.username,
@@ -90,7 +101,7 @@ describe("messages router", () => {
     expect(receiverReq.body).toMatchSnapshot();
   });
 
-  it("doesn't send opened messages", async () => {
+  it("GET doesn't send opened messages", async () => {
     const { user1, user2, bearerToken1, messagesPost, user2MessagesGet } =
       await setupUsers();
 
@@ -158,7 +169,7 @@ describe("messages router", () => {
     expect(response.body).toEqual({});
   });
 
-  it("returns 401 for sending messages with wrong authorization", async () => {
+  it("POST returns 401 for sending messages with wrong authorization", async () => {
     const { user1, user2, messagesPost } = await setupUsers();
     return messagesPost()
       .send({
@@ -215,5 +226,236 @@ describe("messages router", () => {
     const response = await messagesGet(undefined, user1.username, bearerToken1);
 
     expect(response.statusCode).toBe(400);
+  });
+
+  describe("/messages/old", () => {
+    it("GET sends old messages", async () => {
+      const {
+        user1,
+        user2,
+        messagesPost,
+        user2MessagesGet,
+        bearerToken1,
+        bearerToken2,
+        messagesOldGet,
+      } = await setupUsers();
+
+      await messagesPost()
+        .send({
+          sender: user1.username,
+          receiver: user2.username,
+          message: "Some message",
+        })
+        .set("Authorization", bearerToken1);
+
+      // needed for making sure messages aren't considered new
+      await user2MessagesGet();
+
+      const response1 = await messagesOldGet(
+        user1.username,
+        user2.username,
+        bearerToken1
+      );
+      expect(response1.body).toEqual([
+        {
+          date: MOCK_SYSTEM_TIME,
+          id: expect.any(String),
+          message: "Some message",
+          opened: true,
+          sender: user1.username,
+          receiver: user2.username,
+        },
+      ]);
+
+      const response2 = await messagesOldGet(
+        user2.username,
+        user1.username,
+        bearerToken2
+      );
+      expect(response2.body).toEqual([
+        {
+          date: MOCK_SYSTEM_TIME,
+          id: expect.any(String),
+          message: "Some message",
+          opened: true,
+          sender: user1.username,
+          receiver: user2.username,
+        },
+      ]);
+    });
+
+    it("GET doesn't send messages from other users that aren't receiver", async () => {
+      const {
+        user1,
+        user2,
+        bearerToken2,
+        bearerToken1,
+        messagesPost,
+        messagesGet,
+        messagesOldGet,
+      } = await setupUsers();
+
+      await messagesPost()
+        .send({
+          sender: user2.username,
+          receiver: user1.username,
+          message: "Some message",
+        })
+        .set("Authorization", bearerToken2);
+
+      await request(app).post("/register").send({
+        username: "TestUser3",
+        firstName: "Test",
+        lastName: "One",
+        password: "Password@1",
+        email: "test3@email.com",
+      });
+
+      const { user: user3 } = (
+        await request(app).post("/login").send({
+          username: "TestUser3",
+          password: "Password@1",
+        })
+      ).body;
+
+      await messagesPost()
+        .send({
+          receiver: user3.username,
+          sender: user1.username,
+          message: "From user1 to user3",
+        })
+        .set("Authorization", bearerToken1);
+
+      await messagesPost()
+        .send({
+          receiver: user3.username,
+          sender: user2.username,
+          message: "From user2 to user3",
+        })
+        .set("Authorization", bearerToken2);
+
+      await messagesGet(user2.username, user1.username, bearerToken1);
+
+      const response1 = await messagesOldGet(
+        user1.username,
+        user2.username,
+        bearerToken1
+      );
+      expect(response1.body).toEqual([
+        {
+          date: MOCK_SYSTEM_TIME,
+          id: expect.any(String),
+          message: "Some message",
+          opened: true,
+          sender: user2.username,
+          receiver: user1.username,
+        },
+      ]);
+    });
+
+    it("GET send partners opened messages", async () => {
+      const {
+        user1,
+        user2,
+        bearerToken1,
+        bearerToken2,
+        messagesPost,
+        messagesOldGet,
+      } = await setupUsers();
+      await messagesPost()
+        .send({
+          sender: user2.username,
+          receiver: user1.username,
+          message: "Some message that shouldn't be fetched",
+        })
+        .set("Authorization", bearerToken2);
+
+      const response = await messagesOldGet(
+        user1.username,
+        user2.username,
+        bearerToken1
+      );
+
+      expect(response.body).toEqual([]);
+    });
+
+    it("GET sends 400 when missing necessary props", async () => {
+      const { bearerToken1 } = await setupUsers();
+
+      const response = await request(app)
+        .get("/messages/old")
+        .set("Authorization", bearerToken1);
+      expect(response.status).toBe(400);
+    });
+
+    it("GET sends 401 if bearer token doesn't match user", async () => {
+      const { bearerToken1, user2, messagesOldGet } = await setupUsers();
+
+      const response = await messagesOldGet(
+        user2.username,
+        "SomeRandomName",
+        bearerToken1
+      );
+
+      expect(response.status).toBe(401);
+    });
+
+    it("GET only first 25 messages if page not specified", async () => {
+      const { user1, bearerToken1, user2, messagesPost, messagesOldGet } =
+        await setupUsers();
+      const requests = [];
+
+      for (let n = 0; n < 29; n++) {
+        requests.push(
+          messagesPost()
+            .send({
+              sender: user1.username,
+              receiver: user2.username,
+              message: `${n}. message`,
+            })
+            .set("Authorization", bearerToken1)
+        );
+      }
+
+      await Promise.all(requests);
+
+      const response = await messagesOldGet(
+        user1.username,
+        user2.username,
+        bearerToken1
+      );
+      const body = response.body;
+      expect(body).toHaveLength(25);
+    });
+
+    it("GET page specific number of messages", async () => {
+      const { user1, bearerToken1, user2, messagesPost } = await setupUsers();
+      const requests = [];
+
+      for (let n = 0; n < 29; n++) {
+        requests.push(
+          messagesPost()
+            .send({
+              sender: user1.username,
+              receiver: user2.username,
+              message: `${n}. message`,
+            })
+            .set("Authorization", bearerToken1)
+        );
+      }
+
+      await Promise.all(requests);
+
+      const response = await request(app)
+        .get("/messages/old?page=2")
+        .send({
+          user: user1.username,
+          partner: user2.username,
+        })
+        .set("Authorization", bearerToken1);
+
+      const body = response.body;
+      expect(body).toHaveLength(4);
+    });
   });
 });
