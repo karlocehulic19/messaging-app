@@ -44,19 +44,30 @@ module.exports.updateUser = async (originalUsername, updatedValues) => {
   });
 };
 
-module.exports.sendMessage = async (sender, receiver, message) => {
+module.exports.sendMessage = async (sender, receiver, message, date) => {
   return await client.message.create({
     data: {
       sender,
       receiver,
       message,
-      date: new Date(),
+      date,
     },
   });
 };
 
 module.exports.getNewMessages = async (sender, receiver) => {
-  return await client.message.updateManyAndReturn({
+  const foundNewMessages = await client.message.findMany({
+    where: {
+      sender,
+      receiver,
+      opened: false,
+    },
+    orderBy: {
+      date: "asc",
+    },
+  });
+
+  await client.message.updateMany({
     where: {
       sender,
       receiver,
@@ -66,6 +77,8 @@ module.exports.getNewMessages = async (sender, receiver) => {
       opened: true,
     },
   });
+
+  return foundNewMessages;
 };
 
 module.exports.getOldMessages = async (sender, receiver, page = 1) => {
@@ -77,6 +90,9 @@ module.exports.getOldMessages = async (sender, receiver, page = 1) => {
         { sender, receiver },
         { sender: receiver, receiver: sender, opened: true },
       ],
+    },
+    orderBy: {
+      date: "asc",
     },
   });
   return res;

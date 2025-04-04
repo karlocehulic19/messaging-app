@@ -1,1 +1,2 @@
 module.exports.MESSAGES_PER_REQUEST = 25;
+module.exports.MESSAGES_TIMESTAMP_THRESHOLD_SECONDS = 20;

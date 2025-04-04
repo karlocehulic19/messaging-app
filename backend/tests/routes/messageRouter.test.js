@@ -1,12 +1,18 @@
 const messageRouter = require("../../routes/messageRouter");
 const authRouter = require("../../routes/authRouter");
-const { MESSAGES_PER_REQUEST } = require("../../utils/constants");
+const {
+  MESSAGES_PER_REQUEST,
+  MESSAGES_TIMESTAMP_THRESHOLD_SECONDS,
+} = require("../../utils/constants");
 
 const { app, request } = require("../setupApp")((app) => {
   require("../../config/passport").config();
   app.use("/messages", messageRouter);
   app.use("/", authRouter);
 });
+
+const MOCK_SYSTEM_TIME = "2025-03-18T13:08:43.024Z";
+const mockedSystemDate = new Date(MOCK_SYSTEM_TIME);
 
 const setup = () => {
   const messagesPost = () => request(app).post("/messages");
@@ -80,8 +86,6 @@ const setupUsers = async () => {
   };
 };
 
-const MOCK_SYSTEM_TIME = "2025-03-18T13:08:43.024Z";
-
 describe("messages router", () => {
   it("GET sends an message to an user", async () => {
     const { user1, user2, bearerToken1, messagesPost, user2MessagesGet } =
@@ -93,6 +97,7 @@ describe("messages router", () => {
         sender: user1.username,
         receiver: user2.username,
         message: "Some random message",
+        clientTimestamp: mockedSystemDate,
       })
       .set("Authorization", bearerToken1);
     expect(sendReq.status).toBe(200);
@@ -111,6 +116,7 @@ describe("messages router", () => {
         sender: user1.username,
         receiver: user2.username,
         message: "Some random message",
+        clientTimestamp: mockedSystemDate,
       })
       .set("Authorization", bearerToken1);
     expect(sendReq.status).toBe(200);
@@ -131,6 +137,7 @@ describe("messages router", () => {
         sender: user2.username,
         receiver: user1.username,
         message: "Meantime message",
+        clientTimestamp: mockedSystemDate,
       })
       .set("Authorization", bearerToken2);
 
@@ -139,6 +146,7 @@ describe("messages router", () => {
         sender: user1.username,
         receiver: user2.username,
         message: "Some message",
+        clientTimestamp: mockedSystemDate,
       })
       .set("Authorization", bearerToken1);
     expect(afterMeantimeReq.body).toMatchSnapshot();
@@ -159,6 +167,7 @@ describe("messages router", () => {
         sender: user1.username,
         receiver: user2.username,
         message: "Some message that shouldn't be fetched",
+        clientTimestamp: mockedSystemDate,
       })
       .set("Authorization", bearerToken1);
 
@@ -177,6 +186,7 @@ describe("messages router", () => {
         sender: user1.username,
         receiver: user2.username,
         message: "Some message",
+        clientTimestamp: mockedSystemDate,
       })
       .expect(401);
   });
@@ -188,6 +198,7 @@ describe("messages router", () => {
         sender: user1.username,
         receiver: user2.username,
         message: "Some message",
+        clientTimestamp: mockedSystemDate,
       })
       .set("Authorization", bearerToken2)
       .expect(401);
@@ -206,6 +217,7 @@ describe("messages router", () => {
       .send({
         receiver: user2.username,
         message: "Some message",
+        clientTimestamp: mockedSystemDate,
       })
       .set("Authorization", bearerToken1);
 
@@ -216,6 +228,7 @@ describe("messages router", () => {
       .send({
         sender: user1.username,
         message: "Some message",
+        clientTimestamp: mockedSystemDate,
       })
       .set("Authorization", bearerToken1);
 
@@ -229,10 +242,56 @@ describe("messages router", () => {
     expect(response.statusCode).toBe(400);
   });
 
-  // it("POST message date to one the time user sent request not the time server heard request", async () => {
-  //   vi.setSystemTime(new Date(2025, 2, 30, 1))
+  it("POST message date to one the time user sent request not the time server heard request", async () => {
+    const { user1, user2, bearerToken1, messagesPost } = await setupUsers();
 
-  // })
+    const clientMs =
+      mockedSystemDate - 1000 * (MESSAGES_TIMESTAMP_THRESHOLD_SECONDS + 1);
+    const clientTime = new Date(clientMs);
+
+    const response = await messagesPost()
+      .send({
+        sender: user1.username,
+        receiver: user2.username,
+        message: "Delayed message",
+        clientTimestamp: clientTime,
+      })
+      .set("Authorization", bearerToken1);
+
+    expect(response.body).toEqual({
+      error: "Client timestamp delay is too big",
+    });
+    expect(response.status).toBe(400);
+  });
+
+  it("GET sends messages based on clients timestamp not request timestamp", async () => {
+    const { user1, user2, bearerToken1, messagesPost, user2MessagesGet } =
+      await setupUsers();
+
+    await messagesPost()
+      .send({
+        sender: user1.username,
+        receiver: user2.username,
+        message:
+          "Second message that arrived to server first (delayed 5 seconds)",
+        clientTimestamp: new Date(mockedSystemDate - 1000 * 5),
+      })
+      .set("Authorization", bearerToken1);
+
+    await messagesPost()
+      .send({
+        sender: user1.username,
+        receiver: user2.username,
+        // Technically they arrived at the same time in our test suite but that should't affect actual validity of test
+        message:
+          "First message that arrived later to the server (delayed 10 seconds)",
+        clientTimestamp: new Date(mockedSystemDate - 1000 * 10),
+      })
+      .set("Authorization", bearerToken1);
+
+    const response = await user2MessagesGet();
+    expect(response.body).toMatchSnapshot();
+  });
 
   describe("/messages/old", () => {
     it("GET sends old messages", async () => {
@@ -251,6 +310,7 @@ describe("messages router", () => {
           sender: user1.username,
           receiver: user2.username,
           message: "Some message",
+          clientTimestamp: mockedSystemDate,
         })
         .set("Authorization", bearerToken1);
 
@@ -306,6 +366,7 @@ describe("messages router", () => {
           sender: user2.username,
           receiver: user1.username,
           message: "Some message",
+          clientTimestamp: mockedSystemDate,
         })
         .set("Authorization", bearerToken2);
 
@@ -329,6 +390,7 @@ describe("messages router", () => {
           receiver: user3.username,
           sender: user1.username,
           message: "From user1 to user3",
+          clientTimestamp: mockedSystemDate,
         })
         .set("Authorization", bearerToken1);
 
@@ -337,6 +399,7 @@ describe("messages router", () => {
           receiver: user3.username,
           sender: user2.username,
           message: "From user2 to user3",
+          clientTimestamp: mockedSystemDate,
         })
         .set("Authorization", bearerToken2);
 
@@ -373,6 +436,7 @@ describe("messages router", () => {
           sender: user2.username,
           receiver: user1.username,
           message: "Some message that shouldn't be fetched",
+          clientTimestamp: mockedSystemDate,
         })
         .set("Authorization", bearerToken2);
 
@@ -418,6 +482,7 @@ describe("messages router", () => {
               sender: user1.username,
               receiver: user2.username,
               message: `${n}. message`,
+              clientTimestamp: mockedSystemDate,
             })
             .set("Authorization", bearerToken1)
         );
@@ -445,6 +510,7 @@ describe("messages router", () => {
               sender: user1.username,
               receiver: user2.username,
               message: `${n}. message`,
+              clientTimestamp: mockedSystemDate,
             })
             .set("Authorization", bearerToken1)
         );
@@ -462,6 +528,43 @@ describe("messages router", () => {
 
       const body = response.body;
       expect(body).toHaveLength(4);
+    });
+
+    it("GET sends opened messages in order", async () => {
+      const {
+        user1,
+        bearerToken1,
+        bearerToken2,
+        user2,
+        messagesPost,
+        messagesOldGet,
+        user2MessagesGet,
+      } = await setupUsers();
+      const requests = [];
+
+      for (let n = 0; n < 5; n++) {
+        requests.push(
+          messagesPost()
+            .send({
+              sender: user1.username,
+              receiver: user2.username,
+              message: `${n}. message`,
+              clientTimestamp: new Date(mockedSystemDate - (5 - n) * 1000),
+            })
+            .set("Authorization", bearerToken1)
+        );
+      }
+
+      await Promise.all(requests);
+      await user2MessagesGet();
+
+      const response = await messagesOldGet(
+        user2.username,
+        user1.username,
+        bearerToken2
+      );
+
+      expect(response.body).toMatchSnapshot();
     });
   });
 });

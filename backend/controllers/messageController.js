@@ -1,6 +1,7 @@
 const queries = require("../db/queries");
 const asyncHandler = require("express-async-handler");
 const validateBodyProps = require("../middleware/validateBodyProps");
+const { MESSAGES_TIMESTAMP_THRESHOLD_SECONDS } = require("../utils/constants");
 
 const constructMessages = async (sender, receiver) => {
   return (await queries.getNewMessages(sender, receiver)).map((msg) => ({
@@ -9,11 +10,24 @@ const constructMessages = async (sender, receiver) => {
   }));
 };
 
-const messagePostBodyProps = ["sender", "receiver", "message"];
+const messagePostBodyProps = [
+  "sender",
+  "receiver",
+  "message",
+  "clientTimestamp",
+];
 
 module.exports.messagePost = [
   validateBodyProps(messagePostBodyProps),
   asyncHandler(async (req, res) => {
+    if (
+      new Date() - new Date(req.body.clientTimestamp) >
+      1000 * MESSAGES_TIMESTAMP_THRESHOLD_SECONDS
+    ) {
+      return res.status(400).send({
+        error: "Client timestamp delay is too big",
+      });
+    }
     const userUsername = req.body.sender;
     const messagePartner = req.body.receiver;
 
@@ -24,7 +38,8 @@ module.exports.messagePost = [
     await queries.sendMessage(
       req.body.sender,
       req.body.receiver,
-      req.body.message
+      req.body.message,
+      new Date(req.body.clientTimestamp)
     );
 
     const messages = await constructMessages(messagePartner, userUsername);
@@ -56,7 +71,7 @@ const oldMessagesGetBodyProps = ["user", "partner"];
 
 module.exports.oldMessagesGet = [
   validateBodyProps(oldMessagesGetBodyProps),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     if (req.user.username != req.body.user) return res.sendStatus(401);
     res.send(
       await queries.getOldMessages(
@@ -65,5 +80,5 @@ module.exports.oldMessagesGet = [
         req.query.page
       )
     );
-  },
+  }),
 ];
