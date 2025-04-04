@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const client = new PrismaClient();
+const { MESSAGES_PER_REQUEST } = require("../utils/constants");
 
 module.exports.getUserByUsername = async (username) => {
   return await client.user.findFirst({
@@ -68,8 +69,6 @@ module.exports.getNewMessages = async (sender, receiver) => {
 };
 
 module.exports.getOldMessages = async (sender, receiver, page = 1) => {
-  const MESSAGES_PER_REQUEST = 25;
-
   const res = await client.message.findMany({
     skip: (page - 1) * MESSAGES_PER_REQUEST,
     take: MESSAGES_PER_REQUEST,

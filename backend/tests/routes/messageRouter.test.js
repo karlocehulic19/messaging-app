@@ -1,5 +1,6 @@
 const messageRouter = require("../../routes/messageRouter");
 const authRouter = require("../../routes/authRouter");
+const { MESSAGES_PER_REQUEST } = require("../../utils/constants");
 
 const { app, request } = require("../setupApp")((app) => {
   require("../../config/passport").config();
@@ -228,6 +229,11 @@ describe("messages router", () => {
     expect(response.statusCode).toBe(400);
   });
 
+  // it("POST message date to one the time user sent request not the time server heard request", async () => {
+  //   vi.setSystemTime(new Date(2025, 2, 30, 1))
+
+  // })
+
   describe("/messages/old", () => {
     it("GET sends old messages", async () => {
       const {
@@ -400,7 +406,7 @@ describe("messages router", () => {
       expect(response.status).toBe(401);
     });
 
-    it("GET only first 25 messages if page not specified", async () => {
+    it(`GET only first ${MESSAGES_PER_REQUEST} messages if page not specified`, async () => {
       const { user1, bearerToken1, user2, messagesPost, messagesOldGet } =
         await setupUsers();
       const requests = [];
@@ -425,7 +431,7 @@ describe("messages router", () => {
         bearerToken1
       );
       const body = response.body;
-      expect(body).toHaveLength(25);
+      expect(body).toHaveLength(MESSAGES_PER_REQUEST);
     });
 
     it("GET page specific number of messages", async () => {
