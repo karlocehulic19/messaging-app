@@ -325,9 +325,7 @@ describe("messages router", () => {
       expect(response1.body).toEqual([
         {
           date: MOCK_SYSTEM_TIME,
-          id: expect.any(String),
           message: "Some message",
-          opened: true,
           sender: user1.username,
           receiver: user2.username,
         },
@@ -341,9 +339,7 @@ describe("messages router", () => {
       expect(response2.body).toEqual([
         {
           date: MOCK_SYSTEM_TIME,
-          id: expect.any(String),
           message: "Some message",
-          opened: true,
           sender: user1.username,
           receiver: user2.username,
         },
@@ -413,9 +409,7 @@ describe("messages router", () => {
       expect(response1.body).toEqual([
         {
           date: MOCK_SYSTEM_TIME,
-          id: expect.any(String),
           message: "Some message",
-          opened: true,
           sender: user2.username,
           receiver: user1.username,
         },

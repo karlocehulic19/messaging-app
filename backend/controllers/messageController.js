@@ -10,6 +10,21 @@ const constructMessages = async (sender, receiver) => {
   }));
 };
 
+const constructOldMessages = async (
+  sender,
+  receiver,
+  pageNumber = undefined
+) => {
+  return (await queries.getOldMessages(sender, receiver, pageNumber)).map(
+    (msg) => ({
+      date: msg.date,
+      message: msg.message,
+      sender: msg.sender,
+      receiver: msg.receiver,
+    })
+  );
+};
+
 const messagePostBodyProps = [
   "sender",
   "receiver",
@@ -74,7 +89,7 @@ module.exports.oldMessagesGet = [
   asyncHandler(async (req, res) => {
     if (req.user.username != req.body.user) return res.sendStatus(401);
     res.send(
-      await queries.getOldMessages(
+      await constructOldMessages(
         req.body.user,
         req.body.partner,
         req.query.page
