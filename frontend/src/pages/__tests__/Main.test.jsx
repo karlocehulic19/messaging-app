@@ -9,6 +9,7 @@ import { defaultTestUser, secondTestUser } from "../../mocks/handlers";
 import { server } from "../../mocks/node";
 import { http, HttpResponse } from "msw";
 import { config } from "../../Constants";
+import { Test2InstantMessage } from "../../mocks/handlers";
 
 const setup = (initialEntries = ["/"]) => {
   localStorage.setItem("site", "randomJWTtoken");
@@ -26,11 +27,17 @@ const setupMessage = async (initialEntries = ["/Test"]) => {
 
   const user = userEvent.setup();
   const messageInput = await screen.findByRole("textbox");
+  const firstMessageText = "Hello World";
+
   await user.click(messageInput);
-  await user.keyboard("Hello world");
+  await user.keyboard("Hello World");
   vi.resetAllMocks();
 
-  return { user, messageInput };
+  async function sendMessage() {
+    await user.click(screen.getByRole("button", { name: "Send button" }));
+  }
+
+  return { user, messageInput, sendMessage, firstMessageText };
 };
 
 describe("<Main />", () => {
@@ -89,11 +96,12 @@ describe("<Main />", () => {
 
   it("sends a message using send button", async () => {
     vi.setSystemTime("2025-04-04T20:33:37.997Z");
-    const { user, messageInput } = await setupMessage();
+    const { firstMessageText, messageInput, sendMessage } =
+      await setupMessage();
 
     const customFetchSpy = vi.spyOn(customFetch, "default");
 
-    await user.click(screen.getByRole("button", { name: "Send button" }));
+    await sendMessage();
 
     expect(customFetchSpy.mock.calls[0][0]).toBe("/messages");
     expect(customFetchSpy.mock.calls[0][1]).toEqual({
@@ -102,11 +110,11 @@ describe("<Main />", () => {
       body: JSON.stringify({
         sender: defaultTestUser.username,
         receiver: secondTestUser.username,
-        message: "Hello world",
+        message: firstMessageText,
         clientTimestamp: new Date(),
       }),
     });
-    const message = screen.getByText("Hello world");
+    const message = screen.getByText(firstMessageText);
     const timeStamp = screen.getByText("22:33");
     expect(message).toBeInTheDocument();
     expect(timeStamp).toBeInTheDocument();
@@ -116,7 +124,7 @@ describe("<Main />", () => {
   it("sends a message using enter button", async () => {
     vi.setSystemTime("2025-04-04T20:33:37.997Z");
 
-    const { user } = await setupMessage();
+    const { user, firstMessageText } = await setupMessage();
 
     const customFetchSpy = vi.spyOn(customFetch, "default");
 
@@ -129,7 +137,7 @@ describe("<Main />", () => {
       body: JSON.stringify({
         sender: defaultTestUser.username,
         receiver: secondTestUser.username,
-        message: "Hello world",
+        message: firstMessageText,
         clientTimestamp: new Date(),
       }),
     });
@@ -146,16 +154,16 @@ describe("<Main />", () => {
 
   it("displays new messages fetched when sent", async () => {
     vi.spyOn(console, "error").mockImplementationOnce(() => undefined);
-    const { user } = await setupMessage(["/Test2"]);
+    const { sendMessage, firstMessageText } = await setupMessage(["/Test2"]);
 
-    await user.click(screen.getByRole("button", { name: "Send button" }));
+    await sendMessage();
 
-    const newMessage = await screen.findByText("Hello world from partner");
-    const oldMessage = screen.getByText("Hello world");
+    const newMessage = await screen.findByText(Test2InstantMessage);
+    const oldMessage = screen.getByText(firstMessageText);
 
     expect(newMessage).toBeInTheDocument();
 
-    const messages = screen.getAllByLabelText("message");
+    const messages = screen.getAllByLabelText(/message/);
     expect(messages[0]).toBe(newMessage);
     expect(messages[1]).toBe(oldMessage);
   });
@@ -166,14 +174,24 @@ describe("<Main />", () => {
         HttpResponse.error()
       )
     );
-    const { user } = await setupMessage();
+    const { sendMessage, firstMessageText } = await setupMessage();
 
     vi.spyOn(console, "error").mockImplementationOnce(() => undefined);
-    await user.click(screen.getByRole("button", { name: "Send button" }));
+    await sendMessage();
 
     const errorPopup = screen.getByRole("alert");
     expect(errorPopup).toBeInTheDocument();
 
-    expect(screen.getByRole("textbox")).toHaveValue("Hello world");
+    expect(screen.getByRole("textbox")).toHaveValue(firstMessageText);
+  });
+
+  it("distinguishes messages from client and partner", async () => {
+    vi.spyOn(console, "error").mockImplementationOnce(() => undefined);
+    const { sendMessage } = await setupMessage(["/Test2"]);
+
+    await sendMessage();
+
+    await screen.findByLabelText("Partner's message");
+    expect(screen.queryByLabelText("Your message")).toBeInTheDocument();
   });
 });

@@ -25,6 +25,8 @@ export const secondTestUser = {
   id: "someUUIDforTest",
 };
 
+export const Test2InstantMessage = "Hello from Test2";
+
 export const profPic1 = new Jimp({ height: 200, width: 200 }, "#FFFFFF");
 export const profPic1Buffer = profPic1.getBuffer("image/jpeg");
 export const defaultProfPic = new Jimp({ height: 200, width: 200 }, "#AAAAAA");
@@ -166,7 +168,7 @@ export const handlers = [
       return HttpResponse.json([
         {
           date: new Date(new Date() - 1000 * 60),
-          message: "Hello world from partner",
+          message: Test2InstantMessage,
         },
       ]);
     }

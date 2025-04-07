@@ -1,7 +1,7 @@
-import styles from "./styles/MessagingInterface.module.css";
 import SendIcon from "../icons/send-button.svg?react";
 import { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
+import styles from "./styles/MessageSendActions.module.css";
 
 export default function MessageSendActions({
   handleMessageSend,

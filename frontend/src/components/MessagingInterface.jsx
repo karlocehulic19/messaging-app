@@ -31,7 +31,15 @@ export default function MessagingInterface({ receiverUsername }) {
     })
       .then((response) => response.json())
       .then((receivedMessages) => {
-        setMessages((prev) => [...prev, ...receivedMessages]);
+        setMessages((prev) => [
+          ...prev,
+          ...receivedMessages.map((msg) => ({
+            date: msg.date,
+            message: msg.message,
+            sender: receiverUsername,
+            receiver: user.username,
+          })),
+        ]);
         setMessages((prev) => {
           return [
             ...prev,
