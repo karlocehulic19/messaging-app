@@ -95,13 +95,13 @@ describe("<Main />", () => {
     expect(customFetchSpy.mock.calls[0][0]).toBe("/messages");
     expect(customFetchSpy.mock.calls[0][1]).toEqual({
       method: "POST",
-      headers: { Authorization: "someJWTtoken" },
-      body: {
+      headers: { Authorization: "Bearer randomJWTtoken" },
+      body: JSON.stringify({
         sender: defaultTestUser.username,
         receiver: secondTestUser.username,
         message: "Hello world",
         clientTimestamp: new Date(),
-      },
+      }),
     });
     const message = screen.getByText("Hello world");
     const timeStamp = screen.getByText("22:33");
@@ -122,13 +122,13 @@ describe("<Main />", () => {
     expect(customFetchSpy.mock.calls[0][0]).toBe("/messages");
     expect(customFetchSpy.mock.calls[0][1]).toEqual({
       method: "POST",
-      headers: { Authorization: "someJWTtoken" },
-      body: {
+      headers: { Authorization: "Bearer randomJWTtoken" },
+      body: JSON.stringify({
         sender: defaultTestUser.username,
         receiver: secondTestUser.username,
         message: "Hello world",
         clientTimestamp: new Date(),
-      },
+      }),
     });
   });
 

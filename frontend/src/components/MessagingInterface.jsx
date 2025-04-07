@@ -8,7 +8,7 @@ import { useAuth } from "../hooks/useAuth";
 import MessagesLoader from "./MessagesLoader";
 
 export default function MessagingInterface({ receiverUsername }) {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const profilePictureSrc = useProfilePicture(receiverUsername);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
@@ -18,14 +18,14 @@ export default function MessagingInterface({ receiverUsername }) {
     customFetch("/messages", {
       method: "POST",
       headers: {
-        Authorization: "someJWTtoken",
+        Authorization: `Bearer ${token}`,
       },
-      body: {
+      body: JSON.stringify({
         sender: user.username,
         receiver: receiverUsername,
         message: message,
         clientTimestamp: new Date(),
-      },
+      }),
     });
 
     setMessages((prev) => [
@@ -39,7 +39,7 @@ export default function MessagingInterface({ receiverUsername }) {
     ]);
 
     setMessage("");
-  }, [user, message, receiverUsername]);
+  }, [user, message, receiverUsername, token]);
 
   useEffect(() => {
     const enterEventHandler = (e) => {
