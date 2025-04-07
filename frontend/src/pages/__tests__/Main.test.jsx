@@ -18,8 +18,8 @@ const setup = (initialEntries = ["/"]) => {
   );
 };
 
-const setupMessage = async () => {
-  setup(["/Test"]);
+const setupMessage = async (initialEntries = ["/Test"]) => {
+  setup(initialEntries);
 
   const user = userEvent.setup();
   const messageInput = await screen.findByRole("textbox");
@@ -139,5 +139,16 @@ describe("<Main />", () => {
     await user.keyboard("{Enter}");
 
     expect(screen.getByText("22:03")).toBeInTheDocument();
+  });
+
+  it("displays new messages fetched when sent", async () => {
+    vi.spyOn(console, "error").mockImplementationOnce(() => undefined);
+    const { user } = await setupMessage(["/Test2"]);
+
+    await user.click(screen.getByRole("button", { name: "Send button" }));
+
+    expect(
+      await screen.findByText("Hello world from partner")
+    ).toBeInTheDocument();
   });
 });

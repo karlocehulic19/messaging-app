@@ -160,7 +160,20 @@ export const handlers = [
     });
   }),
 
-  http.post(`${BACKEND_URL}/messages`, () => {
+  http.post(`${BACKEND_URL}/messages`, async ({ request }) => {
+    const body = await request.json();
+    if (body.receiver == "Test2") {
+      return HttpResponse.json([
+        {
+          date: new Date(new Date() - 1000 * 60 * 2),
+          message: "Hello world from partner 2",
+        },
+        {
+          date: new Date(new Date() - 1000 * 60),
+          message: "Hello world from partner",
+        },
+      ]);
+    }
     return HttpResponse.json([]);
   }),
 ];

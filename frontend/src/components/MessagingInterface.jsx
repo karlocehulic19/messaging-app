@@ -26,7 +26,11 @@ export default function MessagingInterface({ receiverUsername }) {
         message: message,
         clientTimestamp: new Date(),
       }),
-    });
+    })
+      .then((response) => response.json())
+      .then((receivedMessages) => {
+        setMessages((prev) => [...prev, ...receivedMessages]);
+      });
 
     setMessages((prev) => [
       ...prev,
