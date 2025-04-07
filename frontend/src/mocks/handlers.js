@@ -165,10 +165,6 @@ export const handlers = [
     if (body.receiver == "Test2") {
       return HttpResponse.json([
         {
-          date: new Date(new Date() - 1000 * 60 * 2),
-          message: "Hello world from partner 2",
-        },
-        {
           date: new Date(new Date() - 1000 * 60),
           message: "Hello world from partner",
         },

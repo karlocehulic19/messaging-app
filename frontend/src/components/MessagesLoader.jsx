@@ -7,7 +7,7 @@ export default function MessagesLoader({ messages = [] }) {
     <main>
       {messages.map((msg) => {
         return (
-          <div key={uniqueId()}>
+          <div key={uniqueId()} aria-label="message">
             {msg.message}
             <span>{format(new Date(msg.date), "HH:mm")}</span>
           </div>

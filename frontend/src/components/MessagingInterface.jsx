@@ -1,18 +1,20 @@
 import PropTypes from "prop-types";
 import { useProfilePicture } from "../hooks/useProfilePicture";
-import SendIcon from "../icons/send-button.svg?react";
 import styles from "./styles/MessagingInterface.module.css";
 import customFetch from "../utils/customFetch";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useAuth } from "../hooks/useAuth";
 import MessagesLoader from "./MessagesLoader";
+import ErrorPopup from "./ErrorPopup";
+import apiErrorLogger from "../utils/apiErrorLogger";
+import MessageSendActions from "./MessageSendActions";
 
 export default function MessagingInterface({ receiverUsername }) {
   const { user, token } = useAuth();
   const profilePictureSrc = useProfilePicture(receiverUsername);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
-  const messagingInput = useRef();
+  const errorPopup = useRef();
 
   const handleMessageSend = useCallback(() => {
     customFetch("/messages", {
@@ -30,30 +32,24 @@ export default function MessagingInterface({ receiverUsername }) {
       .then((response) => response.json())
       .then((receivedMessages) => {
         setMessages((prev) => [...prev, ...receivedMessages]);
+        setMessages((prev) => {
+          return [
+            ...prev,
+            {
+              sender: user.username,
+              receiver: receiverUsername,
+              date: new Date(),
+              message,
+            },
+          ];
+        });
+        setMessage("");
+      })
+      .catch((error) => {
+        errorPopup.current.toggle();
+        apiErrorLogger(error);
       });
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        sender: user.username,
-        receiver: receiverUsername,
-        date: new Date(),
-        message,
-      },
-    ]);
-
-    setMessage("");
   }, [user, message, receiverUsername, token]);
-
-  useEffect(() => {
-    const enterEventHandler = (e) => {
-      if (e.code == "Enter") handleMessageSend();
-    };
-    const prevMsgInput = messagingInput.current;
-    messagingInput.current.addEventListener("keydown", enterEventHandler);
-
-    return () => prevMsgInput.removeEventListener("keydown", enterEventHandler);
-  }, [handleMessageSend]);
 
   return (
     <>
@@ -65,28 +61,13 @@ export default function MessagingInterface({ receiverUsername }) {
         />
         <h1>{receiverUsername}</h1>
       </header>
+      <ErrorPopup ref={errorPopup} />
       <MessagesLoader messages={messages} />
-      <div id={styles["messaging-container"]}>
-        <div id={styles["msg-action-container"]}>
-          <input
-            ref={messagingInput}
-            onSubmit={handleMessageSend}
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            id={styles["message-input"]}
-            type="text"
-            aria-label="Message input"
-            placeholder="Type your message here..."
-          />
-          <button
-            onClick={handleMessageSend}
-            id={styles["send-button"]}
-            aria-label="Send button"
-          >
-            <SendIcon className={styles["send-icon"]} />
-          </button>
-        </div>
-      </div>
+      <MessageSendActions
+        setMessage={setMessage}
+        message={message}
+        handleMessageSend={handleMessageSend}
+      />
     </>
   );
 }

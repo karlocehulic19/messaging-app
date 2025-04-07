@@ -6,6 +6,9 @@ import { vi } from "vitest";
 import { userEvent } from "@testing-library/user-event";
 import * as customFetch from "../../utils/customFetch";
 import { defaultTestUser, secondTestUser } from "../../mocks/handlers";
+import { server } from "../../mocks/node";
+import { http, HttpResponse } from "msw";
+import { config } from "../../Constants";
 
 const setup = (initialEntries = ["/"]) => {
   localStorage.setItem("site", "randomJWTtoken");
@@ -147,8 +150,30 @@ describe("<Main />", () => {
 
     await user.click(screen.getByRole("button", { name: "Send button" }));
 
-    expect(
-      await screen.findByText("Hello world from partner")
-    ).toBeInTheDocument();
+    const newMessage = await screen.findByText("Hello world from partner");
+    const oldMessage = screen.getByText("Hello world");
+
+    expect(newMessage).toBeInTheDocument();
+
+    const messages = screen.getAllByLabelText("message");
+    expect(messages[0]).toBe(newMessage);
+    expect(messages[1]).toBe(oldMessage);
+  });
+
+  it("displays error popup on invalid message send", async () => {
+    server.use(
+      http.post(`${config.url.BACKEND_URL}/messages`, () =>
+        HttpResponse.error()
+      )
+    );
+    const { user } = await setupMessage();
+
+    vi.spyOn(console, "error").mockImplementationOnce(() => undefined);
+    await user.click(screen.getByRole("button", { name: "Send button" }));
+
+    const errorPopup = screen.getByRole("alert");
+    expect(errorPopup).toBeInTheDocument();
+
+    expect(screen.getByRole("textbox")).toHaveValue("Hello world");
   });
 });
