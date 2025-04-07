@@ -13,6 +13,17 @@ export const defaultTestUser = {
   photoPublicId: null,
   id: "someUUID",
 };
+export const defaultTestUserToken = "randomJWTtoken";
+export const defaultTestUserBearer = `Bearer ${defaultTestUserToken}`;
+
+export const secondTestUser = {
+  firstName: "Test",
+  lastName: "One",
+  username: "Test",
+  password: "TestOne@1",
+  email: "TestOne@some.com",
+  id: "someUUIDforTest",
+};
 
 export const profPic1 = new Jimp({ height: 200, width: 200 }, "#FFFFFF");
 export const profPic1Buffer = profPic1.getBuffer("image/jpeg");
@@ -79,7 +90,7 @@ export const handlers = [
     }
     return HttpResponse.json(
       {
-        token: "randomJWTtoken",
+        token: defaultTestUserToken,
         user: defaultTestUser,
       },
       { status: 200 }
@@ -113,7 +124,7 @@ export const handlers = [
 
   http.post(`${BACKEND_URL}/validate`, async ({ request }) => {
     const authHeader = request.headers.get("Authorization");
-    if (authHeader === "Bearer randomJWTtoken") {
+    if (authHeader === defaultTestUserBearer) {
       return HttpResponse.json(
         {
           user: defaultTestUser,
@@ -147,5 +158,9 @@ export const handlers = [
       newUsername: reqBody.newUsername,
       newEmail: reqBody.newEmail,
     });
+  }),
+
+  http.post(`${BACKEND_URL}/messages`, () => {
+    return HttpResponse.json([]);
   }),
 ];
