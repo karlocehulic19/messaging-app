@@ -11,7 +11,9 @@ export const useMessagePooling = (receiverUsername, setMessages) => {
     // user can initially be undefined but after /validate it gets set
     if (!user) return;
     const poolFetch = () =>
-      customFetch(`/messages?user=${user.username}&partner=${receiverUsername}`)
+      customFetch(
+        `/messages?receiver=${user.username}&sender=${receiverUsername}`
+      )
         .then((res) => {
           if (res.status == 200) return res.json();
           if (res.status == 204) throw new Error("No new messages found");

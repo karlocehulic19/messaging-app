@@ -227,14 +227,14 @@ describe("<Main />", () => {
 
     await act(() => undefined);
     expect(customFetchSpy.mock.calls[3][0]).toBe(
-      `/messages?user=${defaultTestUser.username}&partner=${poolingTestUser.username}`
+      `/messages?receiver=${defaultTestUser.username}&sender=${poolingTestUser.username}`
     );
 
     expect(screen.getByText(TestPoolingMessage)).toBeInTheDocument();
 
     await act(() => vi.advanceTimersByTime(3000));
     expect(customFetchSpy.mock.calls[4][0]).toBe(
-      `/messages?user=${defaultTestUser.username}&partner=${poolingTestUser.username}`
+      `/messages?receiver=${defaultTestUser.username}&sender=${poolingTestUser.username}`
     );
 
     expect(screen.getAllByText(TestPoolingMessage)).toHaveLength(2);
@@ -257,7 +257,7 @@ describe("<Main />", () => {
     await act(() => vi.advanceTimersByTime(3000));
 
     expect(customFetchSpy).not.toHaveBeenCalledWith(
-      `/messages?user=${defaultTestUser.username}&partner=${poolingTestUser.username}`
+      `/messages?receiver=${defaultTestUser.username}&sender=${poolingTestUser.username}`
     );
 
     vi.runOnlyPendingTimers();

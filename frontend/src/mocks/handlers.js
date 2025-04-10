@@ -199,9 +199,9 @@ export const handlers = [
 
   http.get(`${BACKEND_URL}/messages`, ({ request }) => {
     const url = new URL(request.url);
-    const partner = url.searchParams.get("partner");
+    const sender = url.searchParams.get("sender");
 
-    return partner == poolingTestUser.username
+    return sender == poolingTestUser.username
       ? HttpResponse.json([
           {
             date: new Date(new Date() - 60 * 1000),
