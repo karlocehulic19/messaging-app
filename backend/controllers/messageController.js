@@ -97,6 +97,10 @@ module.exports.oldMessagesGet = [
   validateQueryParams(oldMessagesGetQueryParams),
   asyncHandler(async (req, res) => {
     if (req.user.username != req.query.user) return res.sendStatus(401);
+    if ("page" in req.query && (req.query.page === "" || isNaN(req.query.page)))
+      return res.status(400).send({
+        error: "Page query must be either not present or a number",
+      });
     res.send(
       await constructOldMessages(
         req.query.user,

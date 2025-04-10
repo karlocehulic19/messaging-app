@@ -565,5 +565,32 @@ describe("messages router", () => {
 
       expect(response.body).toMatchSnapshot();
     });
+
+    it("GET sends 400 if page query is present but undefined", async () => {
+      const { user1, user2, bearerToken1 } = await setupUsers();
+
+      const response = await request(app)
+        .get(
+          `/messages/old?user=${user1.username}&partner=${user2.username}&page`
+        )
+        .set("Authorization", bearerToken1);
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({
+        error: "Page query must be either not present or a number",
+      });
+    });
+
+    it("GET sends 400 if page query isn't a number", async () => {
+      const { user1, user2, bearerToken1 } = await setupUsers();
+
+      const response = await request(app)
+        .get(
+          `/messages/old?user=${user1.username}&partner=${user2.username}&page=notAnNumber`
+        )
+        .set("Authorization", bearerToken1);
+      expect(response.status).toBe(400);
+      // expect(response.body).toEqual({ error: "Page query must be either not present or a number",
+      // });
+    });
   });
 });
