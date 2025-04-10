@@ -2,6 +2,7 @@ const queries = require("../db/queries");
 const asyncHandler = require("express-async-handler");
 const validateBodyProps = require("../middleware/validateBodyProps");
 const { MESSAGES_TIMESTAMP_THRESHOLD_SECONDS } = require("../utils/constants");
+const validateQueryParams = require("../middleware/validateQueryParams");
 
 const constructMessages = async (sender, receiver) => {
   return (await queries.getNewMessages(sender, receiver)).map((msg) => ({
@@ -62,13 +63,21 @@ module.exports.messagePost = [
   }),
 ];
 
-const messageGetBodyProps = ["sender", "receiver"];
+const messageGetQueryParams = ["sender", "receiver"];
 
 module.exports.messageGet = [
-  validateBodyProps(messageGetBodyProps),
+  validateQueryParams(messageGetQueryParams),
   asyncHandler(async (req, res) => {
-    const userUsername = req.body.receiver;
-    const messagePartner = req.body.sender;
+    const userUsername = req.query.receiver;
+    const messagePartner = req.query.sender;
+    if (!messagePartner || !userUsername) {
+      return res.status(400).send({
+        error: `Missing query parameters: ${!messagePartner ? "sender" : ""}${
+          !messagePartner && !userUsername ? ", " : ""
+        }${!userUsername ? "receiver" : ""}`,
+      });
+    }
+
     if (userUsername != req.user.username) {
       return res.sendStatus(401);
     }
@@ -82,16 +91,16 @@ module.exports.messageGet = [
   }),
 ];
 
-const oldMessagesGetBodyProps = ["user", "partner"];
+const oldMessagesGetQueryParams = ["user", "partner"];
 
 module.exports.oldMessagesGet = [
-  validateBodyProps(oldMessagesGetBodyProps),
+  validateQueryParams(oldMessagesGetQueryParams),
   asyncHandler(async (req, res) => {
-    if (req.user.username != req.body.user) return res.sendStatus(401);
+    if (req.user.username != req.query.user) return res.sendStatus(401);
     res.send(
       await constructOldMessages(
-        req.body.user,
-        req.body.partner,
+        req.query.user,
+        req.query.partner,
         req.query.page
       )
     );

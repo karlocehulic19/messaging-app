@@ -1,5 +1,11 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`messages router > /messages/old > GET sends 400 when missing necessary props 1`] = `
+{
+  "error": "Missing query parameters: user, partner",
+}
+`;
+
 exports[`messages router > /messages/old > GET sends opened messages in order 1`] = `
 [
   {
@@ -33,6 +39,24 @@ exports[`messages router > /messages/old > GET sends opened messages in order 1`
     "sender": "TestUser1",
   },
 ]
+`;
+
+exports[`messages router > GET sends 400 if any of necessary query params are missing 1`] = `
+{
+  "error": "Missing query parameters: sender",
+}
+`;
+
+exports[`messages router > GET sends 400 if any of necessary query params are missing 2`] = `
+{
+  "error": "Missing query parameters: receiver",
+}
+`;
+
+exports[`messages router > GET sends 400 if any of necessary query params are missing 3`] = `
+{
+  "error": "Missing query parameters: sender, receiver",
+}
 `;
 
 exports[`messages router > GET sends an message to an user 1`] = `

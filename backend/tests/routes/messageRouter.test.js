@@ -18,20 +18,12 @@ const setup = () => {
   const messagesPost = () => request(app).post("/messages");
   const messagesGet = (sender, receiver, bearerToken) => {
     return request(app)
-      .get(`/messages`)
-      .send({
-        sender,
-        receiver,
-      })
+      .get(`/messages?sender=${sender}&receiver=${receiver}`)
       .set("Authorization", bearerToken);
   };
   const messagesOldGet = (user, partner, bearerToken) => {
     return request(app)
-      .get("/messages/old")
-      .send({
-        user,
-        partner,
-      })
+      .get(`/messages/old?user=${user}&partner=${partner}`)
       .set("Authorization", bearerToken);
   };
 
@@ -235,11 +227,25 @@ describe("messages router", () => {
     expect(req2.statusCode).toBe(400);
   });
 
-  it("GET sends 400 if any of necessary body props are missing", async () => {
-    const { user1, bearerToken1, messagesGet } = await setupUsers();
-    const response = await messagesGet(undefined, user1.username, bearerToken1);
+  it("GET sends 400 if any of necessary query params are missing", async () => {
+    const { user1, bearerToken1 } = await setupUsers();
+    const missingSenderResponse = await request(app)
+      .get("/messages?receiver=SomeReceiver")
+      .set("Authorization", bearerToken1);
 
-    expect(response.statusCode).toBe(400);
+    expect(missingSenderResponse.statusCode).toBe(400);
+    expect(missingSenderResponse.body).toMatchSnapshot();
+
+    const missingReceiverResponse = await request(app)
+      .get(`/messages?sender=${user1.username}`)
+      .set("Authorization", bearerToken1);
+
+    expect(missingReceiverResponse.body).toMatchSnapshot();
+
+    const missingBothResponse = await request(app)
+      .get(`/messages`)
+      .set("Authorization", bearerToken1);
+    expect(missingBothResponse.body).toMatchSnapshot();
   });
 
   it("POST message date to one the time user sent request not the time server heard request", async () => {
@@ -450,6 +456,7 @@ describe("messages router", () => {
         .get("/messages/old")
         .set("Authorization", bearerToken1);
       expect(response.status).toBe(400);
+      expect(response.body).toMatchSnapshot();
     });
 
     it("GET sends 401 if bearer token doesn't match user", async () => {
@@ -513,11 +520,9 @@ describe("messages router", () => {
       await Promise.all(requests);
 
       const response = await request(app)
-        .get("/messages/old?page=2")
-        .send({
-          user: user1.username,
-          partner: user2.username,
-        })
+        .get(
+          `/messages/old?page=2&user=${user1.username}&partner=${user2.username}`
+        )
         .set("Authorization", bearerToken1);
 
       const body = response.body;
