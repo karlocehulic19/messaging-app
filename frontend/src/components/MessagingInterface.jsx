@@ -19,43 +19,45 @@ export default function MessagingInterface({ receiverUsername }) {
   const errorPopup = useRef();
 
   const handleMessageSend = useCallback(() => {
-    customFetch("/messages", {
-      method: "POST",
-      body: JSON.stringify({
-        sender: user.username,
-        receiver: receiverUsername,
-        message: message,
-        clientTimestamp: new Date(),
-      }),
-    })
-      .then((response) => response.json())
-      .then((receivedMessages) => {
-        setMessages((prev) => [
-          ...prev,
-          ...receivedMessages.map((msg) => ({
-            date: msg.date,
-            message: msg.message,
-            sender: receiverUsername,
-            receiver: user.username,
-          })),
-        ]);
-        setMessages((prev) => {
-          return [
-            ...prev,
-            {
-              sender: user.username,
-              receiver: receiverUsername,
-              date: new Date(),
-              message,
-            },
-          ];
-        });
-        setMessage("");
+    if (message !== "") {
+      customFetch("/messages", {
+        method: "POST",
+        body: JSON.stringify({
+          sender: user.username,
+          receiver: receiverUsername,
+          message: message,
+          clientTimestamp: new Date(),
+        }),
       })
-      .catch((error) => {
-        errorPopup.current.toggle();
-        apiErrorLogger(error);
-      });
+        .then((response) => response.json())
+        .then((receivedMessages) => {
+          setMessages((prev) => [
+            ...prev,
+            ...receivedMessages.map((msg) => ({
+              date: msg.date,
+              message: msg.message,
+              sender: receiverUsername,
+              receiver: user.username,
+            })),
+          ]);
+          setMessages((prev) => {
+            return [
+              ...prev,
+              {
+                sender: user.username,
+                receiver: receiverUsername,
+                date: new Date(),
+                message,
+              },
+            ];
+          });
+          setMessage("");
+        })
+        .catch((error) => {
+          errorPopup.current.toggle();
+          apiErrorLogger(error);
+        });
+    }
   }, [user, message, receiverUsername]);
 
   return (

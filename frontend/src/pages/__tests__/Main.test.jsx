@@ -164,6 +164,17 @@ describe("<Main />", () => {
     });
   });
 
+  it("doesn't send empty messages", async () => {
+    setup(["/" + firstTestUser.username]);
+    const user = userEvent.setup();
+
+    await user.click(
+      await screen.findByRole("button", { name: "Send button" })
+    );
+
+    expect(screen.queryByText("22:33")).not.toBeInTheDocument();
+  });
+
   it("displays message time correctly", async () => {
     vi.setSystemTime("2025-04-04T20:03:37.997Z");
     const { user } = await setupMessage();
