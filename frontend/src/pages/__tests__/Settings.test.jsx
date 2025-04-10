@@ -15,7 +15,13 @@ import * as customFetch from "../../utils/customFetch.js";
 import { server } from "../../mocks/node.js";
 import { delay, http, HttpResponse } from "msw";
 import { config } from "../../Constants.jsx";
-import { defaultTestUser, defaultPicBuffer } from "../../mocks/handlers.js";
+import {
+  defaultTestUser,
+  defaultPicBuffer,
+  secondTestUserBearer,
+  defaultTestUserToken,
+  secondTestUserToken,
+} from "../../mocks/handlers.js";
 import { Jimp } from "jimp";
 import { objectURL, createObjectURlSpy } from "../../mocks/URL.js";
 import { Blob } from "node:buffer";
@@ -43,9 +49,9 @@ function HistoryWrapper({ children }) {
   );
 }
 
-const setupNonFetched = () => {
+const setupNonFetched = (defaultToken = defaultTestUserToken) => {
   const user = userEvent.setup();
-  localStorage.setItem("site", "randomJWTtoken");
+  localStorage.setItem("site", defaultToken);
   render(<Settings />, { wrapper: HistoryWrapper });
 
   const customFetchSpy = vi.spyOn(customFetch, "default");
@@ -429,6 +435,13 @@ describe("<Settings>", () => {
       ).rejects.toThrow(
         /Unable to find a label with the text of: Email input error/
       );
+    });
+
+    it("doesn't halt on loading button if user has no profile picture", async () => {
+      localStorage.setItem("site", secondTestUserBearer);
+      await setupNonFetched(secondTestUserToken);
+
+      expect(await screen.findByText("Update")).toBeInTheDocument();
     });
   });
 });

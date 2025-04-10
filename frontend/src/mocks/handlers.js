@@ -15,6 +15,8 @@ export const defaultTestUser = {
 };
 export const defaultTestUserToken = "randomJWTtoken";
 export const defaultTestUserBearer = `Bearer ${defaultTestUserToken}`;
+export const secondTestUserToken = "secondJWTtoken";
+export const secondTestUserBearer = `Bearer ${secondTestUserToken}`;
 
 export const firstTestUser = {
   firstName: "Test",
@@ -152,6 +154,13 @@ export const handlers = [
       return HttpResponse.json(
         {
           user: defaultTestUser,
+        },
+        { status: 200 }
+      );
+    } else if (authHeader === secondTestUserBearer) {
+      return HttpResponse.json(
+        {
+          user: secondTestUser,
         },
         { status: 200 }
       );

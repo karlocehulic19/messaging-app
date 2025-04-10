@@ -38,9 +38,9 @@ export default function Settings() {
         .then((img) => {
           const picUrl = URL.createObjectURL(img);
           setPrevPicture(picUrl);
-          setUpdateInfo("editing");
         })
-        .catch(apiErrorLogger);
+        .catch(apiErrorLogger)
+        .finally(() => setUpdateInfo("editing"));
     }
   }, [user]);
 
