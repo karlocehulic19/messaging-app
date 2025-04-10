@@ -1,6 +1,6 @@
 import { MemoryRouter } from "react-router-dom";
 import App from "../../App";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import "../../mocks/URL";
 import { vi } from "vitest";
 import { userEvent } from "@testing-library/user-event";
@@ -193,5 +193,21 @@ describe("<Main />", () => {
 
     await screen.findByLabelText("Partner's message");
     expect(screen.queryByLabelText("Your message")).toBeInTheDocument();
+  });
+
+  it("pools for new messages every 3 seconds", async () => {
+    const customFetchSpy = vi.spyOn(customFetch, "default");
+    setup(["/Test"]);
+
+    await waitFor(() =>
+      expect(customFetchSpy.mock.calls[3][0]).toBe("/messages")
+    );
+
+    expect(customFetchSpy.mock.calls[3][1]).toEqual({
+      body: JSON.stringify({
+        sender: defaultTestUser.username,
+        receiver: "/Test",
+      }),
+    });
   });
 });

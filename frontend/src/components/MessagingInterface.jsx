@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useProfilePicture } from "../hooks/useProfilePicture";
 import styles from "./styles/MessagingInterface.module.css";
 import customFetch from "../utils/customFetch";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import MessagesLoader from "./MessagesLoader";
 import ErrorPopup from "./ErrorPopup";
@@ -15,6 +15,14 @@ export default function MessagingInterface({ receiverUsername }) {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const errorPopup = useRef();
+  useEffect(() => {
+    customFetch("/messages", {
+      body: JSON.stringify({
+        sender: "someUsername",
+        receiver: "Test",
+      }),
+    });
+  }, []);
 
   const handleMessageSend = useCallback(() => {
     customFetch("/messages", {

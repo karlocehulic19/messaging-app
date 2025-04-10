@@ -174,4 +174,13 @@ export const handlers = [
     }
     return HttpResponse.json([]);
   }),
+
+  http.get(`${BACKEND_URL}/messages`, () => {
+    return HttpResponse.json([
+      {
+        date: new Date(new Date() - 1000 * 60),
+        message: Test2InstantMessage,
+      },
+    ]);
+  }),
 ];
