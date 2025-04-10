@@ -1,15 +1,36 @@
 import { MemoryRouter } from "react-router-dom";
 import App from "../../App";
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import "../../mocks/URL";
 import { vi } from "vitest";
 import { userEvent } from "@testing-library/user-event";
 import * as customFetch from "../../utils/customFetch";
-import { defaultTestUser, secondTestUser } from "../../mocks/handlers";
+import {
+  defaultTestUser,
+  firstTestUser,
+  poolingTestUser,
+  secondTestUser,
+  TestPoolingMessage,
+} from "../../mocks/handlers";
 import { server } from "../../mocks/node";
 import { http, HttpResponse } from "msw";
-import { config } from "../../Constants";
+import { config, POOLING_INTERVAL_TIME_SECONDS } from "../../Constants";
 import { Test2InstantMessage } from "../../mocks/handlers";
+
+// Overrides react testing libraries tendency to use jest, needed for userEvents with fake timers
+this.jest = vi;
+
+vi.mock("../../utils/apiErrorLogger", async (importOriginal) => ({
+  default: vi.fn(async (error) => {
+    if (
+      ["No new messages found", "No profile picture found"].includes(
+        error.message
+      )
+    )
+      return;
+    (await importOriginal()).default(error);
+  }),
+}));
 
 const setup = (initialEntries = ["/"]) => {
   localStorage.setItem("site", "randomJWTtoken");
@@ -22,7 +43,9 @@ const setup = (initialEntries = ["/"]) => {
   );
 };
 
-const setupMessage = async (initialEntries = ["/Test"]) => {
+const setupMessage = async (
+  initialEntries = ["/" + firstTestUser.username]
+) => {
   setup(initialEntries);
 
   const user = userEvent.setup();
@@ -51,7 +74,7 @@ describe("<Main />", () => {
   });
 
   it("displays messaging interface when correct username is displayed", async () => {
-    setup(["/Test"]);
+    setup(["/" + firstTestUser.username]);
 
     expect(
       await screen.findByRole("heading", { name: "Test" })
@@ -69,16 +92,16 @@ describe("<Main />", () => {
     ).toBeInTheDocument();
 
     const receiverProfilePic = await screen.findByRole("img", {
-      name: "Test's profile picture",
+      name: `${firstTestUser.username}'s profile picture`,
     });
     expect(receiverProfilePic.src).toMatchSnapshot();
   });
 
   it("displays default profile picture on users without one", async () => {
-    setup(["/Test2"]);
+    setup(["/" + secondTestUser.username]);
     vi.spyOn(console, "error").mockImplementationOnce(() => undefined);
     const receiverProfilePic = await screen.findByRole("img", {
-      name: "Test2's profile picture",
+      name: `${secondTestUser.username}'s profile picture`,
     });
 
     expect(receiverProfilePic.src).toMatchSnapshot();
@@ -106,10 +129,9 @@ describe("<Main />", () => {
     expect(customFetchSpy.mock.calls[0][0]).toBe("/messages");
     expect(customFetchSpy.mock.calls[0][1]).toEqual({
       method: "POST",
-      headers: { Authorization: "Bearer randomJWTtoken" },
       body: JSON.stringify({
         sender: defaultTestUser.username,
-        receiver: secondTestUser.username,
+        receiver: firstTestUser.username,
         message: firstMessageText,
         clientTimestamp: new Date(),
       }),
@@ -133,10 +155,9 @@ describe("<Main />", () => {
     expect(customFetchSpy.mock.calls[0][0]).toBe("/messages");
     expect(customFetchSpy.mock.calls[0][1]).toEqual({
       method: "POST",
-      headers: { Authorization: "Bearer randomJWTtoken" },
       body: JSON.stringify({
         sender: defaultTestUser.username,
-        receiver: secondTestUser.username,
+        receiver: firstTestUser.username,
         message: firstMessageText,
         clientTimestamp: new Date(),
       }),
@@ -154,7 +175,9 @@ describe("<Main />", () => {
 
   it("displays new messages fetched when sent", async () => {
     vi.spyOn(console, "error").mockImplementationOnce(() => undefined);
-    const { sendMessage, firstMessageText } = await setupMessage(["/Test2"]);
+    const { sendMessage, firstMessageText } = await setupMessage([
+      "/" + secondTestUser.username,
+    ]);
 
     await sendMessage();
 
@@ -187,7 +210,7 @@ describe("<Main />", () => {
 
   it("distinguishes messages from client and partner", async () => {
     vi.spyOn(console, "error").mockImplementationOnce(() => undefined);
-    const { sendMessage } = await setupMessage(["/Test2"]);
+    const { sendMessage } = await setupMessage(["/" + secondTestUser.username]);
 
     await sendMessage();
 
@@ -195,19 +218,49 @@ describe("<Main />", () => {
     expect(screen.queryByLabelText("Your message")).toBeInTheDocument();
   });
 
-  it("pools for new messages every 3 seconds", async () => {
+  it(`pools for new messages every ${POOLING_INTERVAL_TIME_SECONDS} seconds`, async () => {
     const customFetchSpy = vi.spyOn(customFetch, "default");
-    setup(["/Test"]);
 
-    await waitFor(() =>
-      expect(customFetchSpy.mock.calls[3][0]).toBe("/messages")
+    vi.useRealTimers();
+    vi.useFakeTimers();
+    setup(["/" + poolingTestUser.username]);
+
+    await act(() => undefined);
+    expect(customFetchSpy.mock.calls[3][0]).toBe(
+      `/messages?user=${defaultTestUser.username}&partner=${poolingTestUser.username}`
     );
 
-    expect(customFetchSpy.mock.calls[3][1]).toEqual({
-      body: JSON.stringify({
-        sender: defaultTestUser.username,
-        receiver: "/Test",
-      }),
-    });
+    expect(screen.getByText(TestPoolingMessage)).toBeInTheDocument();
+
+    await act(() => vi.advanceTimersByTime(3000));
+    expect(customFetchSpy.mock.calls[4][0]).toBe(
+      `/messages?user=${defaultTestUser.username}&partner=${poolingTestUser.username}`
+    );
+
+    expect(screen.getAllByText(TestPoolingMessage)).toHaveLength(2);
+
+    vi.runOnlyPendingTimers();
+    vi.useRealTimers();
+  });
+
+  it("doesn't pool if not in messaging gui", async () => {
+    vi.useFakeTimers();
+    setup(["/" + poolingTestUser.username]);
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    const customFetchSpy = vi.spyOn(customFetch, "default");
+
+    await act(() => vi.runOnlyPendingTimers());
+    customFetchSpy.mockClear();
+    await user.click(screen.getByLabelText("Options button"));
+
+    await user.click(screen.getByRole("link", { name: "Settings" }));
+    await act(() => vi.advanceTimersByTime(3000));
+
+    expect(customFetchSpy).not.toHaveBeenCalledWith(
+      `/messages?user=${defaultTestUser.username}&partner=${poolingTestUser.username}`
+    );
+
+    vi.runOnlyPendingTimers();
+    vi.useRealTimers();
   });
 });

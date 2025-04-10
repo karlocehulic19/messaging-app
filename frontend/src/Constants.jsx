@@ -10,4 +10,6 @@ const dev = {
   },
 };
 
+export const POOLING_INTERVAL_TIME_SECONDS = 3;
+
 export const config = import.meta.env.MODE === "production" ? prod : dev;

@@ -16,7 +16,7 @@ export const defaultTestUser = {
 export const defaultTestUserToken = "randomJWTtoken";
 export const defaultTestUserBearer = `Bearer ${defaultTestUserToken}`;
 
-export const secondTestUser = {
+export const firstTestUser = {
   firstName: "Test",
   lastName: "One",
   username: "Test",
@@ -25,7 +25,26 @@ export const secondTestUser = {
   id: "someUUIDforTest",
 };
 
+export const secondTestUser = {
+  firstName: "Test2",
+  lastName: "Two",
+  username: "Test2",
+  password: "TestTwo@1",
+  email: "TestTwo@some.com",
+  id: "someUUIDforTest2",
+};
+
+export const poolingTestUser = {
+  firstName: "Pooling",
+  lastName: "Test",
+  username: "Pooling",
+  password: "Pooling@1",
+  email: "pooling@some.com",
+  id: "someUUIDforPooling",
+};
+
 export const Test2InstantMessage = "Hello from Test2";
+export const TestPoolingMessage = "Hello this is message from pooling!";
 
 export const profPic1 = new Jimp({ height: 200, width: 200 }, "#FFFFFF");
 export const profPic1Buffer = profPic1.getBuffer("image/jpeg");
@@ -33,8 +52,8 @@ export const defaultProfPic = new Jimp({ height: 200, width: 200 }, "#AAAAAA");
 export const defaultPicBuffer = defaultProfPic.getBuffer("image/jpeg");
 
 const db = {
-  Test: {
-    username: "Test",
+  [firstTestUser.username]: {
+    username: firstTestUser.username,
     profilePicture: profPic1Buffer,
   },
   Test2: {
@@ -42,6 +61,9 @@ const db = {
   },
   Tim: {
     username: "Tim",
+  },
+  [poolingTestUser.username]: {
+    username: poolingTestUser.username,
   },
   [defaultTestUser.username]: {
     username: defaultTestUser.username,
@@ -164,7 +186,7 @@ export const handlers = [
 
   http.post(`${BACKEND_URL}/messages`, async ({ request }) => {
     const body = await request.json();
-    if (body.receiver == "Test2") {
+    if (body.receiver == secondTestUser.username) {
       return HttpResponse.json([
         {
           date: new Date(new Date() - 1000 * 60),
@@ -175,12 +197,17 @@ export const handlers = [
     return HttpResponse.json([]);
   }),
 
-  http.get(`${BACKEND_URL}/messages`, () => {
-    return HttpResponse.json([
-      {
-        date: new Date(new Date() - 1000 * 60),
-        message: Test2InstantMessage,
-      },
-    ]);
+  http.get(`${BACKEND_URL}/messages`, ({ request }) => {
+    const url = new URL(request.url);
+    const partner = url.searchParams.get("partner");
+
+    return partner == poolingTestUser.username
+      ? HttpResponse.json([
+          {
+            date: new Date(new Date() - 60 * 1000),
+            message: TestPoolingMessage,
+          },
+        ])
+      : new HttpResponse(null, { status: 204 });
   }),
 ];
