@@ -589,8 +589,9 @@ describe("messages router", () => {
         )
         .set("Authorization", bearerToken1);
       expect(response.status).toBe(400);
-      // expect(response.body).toEqual({ error: "Page query must be either not present or a number",
-      // });
+      expect(response.body).toEqual({
+        error: "Page query must be either not present or a number",
+      });
     });
   });
 });
