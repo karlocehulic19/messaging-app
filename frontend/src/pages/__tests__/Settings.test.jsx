@@ -157,7 +157,7 @@ describe("<Settings>", () => {
       await setup();
     const customFetchSpy = vi.spyOn(customFetch, "default");
 
-    waitFor(() => expect(emailInput.value).toBe("someemail@some.com"));
+    await waitFor(() => expect(emailInput.value).toBe("someemail@some.com"));
     await user.click(emailInput);
     await user.keyboard("{Backspace}{Backspace}{Backspace}net");
     expect(updateButton).toBeEnabled();
@@ -278,7 +278,9 @@ describe("<Settings>", () => {
 
     await user.click(updateButton);
 
-    waitFor(() => expect(updateButton).not.toHaveTextContent("Loading..."));
+    await waitFor(() =>
+      expect(updateButton).not.toHaveTextContent("Loading...")
+    );
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
 
     cleanup();
@@ -294,7 +296,9 @@ describe("<Settings>", () => {
 
     await user2.click(updateButton2);
 
-    waitFor(() => expect(updateButton2).not.toHaveTextContent("Loading..."));
+    await waitFor(() =>
+      expect(updateButton2).not.toHaveTextContent("Loading...")
+    );
     expect(screen.queryByRole("alert")).toBeInTheDocument();
   });
 
