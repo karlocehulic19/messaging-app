@@ -4,74 +4,121 @@ import { Jimp } from "jimp";
 
 const BACKEND_URL = config.url.BACKEND_URL;
 
-export const defaultTestUser = {
-  firstName: "Some",
-  lastName: "Random",
-  username: "someUsername",
-  password: "somePassword",
-  email: "someemail@some.com",
-  photoPublicId: null,
-  id: "someUUID",
-};
-export const defaultTestUserToken = "randomJWTtoken";
-export const defaultTestUserBearer = `Bearer ${defaultTestUserToken}`;
-export const secondTestUserToken = "secondJWTtoken";
-export const secondTestUserBearer = `Bearer ${secondTestUserToken}`;
+class User {
+  static allUsers = {};
 
-export const firstTestUser = {
-  firstName: "Test",
-  lastName: "One",
-  username: "Test",
-  password: "TestOne@1",
-  email: "TestOne@some.com",
-  id: "someUUIDforTest",
-};
+  constructor(
+    firstName,
+    lastName,
+    username,
+    email,
+    password,
+    id,
+    optional = {}
+  ) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.username = username;
+    this.email = email;
+    this.password = password;
+    this.id = id;
+    this.token = optional.token;
+    this.profilePicture = optional.profilePicture;
+    this.photoPublicId = optional.photoPublicId;
 
-export const secondTestUser = {
-  firstName: "Test2",
-  lastName: "Two",
-  username: "Test2",
-  password: "TestTwo@1",
-  email: "TestTwo@some.com",
-  id: "someUUIDforTest2",
-};
+    User.allUsers[this.username] = this;
+  }
 
-export const poolingTestUser = {
-  firstName: "Pooling",
-  lastName: "Test",
-  username: "Pooling",
-  password: "Pooling@1",
-  email: "pooling@some.com",
-  id: "someUUIDforPooling",
-};
+  getBasicObject() {
+    return {
+      firstName: this.firstName,
+      lastName: this.lastName,
+      username: this.username,
+      password: this.password,
+      email: this.email,
+      photoPublicId: this.photoPublicId,
+      id: this.id,
+    };
+  }
+
+  get bearerToken() {
+    if (!this.token)
+      throw new Error(`${this.username} doesn't have defined token`);
+    return `Bearer ${this.token}`;
+  }
+
+  async getPictureBuffer() {
+    if (!this.profilePicture)
+      throw new Error(`${this.username} doesn't have profile picture`);
+    return this.profilePicture.getBuffer("image/jpeg");
+  }
+}
+
+export const defaultTestUser = new User(
+  "Some",
+  "Random",
+  "someUsername",
+  "someemail@some.com",
+  "somePassword",
+  "someUUId",
+  {
+    token: "randomJWTtoken",
+    profilePicture: new Jimp({ height: 200, width: 200 }, "#FFFFFF"),
+  }
+);
+
+export const firstTestUser = new User(
+  "Test",
+  "One",
+  "Test",
+  "testone@some.com",
+  "TestOne@1",
+  "someUUIDforTest",
+  { profilePicture: new Jimp({ height: 200, width: 200 }, "#AAAAAA") }
+);
+
+export const secondTestUser = new User(
+  "Test2",
+  "Two",
+  "Test2",
+  "testtwo@some.com",
+  "TestTwo@1",
+  "someUUIDforTest2",
+  { token: "secondJWTtoken" }
+);
+
+export const TimUser = new User(
+  "Tim",
+  "Timothy",
+  "Tim",
+  "tim@some.com",
+  "TimIsCool@1",
+  "someUUIDforTim"
+);
+
+export const poolingTestUser = new User(
+  "Pooling",
+  "Test",
+  "Pooling",
+  "pooling@some.com",
+  "Pooling@1",
+  "someUUIDforPooling"
+);
+
+export const profPic1 = firstTestUser.profilePicture;
+export const profPic1Buffer = firstTestUser.getPictureBuffer();
+export const defaultProfPic = defaultTestUser.profilePicture;
+export const defaultPicBuffer = defaultTestUser.getPictureBuffer();
+
+export const defaultTestUserToken = defaultTestUser.token;
+export const defaultTestUserBearer = defaultTestUser.bearerToken;
+export const secondTestUserToken = secondTestUser.token;
+export const secondTestUserBearer = secondTestUser.bearerToken;
 
 export const Test2InstantMessage = "Hello from Test2";
 export const TestPoolingMessage = "Hello this is message from pooling!";
 
-export const profPic1 = new Jimp({ height: 200, width: 200 }, "#FFFFFF");
-export const profPic1Buffer = profPic1.getBuffer("image/jpeg");
-export const defaultProfPic = new Jimp({ height: 200, width: 200 }, "#AAAAAA");
-export const defaultPicBuffer = defaultProfPic.getBuffer("image/jpeg");
-
-const db = {
-  [firstTestUser.username]: {
-    username: firstTestUser.username,
-    profilePicture: profPic1Buffer,
-  },
-  Test2: {
-    username: "Test2",
-  },
-  Tim: {
-    username: "Tim",
-  },
-  [poolingTestUser.username]: {
-    username: poolingTestUser.username,
-  },
-  [defaultTestUser.username]: {
-    username: defaultTestUser.username,
-    profilePicture: defaultPicBuffer,
-  },
-};
+const db = User.allUsers;
 
 export const userGetHandler = ({ request }) => {
   const url = new URL(request.url);
@@ -117,7 +164,7 @@ export const handlers = [
     return HttpResponse.json(
       {
         token: defaultTestUserToken,
-        user: defaultTestUser,
+        user: defaultTestUser.getBasicObject(),
       },
       { status: 200 }
     );
@@ -153,14 +200,14 @@ export const handlers = [
     if (authHeader === defaultTestUserBearer) {
       return HttpResponse.json(
         {
-          user: defaultTestUser,
+          user: defaultTestUser.getBasicObject(),
         },
         { status: 200 }
       );
     } else if (authHeader === secondTestUserBearer) {
       return HttpResponse.json(
         {
-          user: secondTestUser,
+          user: secondTestUser.getBasicObject(),
         },
         { status: 200 }
       );
@@ -173,10 +220,13 @@ export const handlers = [
     async ({ params }) => {
       if (Object.keys(db).includes(params.username)) {
         const user = db[params.username];
-        return user.profilePicture
-          ? HttpResponse.arrayBuffer(await user.profilePicture)
-          : new HttpResponse(null, { status: 204 });
+        try {
+          return HttpResponse.arrayBuffer(await user.getPictureBuffer());
+        } catch {
+          return new HttpResponse(null, { status: 204 });
+        }
       }
+
       switch (params.username) {
         case "NoPictureTest":
           return new HttpResponse(null, { status: 204 });

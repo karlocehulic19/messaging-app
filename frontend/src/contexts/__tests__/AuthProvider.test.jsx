@@ -103,7 +103,7 @@ describe("<AuthProvider></AuthProvider>", () => {
     });
     rerender();
 
-    expect(result.current.user).toEqual(defaultTestUser);
+    expect(result.current.user).toEqual(defaultTestUser.getBasicObject());
   });
 
   it("login returns messages on 401", async () => {
