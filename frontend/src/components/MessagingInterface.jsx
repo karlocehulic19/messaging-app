@@ -41,18 +41,13 @@ export default function MessagingInterface({ receiverUsername }) {
               sender: receiverUsername,
               receiver: user.username,
             })),
+            {
+              sender: user.username,
+              receiver: receiverUsername,
+              date: new Date(),
+              message,
+            },
           ]);
-          setMessages((prev) => {
-            return [
-              ...prev,
-              {
-                sender: user.username,
-                receiver: receiverUsername,
-                date: new Date(),
-                message,
-              },
-            ];
-          });
           setMessage("");
         })
         .catch((error) => {
