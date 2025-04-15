@@ -14,6 +14,8 @@ import {
   oldMessagesUser,
   oldMessage,
   userWithoutPicture,
+  dateMessagesUser,
+  firstDateMessage,
 } from "../../mocks/handlers";
 import { server } from "../../mocks/node";
 import { http, HttpResponse } from "msw";
@@ -22,6 +24,7 @@ import { Test2InstantMessage } from "../../mocks/handlers";
 
 // Overrides react testing libraries tendency to use jest, needed for userEvents with fake timers
 this.jest = vi;
+const mockedSystemTime = "2025-04-04T20:33:37.997Z";
 
 vi.mock("../../utils/apiErrorLogger", async (importOriginal) => ({
   default: vi.fn(async (error) => {
@@ -124,7 +127,7 @@ describe("<Main />", () => {
   });
 
   it("sends a message using send button", async () => {
-    vi.setSystemTime("2025-04-04T20:33:37.997Z");
+    vi.setSystemTime(mockedSystemTime);
     const { firstMessageText, messageInput, sendMessage } =
       await setupMessage();
 
@@ -150,7 +153,7 @@ describe("<Main />", () => {
   });
 
   it("sends a message using enter button", async () => {
-    vi.setSystemTime("2025-04-04T20:33:37.997Z");
+    vi.setSystemTime(mockedSystemTime);
 
     const { user, firstMessageText } = await setupMessage();
 
@@ -182,6 +185,7 @@ describe("<Main />", () => {
   });
 
   it("displays message time correctly", async () => {
+    // checking for for leading zeroes in 03
     vi.setSystemTime("2025-04-04T20:03:37.997Z");
     const { user } = await setupMessage();
 
@@ -324,5 +328,13 @@ describe("<Main />", () => {
     );
 
     expect(screen.getByRole("img").src).toBe(defaultPictureSrc);
+  });
+
+  it("displays dates for older messages", async () => {
+    vi.setSystemTime(mockedSystemTime);
+    setup(["/" + dateMessagesUser.username]);
+
+    await screen.findByText(firstDateMessage);
+    expect(screen.getByRole("main").children).toMatchSnapshot();
   });
 });

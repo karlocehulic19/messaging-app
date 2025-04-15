@@ -37,22 +37,6 @@ exports[`<SearchBar /> > display possible search candidates 1`] = `
       Test2
     </span>
   </div>
-  <div
-    aria-label="Tim user"
-    class="_search-card_1db872"
-    tabindex="-1"
-  >
-    <img
-      alt="Tim profile picture"
-      class="profile-picture _profile-picture_1db872"
-      src="/src/assets/default-profile-picture.jpeg"
-    />
-    <span
-      class="_username-span_1db872"
-    >
-      Tim
-    </span>
-  </div>
 </div>
 `;
 
@@ -121,22 +105,6 @@ exports[`<SearchBar /> > displays searching text before users are loaded 3`] = `
       class="_username-span_1db872"
     >
       Test2
-    </span>
-  </div>
-  <div
-    aria-label="Tim user"
-    class="_search-card_1db872"
-    tabindex="-1"
-  >
-    <img
-      alt="Tim profile picture"
-      class="profile-picture _profile-picture_1db872"
-      src="/src/assets/default-profile-picture.jpeg"
-    />
-    <span
-      class="_username-span_1db872"
-    >
-      Tim
     </span>
   </div>
 </div>

@@ -1,5 +1,51 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`<Main /> > displays dates for older messages 1`] = `
+HTMLCollection [
+  <span>
+    Mar 30th
+  </span>,
+  <div
+    aria-label="Partner's message"
+  >
+    First dated message
+    <span>
+      22:33
+    </span>
+  </div>,
+  <div
+    aria-label="Partner's message"
+  >
+    Second message sent on Sun Mar 30 2025 22:33:37 GMT+0200 (Central European Summer Time)
+    <span>
+      22:33
+    </span>
+  </div>,
+  <span>
+    Mar 31st
+  </span>,
+  <div
+    aria-label="Partner's message"
+  >
+    Message sent on Mon Mar 31 2025 22:33:37 GMT+0200 (Central European Summer Time)
+    <span>
+      22:33
+    </span>
+  </div>,
+  <span>
+    Apr 1st
+  </span>,
+  <div
+    aria-label="Partner's message"
+  >
+    Message sent on Tue Apr 01 2025 22:33:37 GMT+0200 (Central European Summer Time)
+    <span>
+      22:33
+    </span>
+  </div>,
+]
+`;
+
 exports[`<Main /> > displays default profile picture on users without one 1`] = `"http://localhost:3000/src/assets/default-profile-picture.jpeg"`;
 
 exports[`<Main /> > displays messaging interface when correct username is displayed 1`] = `"http://localhost:3000/mockedFilePath"`;

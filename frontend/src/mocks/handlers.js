@@ -54,6 +54,19 @@ class User {
   }
 }
 
+const userFactory = (firstName, lastName) => {
+  const username = firstName + lastName;
+
+  return new User(
+    firstName,
+    lastName,
+    username,
+    username.toLowerCase() + "@some.com",
+    username + "@1",
+    `someUUIDfor${username}`
+  );
+};
+
 export const defaultTestUser = new User(
   "Some",
   "Random",
@@ -87,41 +100,10 @@ export const secondTestUser = new User(
   { token: "secondJWTtoken" }
 );
 
-export const TimUser = new User(
-  "Tim",
-  "Timothy",
-  "Tim",
-  "tim@some.com",
-  "TimIsCool@1",
-  "someUUIDforTim"
-);
-
-export const poolingTestUser = new User(
-  "Pooling",
-  "Test",
-  "Pooling",
-  "pooling@some.com",
-  "Pooling@1",
-  "someUUIDforPooling"
-);
-
-export const oldMessagesUser = new User(
-  "Old",
-  "Messages",
-  "OldUser",
-  "oldmsgs@some.com",
-  "OldMessages@1",
-  "someUUIDforOldMEssages"
-);
-
-export const userWithoutPicture = new User(
-  "Without",
-  "Picture",
-  "UserWithoutPicture",
-  "withoutpic@some.com",
-  "Without@1",
-  "someUUIDforNoPic"
-);
+export const poolingTestUser = userFactory("Pooling", "User");
+export const oldMessagesUser = userFactory("Old", "Messages");
+export const userWithoutPicture = userFactory("Without", "Picture");
+export const dateMessagesUser = userFactory("Date", "Messages");
 
 export const profPic1 = firstTestUser.profilePicture;
 export const profPic1Buffer = firstTestUser.getPictureBuffer();
@@ -136,6 +118,7 @@ export const secondTestUserBearer = secondTestUser.bearerToken;
 export const Test2InstantMessage = "Hello from Test2";
 export const TestPoolingMessage = "Hello this is message from pooling!";
 export const oldMessage = `Hello, this is an old message from ${oldMessagesUser.username}`;
+export const firstDateMessage = "First dated message";
 
 const db = User.allUsers;
 
@@ -299,6 +282,38 @@ export const handlers = [
           date: new Date(),
           receiver: defaultTestUser.username,
           sender: oldMessagesUser.username,
+        },
+      ]);
+    }
+    if (partner == dateMessagesUser.username) {
+      const msInDay = 1000 * 60 * 60 * 24;
+      const firstDate = new Date(new Date() - msInDay * 5);
+      const secondDate = new Date(new Date() - msInDay * 4);
+      const thirdDate = new Date(new Date() - msInDay * 3);
+      return HttpResponse.json([
+        {
+          date: firstDate,
+          message: firstDateMessage,
+          receiver: defaultTestUser.username,
+          sender: dateMessagesUser.username,
+        },
+        {
+          date: firstDate,
+          message: `Second message sent on ${firstDate}`,
+          receiver: defaultTestUser.username,
+          sender: dateMessagesUser.username,
+        },
+        {
+          date: secondDate,
+          message: `Message sent on ${secondDate}`,
+          receiver: defaultTestUser.username,
+          sender: dateMessagesUser.username,
+        },
+        {
+          date: thirdDate,
+          message: `Message sent on ${thirdDate}`,
+          receiver: defaultTestUser.username,
+          sender: dateMessagesUser.username,
         },
       ]);
     }
