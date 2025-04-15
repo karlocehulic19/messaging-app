@@ -8,16 +8,13 @@ import MessagesLoader from "./MessagesLoader";
 import ErrorPopup from "./ErrorPopup";
 import apiErrorLogger from "../utils/apiErrorLogger";
 import MessageSendActions from "./MessageSendActions";
-import { useMessagePooling } from "../hooks/useMessagePooling";
-import { useOldMessages } from "../hooks/useOldMessages";
+import { useMessages } from "../hooks/useMessages";
 
 export default function MessagingInterface({ receiverUsername }) {
   const { user } = useAuth();
   const profilePictureSrc = useProfilePicture(receiverUsername);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useMessages(receiverUsername);
   const [message, setMessage] = useState("");
-  useMessagePooling(receiverUsername, setMessages);
-  useOldMessages(receiverUsername, setMessages);
   const errorPopup = useRef();
 
   const handleMessageSend = useCallback(() => {
@@ -55,7 +52,7 @@ export default function MessagingInterface({ receiverUsername }) {
           apiErrorLogger(error);
         });
     }
-  }, [user, message, receiverUsername]);
+  }, [user, message, receiverUsername, setMessages]);
 
   return (
     <>

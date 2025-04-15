@@ -12,6 +12,7 @@ import {
   secondTestUser,
   TestPoolingMessage,
   oldMessagesUser,
+  oldMessage,
 } from "../../mocks/handlers";
 import { server } from "../../mocks/node";
 import { http, HttpResponse } from "msw";
@@ -34,6 +35,7 @@ vi.mock("../../utils/apiErrorLogger", async (importOriginal) => ({
 }));
 
 const setup = (initialEntries = ["/"]) => {
+  const user = userEvent.setup();
   localStorage.setItem("site", "randomJWTtoken");
   render(
     <App
@@ -42,14 +44,16 @@ const setup = (initialEntries = ["/"]) => {
       )}
     />
   );
+
+  return { user };
 };
 
 const setupMessage = async (
   initialEntries = ["/" + firstTestUser.username]
 ) => {
-  setup(initialEntries);
+  const utils = setup(initialEntries);
+  const user = utils.user;
 
-  const user = userEvent.setup();
   const messageInput = await screen.findByRole("textbox");
   const firstMessageText = "Hello World";
 
@@ -61,7 +65,7 @@ const setupMessage = async (
     await user.click(screen.getByRole("button", { name: "Send button" }));
   }
 
-  return { user, messageInput, sendMessage, firstMessageText };
+  return { ...utils, user, messageInput, sendMessage, firstMessageText };
 };
 
 describe("<Main />", () => {
@@ -292,5 +296,16 @@ describe("<Main />", () => {
     ).toHaveLength(1);
 
     expect(screen.getByLabelText("Partner's message")).toBeInTheDocument();
+  });
+
+  it("removes messages when switching partners", async () => {
+    const { user } = setup(["/" + oldMessagesUser.username]);
+
+    await screen.findByText(oldMessage);
+    await user.click(screen.getByRole("searchbox"));
+    await user.keyboard("Test");
+    await user.click(await screen.findByLabelText("Test2 user"));
+
+    expect(screen.queryByText(oldMessage)).not.toBeInTheDocument();
   });
 });

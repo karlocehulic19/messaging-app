@@ -126,6 +126,7 @@ export const secondTestUserBearer = secondTestUser.bearerToken;
 
 export const Test2InstantMessage = "Hello from Test2";
 export const TestPoolingMessage = "Hello this is message from pooling!";
+export const oldMessage = `Hello, this is an old message from ${oldMessagesUser.username}`;
 
 const db = User.allUsers;
 
@@ -285,7 +286,7 @@ export const handlers = [
     if (partner == oldMessagesUser.username) {
       return HttpResponse.json([
         {
-          message: `This is an old message from ${oldMessagesUser.username}`,
+          message: oldMessage,
           date: new Date(),
           receiver: defaultTestUser.username,
           sender: oldMessagesUser.username,
