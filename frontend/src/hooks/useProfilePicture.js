@@ -18,7 +18,10 @@ export const useProfilePicture = (username) => {
         const profPic = URL.createObjectURL(img);
         setProfilePictureSrc(profPic);
       })
-      .catch(apiErrorLogger);
+      .catch((error) => {
+        apiErrorLogger(error);
+        setProfilePictureSrc(defaultProfilePicture);
+      });
   }, [username]);
 
   return profilePictureSrc;

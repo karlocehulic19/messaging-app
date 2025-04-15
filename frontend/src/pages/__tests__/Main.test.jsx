@@ -13,6 +13,7 @@ import {
   TestPoolingMessage,
   oldMessagesUser,
   oldMessage,
+  userWithoutPicture,
 } from "../../mocks/handlers";
 import { server } from "../../mocks/node";
 import { http, HttpResponse } from "msw";
@@ -303,9 +304,25 @@ describe("<Main />", () => {
 
     await screen.findByText(oldMessage);
     await user.click(screen.getByRole("searchbox"));
-    await user.keyboard("Test");
-    await user.click(await screen.findByLabelText("Test2 user"));
+    await user.keyboard(secondTestUser.username);
+    await user.click(
+      await screen.findByLabelText(`${secondTestUser.username} user`)
+    );
 
     expect(screen.queryByText(oldMessage)).not.toBeInTheDocument();
+  });
+
+  it("shows default profile picture after switching from partner with profile picture", async () => {
+    const { user } = setup(["/" + firstTestUser.username]);
+    const defaultPictureSrc =
+      "http://localhost:3000/src/assets/default-profile-picture.jpeg";
+
+    await user.click(screen.getByRole("searchbox"));
+    await user.keyboard(userWithoutPicture.username);
+    await user.click(
+      await screen.findByLabelText(`${userWithoutPicture.username} user`)
+    );
+
+    expect(screen.getByRole("img").src).toBe(defaultPictureSrc);
   });
 });

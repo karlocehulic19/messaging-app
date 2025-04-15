@@ -114,6 +114,15 @@ export const oldMessagesUser = new User(
   "someUUIDforOldMEssages"
 );
 
+export const userWithoutPicture = new User(
+  "Without",
+  "Picture",
+  "UserWithoutPicture",
+  "withoutpic@some.com",
+  "Without@1",
+  "someUUIDforNoPic"
+);
+
 export const profPic1 = firstTestUser.profilePicture;
 export const profPic1Buffer = firstTestUser.getPictureBuffer();
 export const defaultProfPic = defaultTestUser.profilePicture;
