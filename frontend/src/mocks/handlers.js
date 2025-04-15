@@ -105,6 +105,15 @@ export const poolingTestUser = new User(
   "someUUIDforPooling"
 );
 
+export const oldMessagesUser = new User(
+  "Old",
+  "Messages",
+  "OldUser",
+  "oldmsgs@some.com",
+  "OldMessages@1",
+  "someUUIDforOldMEssages"
+);
+
 export const profPic1 = firstTestUser.profilePicture;
 export const profPic1Buffer = firstTestUser.getPictureBuffer();
 export const defaultProfPic = defaultTestUser.profilePicture;
@@ -268,5 +277,22 @@ export const handlers = [
           },
         ])
       : new HttpResponse(null, { status: 204 });
+  }),
+
+  http.get(`${BACKEND_URL}/messages/old`, ({ request }) => {
+    const url = new URL(request.url);
+    const partner = url.searchParams.get("partner");
+    if (partner == oldMessagesUser.username) {
+      return HttpResponse.json([
+        {
+          message: `This is an old message from ${oldMessagesUser.username}`,
+          date: new Date(),
+          receiver: defaultTestUser.username,
+          sender: oldMessagesUser.username,
+        },
+      ]);
+    }
+
+    return HttpResponse.json([]);
   }),
 ];

@@ -9,6 +9,7 @@ import ErrorPopup from "./ErrorPopup";
 import apiErrorLogger from "../utils/apiErrorLogger";
 import MessageSendActions from "./MessageSendActions";
 import { useMessagePooling } from "../hooks/useMessagePooling";
+import { useOldMessages } from "../hooks/useOldMessages";
 
 export default function MessagingInterface({ receiverUsername }) {
   const { user } = useAuth();
@@ -16,6 +17,7 @@ export default function MessagingInterface({ receiverUsername }) {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   useMessagePooling(receiverUsername, setMessages);
+  useOldMessages(receiverUsername, setMessages);
   const errorPopup = useRef();
 
   const handleMessageSend = useCallback(() => {

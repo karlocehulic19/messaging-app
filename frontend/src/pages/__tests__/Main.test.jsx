@@ -1,8 +1,8 @@
 import { MemoryRouter } from "react-router-dom";
 import App from "../../App";
-import { act, render, screen } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import "../../mocks/URL";
-import { vi } from "vitest";
+import { expect, vi } from "vitest";
 import { userEvent } from "@testing-library/user-event";
 import * as customFetch from "../../utils/customFetch";
 import {
@@ -11,6 +11,7 @@ import {
   poolingTestUser,
   secondTestUser,
   TestPoolingMessage,
+  oldMessagesUser,
 } from "../../mocks/handlers";
 import { server } from "../../mocks/node";
 import { http, HttpResponse } from "msw";
@@ -231,22 +232,20 @@ describe("<Main />", () => {
 
   it(`pools for new messages every ${POOLING_INTERVAL_TIME_SECONDS} seconds`, async () => {
     const customFetchSpy = vi.spyOn(customFetch, "default");
+    const pooledMessagesUrl = `/messages?receiver=${defaultTestUser.username}&sender=${poolingTestUser.username}`;
 
     vi.useRealTimers();
     vi.useFakeTimers();
     setup(["/" + poolingTestUser.username]);
 
     await act(() => undefined);
-    expect(customFetchSpy.mock.calls[3][0]).toBe(
-      `/messages?receiver=${defaultTestUser.username}&sender=${poolingTestUser.username}`
-    );
+    expect(customFetchSpy).toHaveBeenCalledWith(pooledMessagesUrl);
 
     expect(screen.getByText(TestPoolingMessage)).toBeInTheDocument();
 
+    customFetchSpy.mockClear();
     await act(() => vi.advanceTimersByTime(3000));
-    expect(customFetchSpy.mock.calls[4][0]).toBe(
-      `/messages?receiver=${defaultTestUser.username}&sender=${poolingTestUser.username}`
-    );
+    expect(customFetchSpy).toHaveBeenCalledWith(pooledMessagesUrl);
 
     expect(screen.getAllByText(TestPoolingMessage)).toHaveLength(2);
 
@@ -273,5 +272,25 @@ describe("<Main />", () => {
 
     vi.runOnlyPendingTimers();
     vi.useRealTimers();
+  });
+
+  it("shows older messages", async () => {
+    const customFetchSpy = vi.spyOn(customFetch, "default");
+    const oldMessagesUrl = `/messages/old?user=${defaultTestUser.username}&partner=${oldMessagesUser.username}`;
+    setup(["/" + oldMessagesUser.username]);
+
+    await waitFor(() => {
+      expect(customFetchSpy).toHaveBeenCalledWith(
+        oldMessagesUrl,
+        expect.objectContaining({
+          signal: expect.any(AbortSignal),
+        })
+      );
+    });
+    expect(
+      customFetchSpy.mock.calls.filter(([url]) => url == oldMessagesUrl)
+    ).toHaveLength(1);
+
+    expect(screen.getByLabelText("Partner's message")).toBeInTheDocument();
   });
 });
