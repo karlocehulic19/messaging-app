@@ -49,3 +49,46 @@ HTMLCollection [
 exports[`<Main /> > displays default profile picture on users without one 1`] = `"http://localhost:3000/src/assets/default-profile-picture.jpeg"`;
 
 exports[`<Main /> > displays messaging interface when correct username is displayed 1`] = `"http://localhost:3000/mockedFilePath"`;
+
+exports[`<Main /> > displays yesterday and today tags for newer messages 1`] = `
+HTMLCollection [
+  <span>
+    Yesterday
+  </span>,
+  <div
+    aria-label="Partner's message"
+  >
+    First yesterdays message
+    <span>
+      22:33
+    </span>
+  </div>,
+  <div
+    aria-label="Your message"
+  >
+    Second yesterdays message
+    <span>
+      22:33
+    </span>
+  </div>,
+  <span>
+    Today
+  </span>,
+  <div
+    aria-label="Partner's message"
+  >
+    First todays message
+    <span>
+      22:23
+    </span>
+  </div>,
+  <div
+    aria-label="Your message"
+  >
+    Second todays message
+    <span>
+      22:23
+    </span>
+  </div>,
+]
+`;

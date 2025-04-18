@@ -16,6 +16,8 @@ import {
   userWithoutPicture,
   dateMessagesUser,
   firstDateMessage,
+  newerMessagesUser,
+  firstNewerDateMessage,
 } from "../../mocks/handlers";
 import { server } from "../../mocks/node";
 import { http, HttpResponse } from "msw";
@@ -335,6 +337,14 @@ describe("<Main />", () => {
     setup(["/" + dateMessagesUser.username]);
 
     await screen.findByText(firstDateMessage);
+    expect(screen.getByRole("main").children).toMatchSnapshot();
+  });
+
+  it("displays yesterday and today tags for newer messages", async () => {
+    vi.setSystemTime(mockedSystemTime);
+    setup(["/" + newerMessagesUser.username]);
+
+    await screen.findByText(firstNewerDateMessage);
     expect(screen.getByRole("main").children).toMatchSnapshot();
   });
 });

@@ -3,6 +3,7 @@ import { config } from "../Constants";
 import { Jimp } from "jimp";
 
 const BACKEND_URL = config.url.BACKEND_URL;
+const MS_IN_DAY = 1000 * 60 * 60 * 24;
 
 class User {
   static allUsers = {};
@@ -67,6 +68,20 @@ const userFactory = (firstName, lastName) => {
   );
 };
 
+const oldMessageFactory = (
+  message,
+  date,
+  senderUser,
+  receiverUser = defaultTestUser
+) => {
+  return {
+    date,
+    message,
+    sender: senderUser.username,
+    receiver: receiverUser.username,
+  };
+};
+
 export const defaultTestUser = new User(
   "Some",
   "Random",
@@ -104,6 +119,7 @@ export const poolingTestUser = userFactory("Pooling", "User");
 export const oldMessagesUser = userFactory("Old", "Messages");
 export const userWithoutPicture = userFactory("Without", "Picture");
 export const dateMessagesUser = userFactory("Date", "Messages");
+export const newerMessagesUser = userFactory("Newer", "Messages");
 
 export const profPic1 = firstTestUser.profilePicture;
 export const profPic1Buffer = firstTestUser.getPictureBuffer();
@@ -119,6 +135,7 @@ export const Test2InstantMessage = "Hello from Test2";
 export const TestPoolingMessage = "Hello this is message from pooling!";
 export const oldMessage = `Hello, this is an old message from ${oldMessagesUser.username}`;
 export const firstDateMessage = "First dated message";
+export const firstNewerDateMessage = "First yesterdays message";
 
 const db = User.allUsers;
 
@@ -277,44 +294,55 @@ export const handlers = [
     const partner = url.searchParams.get("partner");
     if (partner == oldMessagesUser.username) {
       return HttpResponse.json([
-        {
-          message: oldMessage,
-          date: new Date(),
-          receiver: defaultTestUser.username,
-          sender: oldMessagesUser.username,
-        },
+        oldMessageFactory(oldMessage, new Date(), oldMessagesUser),
       ]);
     }
     if (partner == dateMessagesUser.username) {
-      const msInDay = 1000 * 60 * 60 * 24;
-      const firstDate = new Date(new Date() - msInDay * 5);
-      const secondDate = new Date(new Date() - msInDay * 4);
-      const thirdDate = new Date(new Date() - msInDay * 3);
+      const firstDate = new Date(new Date() - MS_IN_DAY * 5);
+      const secondDate = new Date(new Date() - MS_IN_DAY * 4);
+      const thirdDate = new Date(new Date() - MS_IN_DAY * 3);
       return HttpResponse.json([
-        {
-          date: firstDate,
-          message: firstDateMessage,
-          receiver: defaultTestUser.username,
-          sender: dateMessagesUser.username,
-        },
-        {
-          date: firstDate,
-          message: `Second message sent on ${firstDate}`,
-          receiver: defaultTestUser.username,
-          sender: dateMessagesUser.username,
-        },
-        {
-          date: secondDate,
-          message: `Message sent on ${secondDate}`,
-          receiver: defaultTestUser.username,
-          sender: dateMessagesUser.username,
-        },
-        {
-          date: thirdDate,
-          message: `Message sent on ${thirdDate}`,
-          receiver: defaultTestUser.username,
-          sender: dateMessagesUser.username,
-        },
+        oldMessageFactory(firstDateMessage, firstDate, dateMessagesUser),
+        oldMessageFactory(
+          `Second message sent on ${firstDate}`,
+          firstDate,
+          dateMessagesUser
+        ),
+        oldMessageFactory(
+          `Message sent on ${secondDate}`,
+          secondDate,
+          dateMessagesUser
+        ),
+        oldMessageFactory(
+          `Message sent on ${thirdDate}`,
+          thirdDate,
+          dateMessagesUser
+        ),
+      ]);
+    }
+    if (partner === newerMessagesUser.username) {
+      const yesterdayDate = new Date(new Date() - MS_IN_DAY);
+      const todayDate = new Date(new Date() - 1000 * 60 * 10);
+
+      return HttpResponse.json([
+        oldMessageFactory(
+          firstNewerDateMessage,
+          yesterdayDate,
+          newerMessagesUser
+        ),
+        oldMessageFactory(
+          "Second yesterdays message",
+          yesterdayDate,
+          defaultTestUser,
+          newerMessagesUser
+        ),
+        oldMessageFactory("First todays message", todayDate, newerMessagesUser),
+        oldMessageFactory(
+          "Second todays message",
+          todayDate,
+          defaultTestUser,
+          newerMessagesUser
+        ),
       ]);
     }
 
