@@ -67,6 +67,19 @@ const setupUsers = async () => {
   const bearerToken2 = `Bearer ${token2}`;
   const user2MessagesGet = () =>
     utils.messagesGet(user1.username, user2.username, bearerToken2);
+  const user1ToUser2MessagesPost = (
+    message = "Some random message",
+    clientTimestamp = mockedSystemDate
+  ) =>
+    utils
+      .messagesPost()
+      .send({
+        sender: user1.username,
+        receiver: user2.username,
+        message,
+        clientTimestamp,
+      })
+      .set("Authorization", bearerToken1);
 
   return {
     ...utils,
@@ -75,23 +88,16 @@ const setupUsers = async () => {
     bearerToken1,
     bearerToken2,
     user2MessagesGet,
+    user1ToUser2MessagesPost,
   };
 };
 
 describe("messages router", () => {
   it("GET sends an message to an user", async () => {
-    const { user1, user2, bearerToken1, messagesPost, user2MessagesGet } =
-      await setupUsers();
+    const { user2MessagesGet, user1ToUser2MessagesPost } = await setupUsers();
     // eslint-disable-next-line no-undef
     vitest.setSystemTime(MOCK_SYSTEM_TIME);
-    const sendReq = await messagesPost()
-      .send({
-        sender: user1.username,
-        receiver: user2.username,
-        message: "Some random message",
-        clientTimestamp: mockedSystemDate,
-      })
-      .set("Authorization", bearerToken1);
+    const sendReq = await user1ToUser2MessagesPost();
     expect(sendReq.status).toBe(200);
 
     const receiverReq = await user2MessagesGet();
@@ -100,17 +106,9 @@ describe("messages router", () => {
   });
 
   it("GET doesn't send opened messages", async () => {
-    const { user1, user2, bearerToken1, messagesPost, user2MessagesGet } =
-      await setupUsers();
+    const { user2MessagesGet, user1ToUser2MessagesPost } = await setupUsers();
 
-    const sendReq = await messagesPost()
-      .send({
-        sender: user1.username,
-        receiver: user2.username,
-        message: "Some random message",
-        clientTimestamp: mockedSystemDate,
-      })
-      .set("Authorization", bearerToken1);
+    const sendReq = await user1ToUser2MessagesPost();
     expect(sendReq.status).toBe(200);
 
     await user2MessagesGet();
@@ -121,8 +119,13 @@ describe("messages router", () => {
   });
 
   it("POST checks for new messages from receiver between requests", async () => {
-    const { user1, user2, bearerToken1, bearerToken2, messagesPost } =
-      await setupUsers();
+    const {
+      user1,
+      user2,
+      bearerToken2,
+      messagesPost,
+      user1ToUser2MessagesPost,
+    } = await setupUsers();
 
     await messagesPost()
       .send({
@@ -133,35 +136,15 @@ describe("messages router", () => {
       })
       .set("Authorization", bearerToken2);
 
-    const afterMeantimeReq = await messagesPost()
-      .send({
-        sender: user1.username,
-        receiver: user2.username,
-        message: "Some message",
-        clientTimestamp: mockedSystemDate,
-      })
-      .set("Authorization", bearerToken1);
+    const afterMeantimeReq = await user1ToUser2MessagesPost();
     expect(afterMeantimeReq.body).toMatchSnapshot();
   });
 
   it("GET responses with specific sender messages", async () => {
-    const {
-      user1,
-      bearerToken1,
-      user2,
-      bearerToken2,
-      messagesGet,
-      messagesPost,
-    } = await setupUsers();
+    const { user2, bearerToken2, messagesGet, user1ToUser2MessagesPost } =
+      await setupUsers();
 
-    await messagesPost()
-      .send({
-        sender: user1.username,
-        receiver: user2.username,
-        message: "Some message that shouldn't be fetched",
-        clientTimestamp: mockedSystemDate,
-      })
-      .set("Authorization", bearerToken1);
+    await user1ToUser2MessagesPost("Some message that shouldn't be fetched");
 
     const response = await messagesGet(
       "nonExistentUser",
@@ -249,20 +232,16 @@ describe("messages router", () => {
   });
 
   it("POST message date to one the time user sent request not the time server heard request", async () => {
-    const { user1, user2, bearerToken1, messagesPost } = await setupUsers();
+    const { user1ToUser2MessagesPost } = await setupUsers();
 
     const clientMs =
       mockedSystemDate - 1000 * (MESSAGES_TIMESTAMP_THRESHOLD_SECONDS + 1);
     const clientTime = new Date(clientMs);
 
-    const response = await messagesPost()
-      .send({
-        sender: user1.username,
-        receiver: user2.username,
-        message: "Delayed message",
-        clientTimestamp: clientTime,
-      })
-      .set("Authorization", bearerToken1);
+    const response = await user1ToUser2MessagesPost(
+      "Delayed message",
+      clientTime
+    );
 
     expect(response.body).toEqual({
       error: "Client timestamp delay is too big",
@@ -271,29 +250,18 @@ describe("messages router", () => {
   });
 
   it("GET sends messages based on clients timestamp not request timestamp", async () => {
-    const { user1, user2, bearerToken1, messagesPost, user2MessagesGet } =
-      await setupUsers();
+    const { user2MessagesGet, user1ToUser2MessagesPost } = await setupUsers();
 
-    await messagesPost()
-      .send({
-        sender: user1.username,
-        receiver: user2.username,
-        message:
-          "Second message that arrived to server first (delayed 5 seconds)",
-        clientTimestamp: new Date(mockedSystemDate - 1000 * 5),
-      })
-      .set("Authorization", bearerToken1);
+    await user1ToUser2MessagesPost(
+      "Second message that arrived to server first (delayed 5 seconds)",
+      mockedSystemDate - 1000 * 5
+    );
 
-    await messagesPost()
-      .send({
-        sender: user1.username,
-        receiver: user2.username,
-        // Technically they arrived at the same time in our test suite but that should't affect actual validity of test
-        message:
-          "First message that arrived later to the server (delayed 10 seconds)",
-        clientTimestamp: new Date(mockedSystemDate - 1000 * 10),
-      })
-      .set("Authorization", bearerToken1);
+    // Technically they arrived at the same time in our test suite but that should't affect actual validity of test
+    await user1ToUser2MessagesPost(
+      "First message that arrived later to the server (delayed 10 seconds)",
+      mockedSystemDate - 1000 * 10
+    );
 
     const response = await user2MessagesGet();
     expect(response.body).toMatchSnapshot();
@@ -304,21 +272,14 @@ describe("messages router", () => {
       const {
         user1,
         user2,
-        messagesPost,
         user2MessagesGet,
         bearerToken1,
         bearerToken2,
         messagesOldGet,
+        user1ToUser2MessagesPost,
       } = await setupUsers();
 
-      await messagesPost()
-        .send({
-          sender: user1.username,
-          receiver: user2.username,
-          message: "Some message",
-          clientTimestamp: mockedSystemDate,
-        })
-        .set("Authorization", bearerToken1);
+      await user1ToUser2MessagesPost();
 
       // needed for making sure messages aren't considered new
       await user2MessagesGet();
@@ -331,7 +292,7 @@ describe("messages router", () => {
       expect(response1.body).toEqual([
         {
           date: MOCK_SYSTEM_TIME,
-          message: "Some message",
+          message: "Some random message",
           sender: user1.username,
           receiver: user2.username,
         },
@@ -345,7 +306,7 @@ describe("messages router", () => {
       expect(response2.body).toEqual([
         {
           date: MOCK_SYSTEM_TIME,
-          message: "Some message",
+          message: "Some random message",
           sender: user1.username,
           receiver: user2.username,
         },
@@ -471,22 +432,18 @@ describe("messages router", () => {
       expect(response.status).toBe(401);
     });
 
-    it(`GET only first ${MESSAGES_PER_REQUEST} messages if page not specified`, async () => {
-      const { user1, bearerToken1, user2, messagesPost, messagesOldGet } =
-        await setupUsers();
+    it(`GET only last ${MESSAGES_PER_REQUEST} messages if page not specified`, async () => {
+      const {
+        user1,
+        bearerToken1,
+        user2,
+        messagesOldGet,
+        user1ToUser2MessagesPost,
+      } = await setupUsers();
       const requests = [];
 
       for (let n = 0; n < 29; n++) {
-        requests.push(
-          messagesPost()
-            .send({
-              sender: user1.username,
-              receiver: user2.username,
-              message: `${n}. message`,
-              clientTimestamp: mockedSystemDate,
-            })
-            .set("Authorization", bearerToken1)
-        );
+        requests.push(user1ToUser2MessagesPost(`${n}. message`));
       }
 
       await Promise.all(requests);
@@ -501,20 +458,12 @@ describe("messages router", () => {
     });
 
     it("GET page specific number of messages", async () => {
-      const { user1, bearerToken1, user2, messagesPost } = await setupUsers();
+      const { user1, bearerToken1, user2, user1ToUser2MessagesPost } =
+        await setupUsers();
       const requests = [];
 
       for (let n = 0; n < 29; n++) {
-        requests.push(
-          messagesPost()
-            .send({
-              sender: user1.username,
-              receiver: user2.username,
-              message: `${n}. message`,
-              clientTimestamp: mockedSystemDate,
-            })
-            .set("Authorization", bearerToken1)
-        );
+        requests.push(user1ToUser2MessagesPost(`${n}. message`));
       }
 
       await Promise.all(requests);
@@ -532,25 +481,20 @@ describe("messages router", () => {
     it("GET sends opened messages in order", async () => {
       const {
         user1,
-        bearerToken1,
         bearerToken2,
         user2,
-        messagesPost,
         messagesOldGet,
         user2MessagesGet,
+        user1ToUser2MessagesPost,
       } = await setupUsers();
       const requests = [];
 
       for (let n = 0; n < 5; n++) {
         requests.push(
-          messagesPost()
-            .send({
-              sender: user1.username,
-              receiver: user2.username,
-              message: `${n}. message`,
-              clientTimestamp: new Date(mockedSystemDate - (5 - n) * 1000),
-            })
-            .set("Authorization", bearerToken1)
+          user1ToUser2MessagesPost(
+            `${n}. message`,
+            new Date(mockedSystemDate - (5 - n) * 1000)
+          )
         );
       }
 
@@ -595,21 +539,15 @@ describe("messages router", () => {
     });
 
     it("GET sends messages from newest to oldest if pagination is present", async () => {
-      const { messagesPost, user1, user2, bearerToken1 } = await setupUsers();
+      const { user1, user2, bearerToken1, user1ToUser2MessagesPost } =
+        await setupUsers();
 
       for (let n = 0; n < MESSAGES_PER_REQUEST + 1; n++) {
-        const currMockedTime = new Date(mockedSystemDate).getTime() + 1000 * n;
+        const currMockedTime = +mockedSystemDate + 1000 * n;
 
         // eslint-disable-next-line no-undef
         vitest.setSystemTime(currMockedTime);
-        await messagesPost()
-          .send({
-            receiver: user2.username,
-            sender: user1.username,
-            message: `Message no.${n}`,
-            clientTimestamp: new Date(currMockedTime),
-          })
-          .set("Authorization", bearerToken1);
+        await user1ToUser2MessagesPost(`Message no.${n}`, currMockedTime);
       }
 
       const response = await request(app)
