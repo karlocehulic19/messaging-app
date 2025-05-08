@@ -27,14 +27,24 @@ export default function MessagesLoader({ messages = [] }) {
 
         return (
           <Fragment key={uniqueId()}>
-            {isDifferentDateTag && <span key={dateTag}>{dateTag}</span>}
+            {isDifferentDateTag && (
+              <span
+                className={`${styles["date-span"]} ${styles.item}`}
+                key={dateTag}
+              >
+                {dateTag}
+              </span>
+            )}
             <div
+              className={`${styles.message} ${styles.item}`}
               aria-label={`${
                 msg.sender == user.username ? "Your" : "Partner's"
               } message`}
             >
               {msg.message}
-              <span>{format(new Date(msg.date), "HH:mm")}</span>
+              <span className={styles["time-span"]}>
+                {format(new Date(msg.date), "HH:mm")}
+              </span>
             </div>
           </Fragment>
         );

@@ -1,6 +1,47 @@
 #messages-display {
-  padding: 0 var(--side-padding);
+  padding: 0.4rem var(--side-padding);
   height: 1rem;
   flex-grow: 1;
-  overflow: scroll;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.item {
+  font-size: 1.2rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.2rem;
+  color: var(--secondary-color);
+}
+
+.message {
+  position: relative;
+  padding-bottom: 0.9rem;
+  max-width: 45%;
+  min-width: 3rem;
+  text-align: center;
+}
+
+div[aria-label="Your message"] {
+  align-self: end;
+  background-color: rgb(146, 214, 218);
+}
+
+div[aria-label="Partner's message"] {
+  align-self: flex-start;
+  background-color: rgb(189, 243, 247);
+}
+
+.date-span {
+  align-self: center;
+  background-color: var(--tertiary-color);
+  font-size: 0.8rem;
+}
+
+.time-span {
+  position: absolute;
+  font-size: 0.7em;
+  bottom: 0;
+  right: 0.3em;
 }
