@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { uniqueId } from "lodash";
 import { useAuth } from "../hooks/useAuth";
 import { Fragment } from "react";
+import styles from "./styles/MessagesLoader.module.css";
 
 const MS_IN_DAY = 1000 * 60 * 60 * 24;
 
@@ -18,7 +19,7 @@ export default function MessagesLoader({ messages = [] }) {
   let prevDateTag = null;
 
   return (
-    <main>
+    <main id={styles["messages-display"]}>
       {messages.map((msg) => {
         const dateTag = getMessageDateTag(msg.date);
         const isDifferentDateTag = dateTag != prevDateTag;

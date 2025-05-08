@@ -55,7 +55,7 @@ export default function MessagingInterface({ receiverUsername }) {
   }, [user, message, receiverUsername, setMessages]);
 
   return (
-    <>
+    <div id={styles.messenger}>
       <header id={styles["receiver-header"]}>
         <img
           className={styles["receiver-img"]}
@@ -71,7 +71,7 @@ export default function MessagingInterface({ receiverUsername }) {
         message={message}
         handleMessageSend={handleMessageSend}
       />
-    </>
+    </div>
   );
 }
 

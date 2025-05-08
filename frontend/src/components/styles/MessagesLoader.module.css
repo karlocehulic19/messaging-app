@@ -1,0 +1,6 @@
+#messages-display {
+  padding: 0 var(--side-padding);
+  height: 1rem;
+  flex-grow: 1;
+  overflow: scroll;
+}

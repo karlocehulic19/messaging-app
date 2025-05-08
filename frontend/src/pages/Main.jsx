@@ -17,7 +17,7 @@ export default function Main() {
   }, [params]);
 
   return (
-    <>
+    <div id={styles.app}>
       <Navbar />
       {isSelected ? (
         <MessagingInterface receiverUsername={params.receiverUsername} />
@@ -28,6 +28,6 @@ export default function Main() {
           </h1>
         </div>
       )}
-    </>
+    </div>
   );
 }

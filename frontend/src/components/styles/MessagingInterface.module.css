@@ -14,6 +14,11 @@
   align-items: center;
 }
 
+#messenger {
+  display: flex;
+  flex-direction: column;
+}
+
 .receiver-img {
   max-height: 100%;
   border-radius: 50%;
