@@ -24,3 +24,15 @@
   border-radius: 50%;
   box-shadow: 0 0 4px -1px black;
 }
+
+@media (max-width: 1150px) {
+  :root {
+    --side-padding: 10rem;
+  }
+}
+
+@media (max-width: 750px) {
+  :root {
+    --side-padding: 1rem;
+  }
+}
