@@ -593,5 +593,32 @@ describe("messages router", () => {
         error: "Page query must be either not present or a number",
       });
     });
+
+    it("GET sends messages from newest to oldest if pagination is present", async () => {
+      const { messagesPost, user1, user2, bearerToken1 } = await setupUsers();
+
+      for (let n = 0; n < MESSAGES_PER_REQUEST + 1; n++) {
+        const currMockedTime = new Date(mockedSystemDate).getTime() + 1000 * n;
+
+        // eslint-disable-next-line no-undef
+        vitest.setSystemTime(currMockedTime);
+        await messagesPost()
+          .send({
+            receiver: user2.username,
+            sender: user1.username,
+            message: `Message no.${n}`,
+            clientTimestamp: new Date(currMockedTime),
+          })
+          .set("Authorization", bearerToken1);
+      }
+
+      const response = await request(app)
+        .get(
+          `/messages/old?user=${user1.username}&partner=${user2.username}&page=2`
+        )
+        .set("Authorization", bearerToken1);
+
+      expect(response.body).toMatchSnapshot();
+    });
   });
 });

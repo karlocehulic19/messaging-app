@@ -6,6 +6,17 @@ exports[`messages router > /messages/old > GET sends 400 when missing necessary 
 }
 `;
 
+exports[`messages router > /messages/old > GET sends messages from newest to oldest if pagination is present 1`] = `
+[
+  {
+    "date": "2025-03-18T13:08:43.024Z",
+    "message": "Message no.0",
+    "receiver": "TestUser2",
+    "sender": "TestUser1",
+  },
+]
+`;
+
 exports[`messages router > /messages/old > GET sends opened messages in order 1`] = `
 [
   {
