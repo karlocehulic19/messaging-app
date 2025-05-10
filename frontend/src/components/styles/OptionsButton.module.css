@@ -36,6 +36,7 @@
   background-color: var(--secondary-color);
   box-shadow: 0 0 4px 0px black;
   gap: 1rem;
+  z-index: 1;
 }
 
 #options-container a {
