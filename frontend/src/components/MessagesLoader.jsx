@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { format } from "date-fns";
 import { uniqueId } from "lodash";
 import { useAuth } from "../hooks/useAuth";
-import { Fragment } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import styles from "./styles/MessagesLoader.module.css";
 
 const MS_IN_DAY = 1000 * 60 * 60 * 24;
@@ -16,10 +16,15 @@ function getMessageDateTag(date) {
 
 export default function MessagesLoader({ messages = [] }) {
   const { user } = useAuth();
+  const mainRef = useRef(null);
   let prevDateTag = null;
 
+  useEffect(() => {
+    mainRef.current.scrollTop = mainRef.current.scrollHeight;
+  }, [messages]);
+
   return (
-    <main id={styles["messages-display"]}>
+    <main ref={mainRef} id={styles["messages-display"]}>
       {messages.map((msg) => {
         const dateTag = getMessageDateTag(msg.date);
         const isDifferentDateTag = dateTag != prevDateTag;
