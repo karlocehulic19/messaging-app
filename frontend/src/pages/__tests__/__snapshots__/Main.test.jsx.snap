@@ -2,44 +2,62 @@
 
 exports[`<Main /> > displays dates for older messages 1`] = `
 HTMLCollection [
-  <span>
+  <span
+    class="_date-span_b76533 _item_b76533"
+  >
     Mar 30th
   </span>,
   <div
     aria-label="Partner's message"
+    class="_message_b76533 _item_b76533"
   >
     First dated message
-    <span>
+    <span
+      class="_time-span_b76533"
+    >
       22:33
     </span>
   </div>,
   <div
     aria-label="Partner's message"
+    class="_message_b76533 _item_b76533"
   >
     Second message sent on Sun Mar 30 2025 22:33:37 GMT+0200 (Central European Summer Time)
-    <span>
+    <span
+      class="_time-span_b76533"
+    >
       22:33
     </span>
   </div>,
-  <span>
+  <span
+    class="_date-span_b76533 _item_b76533"
+  >
     Mar 31st
   </span>,
   <div
     aria-label="Partner's message"
+    class="_message_b76533 _item_b76533"
   >
     Message sent on Mon Mar 31 2025 22:33:37 GMT+0200 (Central European Summer Time)
-    <span>
+    <span
+      class="_time-span_b76533"
+    >
       22:33
     </span>
   </div>,
-  <span>
+  <span
+    class="_date-span_b76533 _item_b76533"
+  >
     Apr 1st
   </span>,
   <div
     aria-label="Partner's message"
+    class="_message_b76533 _item_b76533"
   >
     Message sent on Tue Apr 01 2025 22:33:37 GMT+0200 (Central European Summer Time)
-    <span>
+    <span
+      class="_time-span_b76533"
+    >
       22:33
     </span>
   </div>,
@@ -52,41 +70,57 @@ exports[`<Main /> > displays messaging interface when correct username is displa
 
 exports[`<Main /> > displays yesterday and today tags for newer messages 1`] = `
 HTMLCollection [
-  <span>
+  <span
+    class="_date-span_b76533 _item_b76533"
+  >
     Yesterday
   </span>,
   <div
     aria-label="Partner's message"
+    class="_message_b76533 _item_b76533"
   >
     First yesterdays message
-    <span>
+    <span
+      class="_time-span_b76533"
+    >
       22:33
     </span>
   </div>,
   <div
     aria-label="Your message"
+    class="_message_b76533 _item_b76533"
   >
     Second yesterdays message
-    <span>
+    <span
+      class="_time-span_b76533"
+    >
       22:33
     </span>
   </div>,
-  <span>
+  <span
+    class="_date-span_b76533 _item_b76533"
+  >
     Today
   </span>,
   <div
     aria-label="Partner's message"
+    class="_message_b76533 _item_b76533"
   >
     First todays message
-    <span>
+    <span
+      class="_time-span_b76533"
+    >
       22:23
     </span>
   </div>,
   <div
     aria-label="Your message"
+    class="_message_b76533 _item_b76533"
   >
     Second todays message
-    <span>
+    <span
+      class="_time-span_b76533"
+    >
       22:23
     </span>
   </div>,
