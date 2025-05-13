@@ -1,39 +1,49 @@
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useState } from "react";
 import { useAuth } from "./useAuth";
 import customFetch from "../utils/customFetch";
+import apiErrorLogger from "../utils/apiErrorLogger";
 
-export const useScrollingMessages = (partnerUsername, setMessages) => {
+export const useScrollingMessages = (
+  partnerUsername,
+  setMessages,
+  totalMessagesNumber
+) => {
   const [loading, setLoading] = useState(false);
-  const page = useRef(2);
+  const [isAllLoaded, setIsAllLoaded] = useState(false);
   const { user } = useAuth();
 
   const handleScrollingMessages = useCallback(
     (e) => {
       if (e.target.scrollTop == 0) {
-        if (loading || page.current == -1) return;
+        if (loading || isAllLoaded) return;
         setLoading(true);
         customFetch(
-          `/messages/old?partner=${partnerUsername}&user=${
-            user.username
-          }&page=${2}`
+          `/messages/old?partner=${partnerUsername}&user=${user.username}&pos=${totalMessagesNumber}`
         )
           .then((res) => res.json())
           .then((scrolledMessages) => {
             if (scrolledMessages.length == 0) {
-              page.current = -1;
+              setIsAllLoaded(true);
               return;
             }
-            page.current++;
             setMessages((prevMessages) => {
               return [...scrolledMessages, ...prevMessages];
             });
           })
+          .catch(apiErrorLogger)
           .finally(() => {
             setLoading(false);
           });
       }
     },
-    [partnerUsername, user, setMessages, loading]
+    [
+      partnerUsername,
+      user,
+      setMessages,
+      loading,
+      totalMessagesNumber,
+      isAllLoaded,
+    ]
   );
 
   return { handleScrollingMessages, loading };

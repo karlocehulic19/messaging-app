@@ -14,7 +14,11 @@ function getMessageDateTag(date) {
   return dateTag;
 }
 
-export default function MessagesLoader({ messages = [] }) {
+export default function MessagesLoader({
+  messages = [],
+  handleScrollingMessages,
+  loading = false,
+}) {
   const { user } = useAuth();
   const mainRef = useRef(null);
   let prevDateTag = null;
@@ -24,7 +28,12 @@ export default function MessagesLoader({ messages = [] }) {
   }, [messages]);
 
   return (
-    <main ref={mainRef} id={styles["messages-display"]}>
+    <main
+      onScroll={handleScrollingMessages}
+      ref={mainRef}
+      id={styles["messages-display"]}
+    >
+      {loading && <h2>Loading...</h2>}
       {messages.map((msg) => {
         const dateTag = getMessageDateTag(msg.date);
         const isDifferentDateTag = dateTag != prevDateTag;
@@ -59,5 +68,7 @@ export default function MessagesLoader({ messages = [] }) {
 }
 
 MessagesLoader.propTypes = {
-  messages: PropTypes.array,
+  messages: PropTypes.array.isRequired,
+  handleScrollingMessages: PropTypes.func,
+  loading: PropTypes.bool.isRequired,
 };

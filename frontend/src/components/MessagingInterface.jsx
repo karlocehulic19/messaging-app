@@ -13,7 +13,8 @@ import { useMessages } from "../hooks/useMessages";
 export default function MessagingInterface({ receiverUsername }) {
   const { user } = useAuth();
   const profilePictureSrc = useProfilePicture(receiverUsername);
-  const [messages, setMessages] = useMessages(receiverUsername);
+  const { messages, addMessages, loading, handleScrollingMessages } =
+    useMessages(receiverUsername);
   const [message, setMessage] = useState("");
   const errorPopup = useRef();
 
@@ -30,8 +31,7 @@ export default function MessagingInterface({ receiverUsername }) {
       })
         .then((response) => response.json())
         .then((receivedMessages) => {
-          setMessages((prev) => [
-            ...prev,
+          addMessages([
             ...receivedMessages.map((msg) => ({
               date: msg.date,
               message: msg.message,
@@ -52,7 +52,7 @@ export default function MessagingInterface({ receiverUsername }) {
           apiErrorLogger(error);
         });
     }
-  }, [user, message, receiverUsername, setMessages]);
+  }, [user, message, receiverUsername, addMessages]);
 
   return (
     <div id={styles.messenger}>
@@ -65,7 +65,11 @@ export default function MessagingInterface({ receiverUsername }) {
         <h1>{receiverUsername}</h1>
       </header>
       <ErrorPopup ref={errorPopup} />
-      <MessagesLoader messages={messages} />
+      <MessagesLoader
+        messages={messages}
+        loading={loading}
+        handleScrollingMessages={handleScrollingMessages}
+      />
       <MessageSendActions
         setMessage={setMessage}
         message={message}
