@@ -21,10 +21,15 @@ export default function MessagesLoader({
 }) {
   const { user } = useAuth();
   const mainRef = useRef(null);
+  const prevLastMessage = useRef(null);
   let prevDateTag = null;
 
   useEffect(() => {
-    mainRef.current.scrollTop = mainRef.current.scrollHeight;
+    const lastMessage = messages[messages.length - 1];
+    if (prevLastMessage.current != lastMessage) {
+      mainRef.current.scrollTop = mainRef.current.scrollHeight;
+      prevLastMessage.current = lastMessage;
+    }
   }, [messages]);
 
   return (

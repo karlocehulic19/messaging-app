@@ -12,9 +12,11 @@ export const useScrollingMessages = (
   const [isAllLoaded, setIsAllLoaded] = useState(false);
   const { user } = useAuth();
 
+  const SCROLL_OFFSET = 20;
+
   const handleScrollingMessages = useCallback(
     (e) => {
-      if (e.target.scrollTop == 0) {
+      if (e.target.scrollTop <= SCROLL_OFFSET) {
         if (loading || isAllLoaded) return;
         setLoading(true);
         customFetch(
@@ -33,6 +35,10 @@ export const useScrollingMessages = (
           .catch(apiErrorLogger)
           .finally(() => {
             setLoading(false);
+            const prevScrollHeight = e.target.scrollHeight;
+            setTimeout(() => {
+              e.target.scrollTop = e.target.scrollHeight - prevScrollHeight;
+            }, 0);
           });
       }
     },
