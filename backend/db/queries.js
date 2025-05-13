@@ -81,9 +81,9 @@ module.exports.getNewMessages = async (sender, receiver) => {
   return foundNewMessages;
 };
 
-module.exports.getOldMessages = async (sender, receiver, page = 1) => {
+module.exports.getOldMessages = async (sender, receiver, position = 0) => {
   const res = await client.message.findMany({
-    skip: (page - 1) * MESSAGES_PER_REQUEST,
+    skip: position,
     take: -MESSAGES_PER_REQUEST,
     where: {
       OR: [

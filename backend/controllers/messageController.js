@@ -11,12 +11,8 @@ const constructMessages = async (sender, receiver) => {
   }));
 };
 
-const constructOldMessages = async (
-  sender,
-  receiver,
-  pageNumber = undefined
-) => {
-  return (await queries.getOldMessages(sender, receiver, pageNumber)).map(
+const constructOldMessages = async (sender, receiver, position = undefined) => {
+  return (await queries.getOldMessages(sender, receiver, position)).map(
     (msg) => ({
       date: msg.date,
       message: msg.message,
@@ -96,16 +92,21 @@ const oldMessagesGetQueryParams = ["user", "partner"];
 module.exports.oldMessagesGet = [
   validateQueryParams(oldMessagesGetQueryParams),
   asyncHandler(async (req, res) => {
-    if (req.user.username != req.query.user) return res.sendStatus(401);
-    if ("page" in req.query && (req.query.page === "" || isNaN(req.query.page)))
+    if (req.query.user != req.user.username) {
+      return res.send(401);
+    }
+
+    if ("pos" in req.query && (req.query.pos === "" || isNaN(req.query.pos))) {
       return res.status(400).send({
         error: "Page query must be either not present or a number",
       });
-    res.send(
+    }
+
+    return res.send(
       await constructOldMessages(
         req.query.user,
         req.query.partner,
-        req.query.page
+        req.query.pos ? +req.query.pos : undefined
       )
     );
   }),

@@ -473,7 +473,7 @@ describe("messages router", () => {
 
       const response = await request(app)
         .get(
-          `/messages/old?page=2&user=${user1.username}&partner=${user2.username}`
+          `/messages/old?pos=25&user=${user1.username}&partner=${user2.username}`
         )
         .set("Authorization", bearerToken1);
 
@@ -513,12 +513,12 @@ describe("messages router", () => {
       expect(response.body).toMatchSnapshot();
     });
 
-    it("GET sends 400 if page query is present but undefined", async () => {
+    it("GET sends 400 if pos query is present but undefined", async () => {
       const { user1, user2, bearerToken1 } = await setupUsers();
 
       const response = await request(app)
         .get(
-          `/messages/old?user=${user1.username}&partner=${user2.username}&page`
+          `/messages/old?user=${user1.username}&partner=${user2.username}&pos`
         )
         .set("Authorization", bearerToken1);
       expect(response.status).toBe(400);
@@ -527,12 +527,12 @@ describe("messages router", () => {
       });
     });
 
-    it("GET sends 400 if page query isn't a number", async () => {
+    it("GET sends 400 if pos query isn't a number", async () => {
       const { user1, user2, bearerToken1 } = await setupUsers();
 
       const response = await request(app)
         .get(
-          `/messages/old?user=${user1.username}&partner=${user2.username}&page=notAnNumber`
+          `/messages/old?user=${user1.username}&partner=${user2.username}&pos=notAnNumber`
         )
         .set("Authorization", bearerToken1);
       expect(response.status).toBe(400);
@@ -541,11 +541,11 @@ describe("messages router", () => {
       });
     });
 
-    it("GET sends messages from newest to oldest if pagination is present", async () => {
+    it("GET sends messages from newest to oldest", async () => {
       const { user1, user2, bearerToken1, user1ToUser2MessagesPost } =
         await setupUsers();
 
-      for (let n = 0; n < MESSAGES_PER_REQUEST + 1; n++) {
+      for (let n = 0; n < MESSAGES_PER_REQUEST + 2; n++) {
         const currMockedTime = +mockedSystemDate + 1000 * n;
 
         // eslint-disable-next-line no-undef
@@ -555,7 +555,7 @@ describe("messages router", () => {
 
       const response = await request(app)
         .get(
-          `/messages/old?user=${user1.username}&partner=${user2.username}&page=2`
+          `/messages/old?user=${user1.username}&partner=${user2.username}&pos=25`
         )
         .set("Authorization", bearerToken1);
 
