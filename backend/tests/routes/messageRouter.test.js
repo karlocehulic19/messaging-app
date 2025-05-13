@@ -93,10 +93,13 @@ const setupUsers = async () => {
 };
 
 describe("messages router", () => {
-  it("GET sends an message to an user", async () => {
-    const { user2MessagesGet, user1ToUser2MessagesPost } = await setupUsers();
+  beforeEach(() => {
     // eslint-disable-next-line no-undef
     vitest.setSystemTime(MOCK_SYSTEM_TIME);
+  });
+
+  it("GET sends an message to an user", async () => {
+    const { user2MessagesGet, user1ToUser2MessagesPost } = await setupUsers();
     const sendReq = await user1ToUser2MessagesPost();
     expect(sendReq.status).toBe(200);
 
