@@ -33,7 +33,7 @@ export default function MessagesLoader({
       ref={mainRef}
       id={styles["messages-display"]}
     >
-      {loading && <h2>Loading...</h2>}
+      {loading && <h2 id={styles["scroll-loading"]}>Loading...</h2>}
       {messages.map((msg) => {
         const dateTag = getMessageDateTag(msg.date);
         const isDifferentDateTag = dateTag != prevDateTag;

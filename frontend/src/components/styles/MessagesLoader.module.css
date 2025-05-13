@@ -44,3 +44,7 @@ div[aria-label="Partner's message"] {
   bottom: 0;
   right: 0.3em;
 }
+
+#scroll-loading {
+  text-align: center;
+}
