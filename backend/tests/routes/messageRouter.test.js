@@ -445,7 +445,7 @@ describe("messages router", () => {
       } = await setupUsers();
       const requests = [];
 
-      for (let n = 0; n < 29; n++) {
+      for (let n = 0; n < MESSAGES_PER_REQUEST + 4; n++) {
         requests.push(user1ToUser2MessagesPost(`${n}. message`));
       }
 
@@ -465,7 +465,7 @@ describe("messages router", () => {
         await setupUsers();
       const requests = [];
 
-      for (let n = 0; n < 29; n++) {
+      for (let n = 0; n < MESSAGES_PER_REQUEST + 4; n++) {
         requests.push(user1ToUser2MessagesPost(`${n}. message`));
       }
 
@@ -473,7 +473,7 @@ describe("messages router", () => {
 
       const response = await request(app)
         .get(
-          `/messages/old?pos=25&user=${user1.username}&partner=${user2.username}`
+          `/messages/old?pos=${MESSAGES_PER_REQUEST}&user=${user1.username}&partner=${user2.username}`
         )
         .set("Authorization", bearerToken1);
 
@@ -555,7 +555,7 @@ describe("messages router", () => {
 
       const response = await request(app)
         .get(
-          `/messages/old?user=${user1.username}&partner=${user2.username}&pos=25`
+          `/messages/old?user=${user1.username}&partner=${user2.username}&pos=${MESSAGES_PER_REQUEST}`
         )
         .set("Authorization", bearerToken1);
 
