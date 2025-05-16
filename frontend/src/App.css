@@ -45,6 +45,8 @@ input::placeholder {
   padding: 0.5rem;
   border-radius: 0.5rem;
   animation: slide-down 0.05s ease-out;
+  left: 50%;
+  transform: translate(-50%, 0);
 }
 
 @keyframes slide-down {

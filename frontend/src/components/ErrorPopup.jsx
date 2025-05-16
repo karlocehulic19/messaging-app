@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 const ErrorPopup = forwardRef(
   ({ text = "An unexpected error occurred.", delay = 5000 }, ref) => {
@@ -22,7 +23,7 @@ const ErrorPopup = forwardRef(
       [delay]
     );
 
-    return (
+    return createPortal(
       <>
         {toggle && (
           <div role="alert" aria-label="Error message" className="error-popup">
@@ -31,7 +32,8 @@ const ErrorPopup = forwardRef(
             ))}
           </div>
         )}
-      </>
+      </>,
+      document.body
     );
   }
 );
