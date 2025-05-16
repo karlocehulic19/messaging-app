@@ -9,7 +9,7 @@ input {
   position: relative;
 }
 
-label {
+.register-form label {
   justify-self: center;
   width: 100%;
   padding-top: 1em;
