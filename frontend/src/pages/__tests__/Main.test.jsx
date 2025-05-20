@@ -16,8 +16,10 @@ import {
   userWithoutPicture,
   dateMessagesUser,
   firstDateMessage,
-  newerMessagesUser,
-  firstNewerDateMessage,
+  yesterdaysMessagesUser,
+  todaysMessagesUser,
+  firstYesterdaysDateMessage,
+  firstTodaysDateMessage,
 } from "../../mocks/handlers";
 import { server } from "../../mocks/node";
 import { http, HttpResponse } from "msw";
@@ -345,24 +347,32 @@ describe("<Main />", () => {
     expect(screen.getByRole("main").children).toMatchSnapshot();
   });
 
-  it("displays yesterday and today tags for newer messages", async () => {
+  it("displays yesterday tags for yesterdays messages", async () => {
     vi.setSystemTime(mockedSystemTime);
-    setup(["/" + newerMessagesUser.username]);
+    setup(["/" + yesterdaysMessagesUser.username]);
 
-    await screen.findByText(firstNewerDateMessage);
+    await screen.findByText(firstYesterdaysDateMessage);
+    expect(screen.getByRole("main").children).toMatchSnapshot();
+  });
+
+  it("displays today tags for todays messages", async () => {
+    vi.setSystemTime(mockedSystemTime);
+    setup(["/" + todaysMessagesUser.username]);
+
+    await screen.findByText(firstTodaysDateMessage);
     expect(screen.getByRole("main").children).toMatchSnapshot();
   });
 
   it("back button goes to last url not dashboard", async () => {
     vi.spyOn(window.history, "length", "get").mockReturnValueOnce(2);
-    const { user } = setup(["/" + newerMessagesUser.username, "/settings"], 1);
+    const { user } = setup(["/" + firstTestUser.username, "/settings"], 1);
 
     await user.click(
       await screen.findByRole("button", { name: "Back button" })
     );
 
     expect(
-      await screen.findByRole("heading", { name: newerMessagesUser.username })
+      await screen.findByRole("heading", { name: firstTestUser.username })
     ).toBeInTheDocument();
   });
 });
