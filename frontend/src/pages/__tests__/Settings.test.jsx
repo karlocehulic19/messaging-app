@@ -122,7 +122,7 @@ const setupChanged = async () => {
 describe("<Settings>", () => {
   it("redirect to dashboard when back button is pressed", async () => {
     const { user } = await setup();
-    await user.click(screen.getByRole("link"));
+    await user.click(screen.getByRole("button", { name: "Back button" }));
     expect(screen.getByTestId("path").textContent).toBe("/");
   });
 

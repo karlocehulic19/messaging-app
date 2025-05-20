@@ -40,13 +40,18 @@ vi.mock("../../utils/apiErrorLogger", async (importOriginal) => ({
   }),
 }));
 
-const setup = (initialEntries = ["/"]) => {
+const setup = (initialEntries = ["/"], initialIndex = 0) => {
   const user = userEvent.setup();
   localStorage.setItem("site", "randomJWTtoken");
   render(
     <App
       routerRender={(children) => (
-        <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+        <MemoryRouter
+          initialEntries={initialEntries}
+          initialIndex={initialIndex}
+        >
+          {children}
+        </MemoryRouter>
       )}
     />
   );
@@ -346,5 +351,18 @@ describe("<Main />", () => {
 
     await screen.findByText(firstNewerDateMessage);
     expect(screen.getByRole("main").children).toMatchSnapshot();
+  });
+
+  it("back button goes to last url not dashboard", async () => {
+    vi.spyOn(window.history, "length", "get").mockReturnValueOnce(2);
+    const { user } = setup(["/" + newerMessagesUser.username, "/settings"], 1);
+
+    await user.click(
+      await screen.findByRole("button", { name: "Back button" })
+    );
+
+    expect(
+      await screen.findByRole("heading", { name: newerMessagesUser.username })
+    ).toBeInTheDocument();
   });
 });
