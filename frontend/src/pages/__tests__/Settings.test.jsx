@@ -442,6 +442,7 @@ describe("<Settings>", () => {
     });
 
     it("doesn't halt on loading button if user has no profile picture", async () => {
+      vi.spyOn(console, "error").mockImplementationOnce(() => undefined);
       localStorage.setItem("site", secondTestUserBearer);
       await setupNonFetched(secondTestUserToken);
 
