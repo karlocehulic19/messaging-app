@@ -4,6 +4,7 @@ const { faker } = require("@faker-js/faker");
 const { Buffer } = require("node:buffer");
 const { Jimp } = require("jimp");
 const { randomUUID } = require("node:crypto");
+const { PROFILE_PICTURE_CACHE_SECONDS } = require("../../utils/constants");
 
 const mockedBufferImages = {
   validId1: {
@@ -187,6 +188,18 @@ describe("getProfilePictureByUsername", () => {
     );
 
     expect(response.status).toBe(204);
+  });
+
+  it(`uses cache control with ${12 * 60 * 60} seconds`, async () => {
+    const { originalLoggedUser } = await setupLogged();
+
+    const res = await request(app).get(
+      `/profile-picture/${originalLoggedUser.username}`
+    );
+
+    expect(res.headers["cache-control"]).toBe(
+      `max-age=${PROFILE_PICTURE_CACHE_SECONDS}`
+    );
   });
 });
 

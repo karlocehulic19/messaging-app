@@ -6,6 +6,7 @@ const {
   getBaseEmailVC,
   getBaseUsernameVC,
 } = require("../utils/baseValidationChains");
+const { PROFILE_PICTURE_CACHE_SECONDS } = require("../utils/constants");
 
 const getUsers = asyncHandler(async (req, res) => {
   if (req.query.exists)
@@ -13,12 +14,9 @@ const getUsers = asyncHandler(async (req, res) => {
       (await queries.getUserByUsername(req.query.exists)) ? 200 : 404
     );
   if (!req.query.s)
-    return res
-      .status(400)
-      .send({
-        error:
-          "At least s or exists query is needed to send users get request.",
-      });
+    return res.status(400).send({
+      error: "At least s or exists query is needed to send users get request.",
+    });
   const usernameSearch = req.query.s;
   const users = await queries.getUsersByUsername(usernameSearch);
 
@@ -38,6 +36,8 @@ const getProfilePictureByUsername = (ImageManager) =>
         .send({ error: "Searched username doesn't exist in the database" });
     }
     const photoPublicId = user.photoPublicId;
+
+    res.set("Cache-Control", `max-age=${PROFILE_PICTURE_CACHE_SECONDS}`);
     if (!photoPublicId) return res.status(204).send();
     const pictureResponse = await ImageManager.getProfilePicture(photoPublicId);
 
