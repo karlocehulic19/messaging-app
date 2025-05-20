@@ -75,3 +75,7 @@ button:enabled:hover {
 .profile-picture {
   border-radius: 100%;
 }
+
+button:hover {
+  cursor: pointer;
+}
