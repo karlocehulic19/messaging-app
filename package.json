@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Messaing app built on top of express.js for backend and react for frontend. Authentication is implemented using JWT tokens.",
   "main": "index.js",
+  "type": "module",
   "workspaces": [
     "./backend",
     "./frontend"
