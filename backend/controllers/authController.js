@@ -13,6 +13,7 @@ const {
   getBaseUsernameVC,
 } = require("../utils/baseValidationChains");
 const validateBodyProps = require("../middleware/validateBodyProps");
+const { JWT_EXPIRES_IN } = require("../utils/constants");
 
 const validateUser = [
   getBaseUsernameVC(),
@@ -109,7 +110,9 @@ module.exports.loginPost = [
   },
   (req, res) => {
     res.status(200).send({
-      token: jwt.sign({ sub: req.user.id }, process.env.JWT_SECRET),
+      token: jwt.sign({ sub: req.user.id }, process.env.JWT_SECRET, {
+        expiresIn: JWT_EXPIRES_IN,
+      }),
       user: req.user,
     });
   },
