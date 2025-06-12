@@ -47,7 +47,7 @@ describe("<LoginForm />", () => {
   it("renders submit button", () => {
     render(<LoginForm callback={() => null} />);
 
-    const btn = screen.getByRole("button");
+    const btn = screen.getByRole("button", { name: "Login" });
 
     expect(btn.getAttribute("type")).toBe("submit");
     expect(btn.parentNode).toBe(screen.getByLabelText("Login form"));
@@ -60,7 +60,7 @@ describe("<LoginForm />", () => {
 
       await user.click(screen.getByLabelText("Password input"));
       await user.keyboard("randomPassword");
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       expect(() => screen.getByText("Username can't be empty")).not.toThrow();
     });
@@ -81,7 +81,7 @@ describe("<LoginForm />", () => {
 
       await user.click(screen.getByLabelText("Username input"));
       await user.keyboard("randomUsername");
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       expect(() => screen.getByText("Password can't be empty")).not.toThrow();
     });
@@ -103,12 +103,12 @@ describe("<LoginForm />", () => {
       await user.click(screen.getByLabelText("Password input"));
       await user.keyboard("randomPassword");
 
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       await user.click(screen.getByLabelText("Username input"));
       await user.keyboard("randomUsername");
 
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       expect(() => screen.getByText("Username can't be empty")).toThrow();
     });
@@ -120,12 +120,12 @@ describe("<LoginForm />", () => {
       await user.click(screen.getByLabelText("Username input"));
       await user.keyboard("randomUsername");
 
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       await user.click(screen.getByLabelText("Password input"));
       await user.keyboard("randomPassword");
 
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       expect(() => screen.getByText("Password can't be empty")).toThrow();
     });
@@ -134,14 +134,14 @@ describe("<LoginForm />", () => {
       render(<LoginForm callback={() => null} />);
       const user = userEvent.setup();
 
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       await user.click(screen.getByLabelText("Username input"));
       await user.keyboard("randomUsername");
       await user.click(screen.getByLabelText("Password input"));
       await user.keyboard("randomPassword");
 
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       expect(() => screen.getByText("Password can't be empty")).toThrow();
       expect(() => screen.getByText("Username can't be empty")).toThrow();
@@ -151,7 +151,7 @@ describe("<LoginForm />", () => {
       render(<LoginForm callback={() => null} />);
       const user = userEvent.setup();
 
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       expect(() => screen.getByText("Username can't be empty")).not.toThrow();
       expect(() => screen.getByText("Password can't be empty")).not.toThrow();
@@ -167,7 +167,7 @@ describe("<LoginForm />", () => {
 
       await user.click(screen.getByLabelText("Username input"));
       await user.keyboard("randomUsername");
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       expect(mockLoginAction).not.toBeCalled();
     });
@@ -180,7 +180,7 @@ describe("<LoginForm />", () => {
 
       await user.click(screen.getByLabelText("Password input"));
       await user.keyboard("randomPassword");
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       expect(mockLoginAction).not.toBeCalled();
     });
@@ -191,7 +191,7 @@ describe("<LoginForm />", () => {
       render(<LoginForm callback={() => null} />);
       const user = userEvent.setup();
 
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       expect(mockLoginAction).not.toBeCalled();
     });
@@ -209,9 +209,11 @@ describe("<LoginForm />", () => {
       await user.click(screen.getByLabelText("Password input"));
       await user.keyboard("somePassword");
 
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
-      expect(screen.getByRole("button").textContent).toBe("Loading...");
+      expect(
+        screen.queryByRole("button", { name: "Loading..." })
+      ).toBeInTheDocument();
     });
 
     it("removes loading on loginAction throwing error", async () => {
@@ -226,7 +228,9 @@ describe("<LoginForm />", () => {
       await user.click(screen.getByLabelText("Password input"));
       await user.keyboard("somePassword");
 
-      expect(screen.getByRole("button").textContent).toBe("Login");
+      expect(
+        screen.queryByRole("button", { name: "Login" })
+      ).toBeInTheDocument();
     });
 
     it("displays error message after failed loginAction", async () => {
@@ -245,7 +249,7 @@ describe("<LoginForm />", () => {
       await user.click(screen.getByLabelText("Password input"));
       await user.keyboard("somePassword");
 
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       expect(screen.getByTestId("login-server-error").textContent).toBe(
         "Error occurred: Please try again!"
@@ -263,7 +267,7 @@ describe("<LoginForm />", () => {
       await user.click(screen.getByLabelText("Password input"));
       await user.keyboard("somePassword");
 
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       expect(callbackMock).toBeCalledTimes(1);
     });
@@ -287,7 +291,7 @@ describe("<LoginForm />", () => {
       await user.click(screen.getByLabelText("Password input"));
       await user.keyboard("somePassword");
 
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       expect(callbackMock).not.toBeCalled();
     });
@@ -304,7 +308,7 @@ describe("<LoginForm />", () => {
       await user.click(screen.getByLabelText("Password input"));
       await user.keyboard("somePassword");
 
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       expect(screen.getByLabelText("Login message")).toBeInTheDocument();
     });

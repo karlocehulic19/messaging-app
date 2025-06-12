@@ -3,6 +3,7 @@ import { useAuth } from "../hooks/useAuth";
 import PropTypes from "prop-types";
 import styles from "./styles/LoginForm.module.css";
 import apiErrorLogger from "../utils/apiErrorLogger";
+import { DEMO_USER_PASSWORD, DEMO_USER_USERNAME } from "../Constants";
 
 function LoginForm({ callback }) {
   const [emptyErrors, setEmptyErrors] = useState({});
@@ -11,8 +12,18 @@ function LoginForm({ callback }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [loginMessage, setLoginMessage] = useState("");
-
   const { loginAction } = useAuth();
+
+  const login = async (username, password) => {
+    try {
+      const messages = await loginAction(username, password);
+      if (!messages) return callback();
+      setLoginMessage(messages[0]);
+    } catch (error) {
+      apiErrorLogger(error);
+      setError("Error occurred: Please try again!");
+    }
+  };
 
   async function handleFormSubmit(e) {
     e.preventDefault();
@@ -21,21 +32,17 @@ function LoginForm({ callback }) {
 
     if (password.length && username.length) {
       setLoading(true);
-      try {
-        const messages = await loginAction(username, password);
-        if (!messages) return callback();
-        setLoginMessage(messages[0]);
-      } catch (error) {
-        apiErrorLogger(error);
-        setError("Error occurred: Please try again!");
-      }
-
+      await login(username, password);
       setLoading(false);
     }
   }
 
   function handleInput(e) {
     setUsername(e.target.value);
+  }
+
+  function handleDemoButtonClick() {
+    login(DEMO_USER_USERNAME, DEMO_USER_PASSWORD);
   }
 
   return (
@@ -75,6 +82,9 @@ function LoginForm({ callback }) {
         ) : (
           <button disabled>Loading...</button>
         )}
+        <button type="button" onClick={handleDemoButtonClick}>
+          Continue as Demo User
+        </button>
       </form>
       {error && (
         <div data-testid="login-server-error" className="error-popup">

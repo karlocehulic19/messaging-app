@@ -375,4 +375,25 @@ describe("<Main />", () => {
       await screen.findByRole("heading", { name: firstTestUser.username })
     ).toBeInTheDocument();
   });
+
+  describe("demo version", () => {
+    it("goes to Dashboard when clicked on button", async () => {
+      render(
+        <App
+          routerRender={(children) => <MemoryRouter>{children}</MemoryRouter>}
+        />
+      );
+      const user = userEvent.setup();
+
+      await user.click(
+        screen.getByRole("button", { name: "Continue as Demo User" })
+      );
+
+      expect(
+        screen.queryByRole("heading", {
+          name: "Select user to message in the search bar",
+        })
+      ).toBeInTheDocument();
+    });
+  });
 });

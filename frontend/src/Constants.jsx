@@ -11,5 +11,7 @@ const dev = {
 };
 
 export const POOLING_INTERVAL_TIME_SECONDS = 3;
+export const DEMO_USER_USERNAME = import.meta.env.VITE_DEMO_USER_USERNAME;
+export const DEMO_USER_PASSWORD = import.meta.env.VITE_DEMO_USER_PASSWORD;
 
 export const config = import.meta.env.MODE === "production" ? prod : dev;

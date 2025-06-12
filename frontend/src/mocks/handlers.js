@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { config } from "../Constants";
+import { config, DEMO_USER_PASSWORD, DEMO_USER_USERNAME } from "../Constants";
 import { Jimp } from "jimp";
 
 const BACKEND_URL = config.url.BACKEND_URL;
@@ -115,6 +115,14 @@ export const secondTestUser = new User(
   { token: "secondJWTtoken" }
 );
 
+const demoTestUser = new User(
+  "Demo",
+  "User",
+  DEMO_USER_USERNAME,
+  "demo@email.com",
+  DEMO_USER_PASSWORD
+);
+
 export const poolingTestUser = userFactory("Pooling", "User");
 export const oldMessagesUser = userFactory("Old", "Messages");
 export const userWithoutPicture = userFactory("Without", "Picture");
@@ -174,6 +182,16 @@ export const handlers = [
         { error: "Missing credentials" },
         { status: 401 }
       );
+    }
+
+    if (
+      body.username === demoTestUser.username &&
+      body.password === demoTestUser.password
+    ) {
+      return HttpResponse.json({
+        token: defaultTestUserToken,
+        user: demoTestUser.getBasicObject(),
+      });
     }
 
     if (body.username != "someUsername" || body.password != "somePassword") {
