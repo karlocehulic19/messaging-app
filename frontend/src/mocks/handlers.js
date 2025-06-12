@@ -149,6 +149,37 @@ export const firstTodaysDateMessage = "First todays message";
 
 const db = User.allUsers;
 
+export const loginPostHandler = async ({ request }) => {
+  const body = await request.json();
+  if (!body.username || !body.password) {
+    return HttpResponse.json({ error: "Missing credentials" }, { status: 401 });
+  }
+
+  if (
+    body.username === demoTestUser.username &&
+    body.password === demoTestUser.password
+  ) {
+    return HttpResponse.json({
+      token: defaultTestUserToken,
+      user: demoTestUser.getBasicObject(),
+    });
+  }
+
+  if (body.username != "someUsername" || body.password != "somePassword") {
+    return HttpResponse.json(
+      { messages: ["Username or password is incorrect"] },
+      { status: 401 }
+    );
+  }
+  return HttpResponse.json(
+    {
+      token: defaultTestUserToken,
+      user: defaultTestUser.getBasicObject(),
+    },
+    { status: 200 }
+  );
+};
+
 export const userGetHandler = ({ request }) => {
   const url = new URL(request.url);
   const queries = url.searchParams;
@@ -175,39 +206,7 @@ export const userGetHandler = ({ request }) => {
 };
 
 export const handlers = [
-  http.post(`${BACKEND_URL}/login`, async ({ request }) => {
-    const body = await request.json();
-    if (!body.username || !body.password) {
-      return HttpResponse.json(
-        { error: "Missing credentials" },
-        { status: 401 }
-      );
-    }
-
-    if (
-      body.username === demoTestUser.username &&
-      body.password === demoTestUser.password
-    ) {
-      return HttpResponse.json({
-        token: defaultTestUserToken,
-        user: demoTestUser.getBasicObject(),
-      });
-    }
-
-    if (body.username != "someUsername" || body.password != "somePassword") {
-      return HttpResponse.json(
-        { messages: ["Username or password is incorrect"] },
-        { status: 401 }
-      );
-    }
-    return HttpResponse.json(
-      {
-        token: defaultTestUserToken,
-        user: defaultTestUser.getBasicObject(),
-      },
-      { status: 200 }
-    );
-  }),
+  http.post(`${BACKEND_URL}/login`, loginPostHandler),
 
   http.post(`${BACKEND_URL}/register`, async ({ request }) => {
     const body = await request.json();

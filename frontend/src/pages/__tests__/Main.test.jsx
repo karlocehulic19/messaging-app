@@ -20,9 +20,10 @@ import {
   todaysMessagesUser,
   firstYesterdaysDateMessage,
   firstTodaysDateMessage,
+  loginPostHandler,
 } from "../../mocks/handlers";
 import { server } from "../../mocks/node";
-import { http, HttpResponse } from "msw";
+import { delay, http, HttpResponse } from "msw";
 import { config, POOLING_INTERVAL_TIME_SECONDS } from "../../Constants";
 import { Test2InstantMessage } from "../../mocks/handlers";
 
@@ -394,6 +395,30 @@ describe("<Main />", () => {
           name: "Select user to message in the search bar",
         })
       ).toBeInTheDocument();
+    });
+
+    it("demo button displays loading and is disabled", async () => {
+      const user = userEvent.setup();
+      server.use(
+        http.post("/login", async (args) => {
+          await delay();
+          return loginPostHandler(args);
+        })
+      );
+      render(
+        <App
+          routerRender={(children) => <MemoryRouter>{children}</MemoryRouter>}
+        />
+      );
+
+      await user.click(
+        screen.getByRole("button", { name: "Continue as Demo User" })
+      );
+
+      const demoButton = screen.queryByRole("button", { name: "Loading..." });
+      expect(demoButton).toBeInTheDocument();
+
+      expect(demoButton).toBeDisabled();
     });
   });
 });

@@ -4,12 +4,16 @@ import PropTypes from "prop-types";
 import styles from "./styles/LoginForm.module.css";
 import apiErrorLogger from "../utils/apiErrorLogger";
 import { DEMO_USER_PASSWORD, DEMO_USER_USERNAME } from "../Constants";
+import LoadingButton from "./LoadingButton";
 
 function LoginForm({ callback }) {
   const [emptyErrors, setEmptyErrors] = useState({});
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [buttonsLoading, setButtonsLoading] = useState({
+    login: false,
+    demo: false,
+  });
   const [error, setError] = useState(false);
   const [loginMessage, setLoginMessage] = useState("");
   const { loginAction } = useAuth();
@@ -31,9 +35,9 @@ function LoginForm({ callback }) {
     setEmptyErrors((prev) => ({ ...prev, password: !password.length }));
 
     if (password.length && username.length) {
-      setLoading(true);
+      setButtonsLoading((prev) => ({ ...prev, login: true }));
       await login(username, password);
-      setLoading(false);
+      setButtonsLoading((prev) => ({ ...prev, login: false }));
     }
   }
 
@@ -41,8 +45,10 @@ function LoginForm({ callback }) {
     setUsername(e.target.value);
   }
 
-  function handleDemoButtonClick() {
-    login(DEMO_USER_USERNAME, DEMO_USER_PASSWORD);
+  async function handleDemoButtonClick() {
+    setButtonsLoading((prev) => ({ ...prev, demo: true }));
+    await login(DEMO_USER_USERNAME, DEMO_USER_PASSWORD);
+    setButtonsLoading((prev) => ({ ...prev, demo: true }));
   }
 
   return (
@@ -77,14 +83,21 @@ function LoginForm({ callback }) {
           aria-label="Password input"
           placeholder="Password"
         />
-        {!loading ? (
-          <button type="submit">Login</button>
-        ) : (
-          <button disabled>Loading...</button>
-        )}
-        <button type="button" onClick={handleDemoButtonClick}>
+        <LoadingButton
+          loading={buttonsLoading.login}
+          customProps={{ type: "submit" }}
+        >
+          Login
+        </LoadingButton>
+        <LoadingButton
+          loading={buttonsLoading.demo}
+          customProps={{
+            type: "button",
+            onClick: handleDemoButtonClick,
+          }}
+        >
           Continue as Demo User
-        </button>
+        </LoadingButton>
       </form>
       {error && (
         <div data-testid="login-server-error" className="error-popup">
