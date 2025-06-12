@@ -9,6 +9,7 @@ async function enableAPIMocking() {
     http: (await import("msw")).http,
     HttpResponse: (await import("msw")).HttpResponse,
     backendRoute: (await import("../Constants")).config.url.BACKEND_URL,
+    delay: (await import("msw")).delay,
   };
 
   return worker.start();

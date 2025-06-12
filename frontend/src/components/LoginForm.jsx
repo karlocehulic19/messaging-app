@@ -41,11 +41,10 @@ function LoginForm({ callback }) {
     }
   }
 
-  function handleInput(e) {
-    setUsername(e.target.value);
-  }
-
   async function handleDemoButtonClick() {
+    setUsername(DEMO_USER_USERNAME);
+    setPassword(DEMO_USER_PASSWORD);
+
     setButtonsLoading((prev) => ({ ...prev, demo: true }));
     await login(DEMO_USER_USERNAME, DEMO_USER_PASSWORD);
     setButtonsLoading((prev) => ({ ...prev, demo: true }));
@@ -64,7 +63,8 @@ function LoginForm({ callback }) {
         )}
         {emptyErrors.username && <span>Username can&apos;t be empty</span>}
         <input
-          onChange={handleInput}
+          onChange={(e) => setUsername(e.target.value)}
+          value={username}
           type="text"
           name="username"
           id="username"
@@ -77,6 +77,7 @@ function LoginForm({ callback }) {
           onChange={(e) => {
             setPassword(e.target.value);
           }}
+          value={password}
           type="password"
           name="password"
           id="password"
