@@ -47,5 +47,8 @@
       "frontend/public",
       "public"
     ]
+  },
+  "prettier": {
+    "trailingComma": "es5"
   }
 }
