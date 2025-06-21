@@ -1,6 +1,9 @@
 const { PrismaClient } = require("@prisma/client");
 const client = new PrismaClient();
-const { MESSAGES_PER_REQUEST } = require("../utils/constants");
+const {
+  MESSAGES_PER_REQUEST,
+  SEARCHED_USER_NUMBER,
+} = require("../utils/constants");
 
 module.exports.getUserByUsername = async (username) => {
   return await client.user.findFirst({
@@ -22,15 +25,34 @@ module.exports.createUser = async (user) => {
   });
 };
 
-module.exports.getUsersByUsername = async (search) => {
-  return await client.user.findMany({
-    take: 5,
-    where: {
-      username: {
-        startsWith: search,
+module.exports.getUsernamesBySearch = async (search) => {
+  return (
+    await client.user.findMany({
+      take: SEARCHED_USER_NUMBER,
+      where: {
+        username: {
+          startsWith: search,
+        },
+      },
+    })
+  ).map((user) => ({ username: user.username }));
+};
+
+module.exports.getMostActiveSendersUsernames = async () => {
+  const userGroup = await client.message.groupBy({
+    by: ["sender"],
+    _count: {
+      sender: true,
+    },
+    orderBy: {
+      _count: {
+        sender: "desc",
       },
     },
+    take: SEARCHED_USER_NUMBER,
   });
+
+  return userGroup.map((msgData) => ({ username: msgData.sender }));
 };
 
 module.exports.getUserById = async (id) => {

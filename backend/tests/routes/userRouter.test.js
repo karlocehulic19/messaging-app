@@ -1,5 +1,6 @@
 const userRouter = require("../../routes/userRouter");
 const { faker } = require("@faker-js/faker");
+const { SEARCHED_USER_NUMBER } = require("../../utils/constants");
 const { app, request, prisma } = require("../setupApp")((app) => {
   app.use("/users", userRouter);
 });
@@ -7,8 +8,8 @@ const { app, request, prisma } = require("../setupApp")((app) => {
 const setup = async () => {
   faker.seed(123);
 
-  // Ensures stable test(five usernames with "Jo" must be created)
-  const usernames = [
+  // Ensures stable test(five firstNames with "Jo" must be created)
+  const firstNames = [
     "John",
     "Josh",
     "Joanne",
@@ -21,23 +22,29 @@ const setup = async () => {
     "Amanda",
   ];
 
-  for (let firstName of usernames) {
-    await prisma.user.create({
-      data: {
-        username: faker.internet.username({ firstName }),
-        email: faker.internet.email(),
-        firstName: faker.person.firstName(),
-        lastName: faker.person.lastName(),
-        password: faker.internet.password(),
-      },
-    });
+  const usernames = [];
+
+  for (let firstName of firstNames) {
+    usernames.push(
+      (
+        await prisma.user.create({
+          data: {
+            username: faker.internet.username({ firstName }),
+            email: faker.internet.email(),
+            firstName: faker.person.firstName(),
+            lastName: faker.person.lastName(),
+            password: faker.internet.password(),
+          },
+        })
+      ).username,
+    );
   }
 
-  return { usernames };
+  return { firstNames, usernames };
 };
 
 describe("/users", () => {
-  it("returns first five users with searched username", async () => {
+  it(`returns first ${SEARCHED_USER_NUMBER} users with searched username`, async () => {
     await setup();
 
     const USERS_COUNT = 100;
@@ -56,14 +63,14 @@ describe("/users", () => {
 
     const response1 = await request(app).get("/users?s=A");
     expect(response1.status).toBe(200);
-    expect(response1.body.length).toBe(5);
+    expect(response1.body.length).toBe(SEARCHED_USER_NUMBER);
     for (let res of response1.body) {
       expect(res.username).toMatch(/A/);
     }
 
     const response2 = await request(app).get("/users?s=Jo");
     expect(response2.status).toBe(200);
-    expect(response2.body.length).toBe(5);
+    expect(response2.body.length).toBe(SEARCHED_USER_NUMBER);
     for (let res of response2.body) {
       expect(res.username).toMatch(/Jo/);
     }
@@ -111,23 +118,47 @@ describe("/users", () => {
     expect(response4.body.length).toBe(1);
   });
 
+  it("respondes with five users with most messages user on empty s parameter", async () => {
+    const { usernames } = await setup();
+
+    for (let i = 0; i < SEARCHED_USER_NUMBER + 2; i++) {
+      for (let j = 0; j < SEARCHED_USER_NUMBER + 2 - i; j++) {
+        await prisma.message.create({
+          data: {
+            sender: usernames[i],
+            receiver: usernames[i + 1],
+            date: new Date(),
+            message: `This is the ${j}. message!`,
+          },
+        });
+      }
+    }
+
+    const resExplicit = await request(app).get("/users");
+
+    const arrayOfReceivedUsernamesExplicit = resExplicit.body.map(
+      (user) => user.username,
+    );
+    expect(arrayOfReceivedUsernamesExplicit).toEqual(
+      usernames.slice(0, SEARCHED_USER_NUMBER),
+    );
+
+    const resImplicit = await request(app).get("/users?s=");
+
+    const arrayOfReceivedUsernamesImplicit = resImplicit.body.map(
+      (user) => user.username,
+    );
+    expect(arrayOfReceivedUsernamesImplicit).toEqual(
+      usernames.slice(0, SEARCHED_USER_NUMBER),
+    );
+  });
+
   it("returns empty array if user with username isn't found", () => {
     return request(app)
       .get("/users?s=t0t4lly4psurdN1ckn4m3")
       .expect(200)
       .then((response) => {
         expect(response.body).toEqual([]);
-      });
-  });
-
-  it("sends bad request if s query isn't present", () => {
-    return request(app)
-      .get("/users")
-      .expect(400)
-      .then((response) => {
-        expect(response.body.error).toBe(
-          "At least s or exists query is needed to send users get request."
-        );
       });
   });
 

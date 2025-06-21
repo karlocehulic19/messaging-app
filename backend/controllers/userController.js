@@ -11,20 +11,16 @@ const { PROFILE_PICTURE_CACHE_SECONDS } = require("../utils/constants");
 const getUsers = asyncHandler(async (req, res) => {
   if (req.query.exists)
     return res.sendStatus(
-      (await queries.getUserByUsername(req.query.exists)) ? 200 : 404
+      (await queries.getUserByUsername(req.query.exists)) ? 200 : 404,
     );
-  if (!req.query.s)
-    return res.status(400).send({
-      error: "At least s or exists query is needed to send users get request.",
-    });
+
   const usernameSearch = req.query.s;
-  const users = await queries.getUsersByUsername(usernameSearch);
 
-  const usersProfiles = users.map((user) => ({
-    username: user.username,
-  }));
+  if (!usernameSearch) {
+    return res.send(await queries.getMostActiveSendersUsernames());
+  }
 
-  return res.send(usersProfiles);
+  return res.send(await queries.getUsernamesBySearch(usernameSearch));
 });
 
 const getProfilePictureByUsername = (ImageManager) =>
@@ -94,12 +90,12 @@ const putUser = (ImageManager) => {
 
       if (req.body.newPictureBase64) {
         newPhotoPublicId = await ImageManager.uploadCropped(
-          req.body.newPictureBase64
+          req.body.newPictureBase64,
         );
       }
 
       const originalUser = await queries.getUserByUsername(
-        req.body.senderUsername
+        req.body.senderUsername,
       );
       const updatedUser = await queries.updateUser(req.body.senderUsername, {
         username: req.body.newUsername,
