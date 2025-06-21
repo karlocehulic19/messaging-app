@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import useDebounce from "../hooks/useDebounce";
 import SearchCard from "./SearchCard";
 import customFetch from "../utils/customFetch";
@@ -19,6 +19,19 @@ export default function SearchBar() {
       searchBarState == "error") &&
     focused;
 
+  const fetchUsers = useCallback((url) => {
+    customFetch(url)
+      .then((response) => response.json())
+      .then((users) => {
+        setUsers(users);
+        setSearchBarState("result");
+      })
+      .catch((error) => {
+        setSearchBarState("error");
+        apiErrorLogger(error);
+      });
+  }, []);
+
   if (!users.length && search && searchBarState == "result")
     setSearchBarState("notfound");
   else if (search == "" && searchBarState == "loading")
@@ -26,21 +39,16 @@ export default function SearchBar() {
   useDebounce(
     useCallback(() => {
       if (search != "") {
-        customFetch(`/users?s=${search}`)
-          .then((response) => response.json())
-          .then((users) => {
-            setUsers(users);
-            setSearchBarState("result");
-          })
-          .catch((error) => {
-            setSearchBarState("error");
-            apiErrorLogger(error);
-          });
+        fetchUsers(`/users?s=${search}`);
       }
-    }, [search]),
+    }, [search, fetchUsers]),
     500,
     search
   );
+
+  useEffect(() => {
+    fetchUsers("/users");
+  }, [fetchUsers]);
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);

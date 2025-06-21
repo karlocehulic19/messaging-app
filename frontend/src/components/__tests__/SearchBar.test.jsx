@@ -7,7 +7,7 @@ import * as customFetch from "../../utils/customFetch";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { http, HttpResponse } from "msw";
 import { config } from "../../Constants";
-import { userGetHandler } from "../../mocks/handlers";
+import { oldMessagesUser, userGetHandler } from "../../mocks/handlers";
 
 function getConsoleErrorSpy() {
   const consoleErrorSpy = vi
@@ -104,6 +104,7 @@ describe("<SearchBar />", () => {
   });
 
   it("displays not found when no users are found", async () => {
+    getConsoleErrorSpy();
     const { user, customFetchSpy } = await setup();
     await user.keyboard("not in database");
 
@@ -164,9 +165,7 @@ describe("<SearchBar />", () => {
 
     await user2.keyboard("T");
 
-    await waitFor(() =>
-      expect(customFetchSpy2.mock.calls[0][0]).toBe("/users?s=T")
-    );
+    await waitFor(() => expect(customFetchSpy2).toBeCalledWith("/users?s=T"));
 
     await user2.click(screen.getByLabelText("Test user"));
 
@@ -183,12 +182,19 @@ describe("<SearchBar />", () => {
 
     await user3.keyboard("T");
 
-    await waitFor(() =>
-      expect(customFetchSpy3.mock.calls[0][0]).toBe("/users?s=T")
-    );
+    await waitFor(() => expect(customFetchSpy3).toBeCalledWith("/users?s=T"));
 
     await user3.click(screen.getByRole("search"));
 
     expect(screen.getByLabelText("Found users")).toBeInTheDocument();
+  });
+
+  it("opens with defualt users on empty search", async () => {
+    getConsoleErrorSpy();
+    const { user } = await setup();
+
+    user.click(screen.getByRole("searchbox"));
+
+    expect(screen.getByText(oldMessagesUser.username)).toBeInTheDocument();
   });
 });

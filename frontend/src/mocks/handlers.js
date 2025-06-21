@@ -184,14 +184,10 @@ export const userGetHandler = ({ request }) => {
   const url = new URL(request.url);
   const queries = url.searchParams;
 
-  if (!queries.has("s") && !queries.has("exists")) {
-    return HttpResponse.json(
-      {
-        error:
-          "At least s or exists query is needed to send users get request.",
-      },
-      { status: 400 }
-    );
+  if (queries.has("exists")) {
+    return new HttpResponse(null, {
+      status: queries.get("exists") in db ? 200 : 400,
+    });
   }
 
   if (queries.has("s")) {
@@ -200,9 +196,13 @@ export const userGetHandler = ({ request }) => {
     );
   }
 
-  return new HttpResponse(null, {
-    status: queries.get("exists") in db ? 200 : 400,
-  });
+  return HttpResponse.json([
+    { username: defaultTestUser.username },
+    { username: poolingTestUser.username },
+    { username: todaysMessagesUser.username },
+    { username: yesterdaysMessagesUser.username },
+    { username: oldMessagesUser.username },
+  ]);
 };
 
 export const handlers = [
