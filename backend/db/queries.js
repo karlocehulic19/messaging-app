@@ -32,6 +32,7 @@ module.exports.getUsernamesBySearch = async (search) => {
       where: {
         username: {
           startsWith: search,
+          mode: "insensitive",
         },
       },
     })

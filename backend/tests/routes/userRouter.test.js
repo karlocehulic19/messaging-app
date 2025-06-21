@@ -118,6 +118,23 @@ describe("/users", () => {
     expect(response4.body.length).toBe(1);
   });
 
+  it("respondes with case insensitive result", async () => {
+    const caseInsensitiveUsername = "CaseInsensitive";
+
+    await prisma.user.create({
+      data: {
+        firstName: "First",
+        lastName: "Last",
+        password: "SomePassword@1",
+        username: "CaseInsensitive",
+        email: "caseInsensitive@email.com",
+      },
+    });
+
+    const res = await request(app).get("/users?s=case");
+    expect(res.body).toEqual([{ username: caseInsensitiveUsername }]);
+  });
+
   it("respondes with five users with most messages user on empty s parameter", async () => {
     const { usernames } = await setup();
 
