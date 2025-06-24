@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useAuth } from "./useAuth";
 import customFetch from "../utils/customFetch";
 import apiErrorLogger from "../utils/apiErrorLogger";
@@ -13,6 +13,11 @@ export const useScrollingMessages = (
   const { user } = useAuth();
 
   const SCROLL_OFFSET = 20;
+
+  useEffect(() => {
+    setIsAllLoaded(false);
+    setLoading(false);
+  }, [partnerUsername]);
 
   const handleScrollingMessages = useCallback(
     (e) => {
