@@ -2,6 +2,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 3vh;
+  padding-top: 5vh;
   gap: 1em;
 }
