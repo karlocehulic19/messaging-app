@@ -7,3 +7,29 @@
   justify-content: center;
   height: 5rem;
 }
+
+@media (max-width: 750px) {
+  #navbar {
+    padding: 0.2rem 2rem;
+    display: flex;
+    align-items: start;
+    gap: 1rem;
+  }
+
+  #navbar > * {
+    position: relative;
+    transform: none;
+  }
+
+  #navbar > div[role="search"] {
+    flex-grow: 1;
+    top: 1rem;
+    left: 0;
+    width: auto;
+  }
+
+  #navbar > div:has(a) {
+    position: relative;
+    left: 0;
+  }
+}
