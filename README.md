@@ -11,11 +11,11 @@ A messaging app is a full-stack application for messaging users.
 Run `npm -w frontend run dev:msw` if you want to run the Frontend of the app without starting the backend.
 
 ## Frontend
-Some of the main technologies used for Frontend are: Javascript, React, React Testing Library, Vitest, npm...
+Some of the main technologies used for Frontend are: JavaScript, React, React Testing Library, Vitest, npm...
 
 
 ## Backend
-Some of the main technologies used for Backend are: JavaScript, Express, JSON Web Tokens (used for authentication along with bearer headers), Postgresql (database), PrismaORM...  
+Some of the main technologies used for the Backend are: JavaScript, Express, JSON Web Tokens (used for authentication along with bearer headers), Postgresql (database), PrismaORM...  
 
 ## Features
 ### Live Messaging
@@ -30,7 +30,7 @@ Some of the main technologies used for Backend are: JavaScript, Express, JSON We
 
 ![updating-profile](https://github.com/user-attachments/assets/104ba8e7-abf8-488f-af5c-76a8e5b96df7)
 
-### Dynamic Registration Input Fields
+### Dynamic Registration Validation
 
 ![register-dynamic](https://github.com/user-attachments/assets/48e18fb3-8100-4bd8-a239-76239f7493e7)
 
