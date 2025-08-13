@@ -7,7 +7,6 @@ import userEvent from "@testing-library/user-event";
 import * as customFetch from "../../utils/customFetch";
 import { config } from "../../Constants";
 import { http, HttpResponse } from "msw";
-import { useRef } from "react";
 
 server.listen();
 
@@ -26,12 +25,10 @@ global.URL.createObjectURL = vi.fn(() => {
 
 // eslint-disable-next-line react/prop-types
 const MockedSearchBar = ({ username }) => {
-  const searchBarRef = useRef();
-
   return (
     <>
-      <input ref={searchBarRef} type="text" name="searchbar" id="searchbar" />
-      <SearchCard username={username} searchBarRef={searchBarRef} />
+      <input type="text" name="searchbar" id="searchbar" />
+      <SearchCard username={username} closeSearchbar={() => null} />
     </>
   );
 };

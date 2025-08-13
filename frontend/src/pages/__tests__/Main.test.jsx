@@ -431,8 +431,9 @@ describe("<Main />", () => {
         screen.getByLabelText(defaultTestUser.username + " user")
       );
 
-      // TODO: make this more explicit so its clearer
-      expect(screen.getByText("someUsername")).toBeInTheDocument();
+      const isSearchbarOpen = () =>
+        screen.getByLabelText(defaultTestUser.username + " user");
+      expect(isSearchbarOpen).toThrow();
     });
   });
 });
