@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import styles from "./styles/SearchCard.module.css";
 import { useProfilePicture } from "../hooks/useProfilePicture";
 
-export default function SearchCard({ username, searchBarRef }) {
+export default function SearchCard({ username, closeSearchbar }) {
   const profilePictureSrc = useProfilePicture(username);
   const navigate = useNavigate();
 
   function handleClick(e) {
     e.preventDefault();
     navigate(`/${username}`);
-    searchBarRef.current.blur();
+    closeSearchbar();
   }
 
   return (
@@ -33,5 +33,5 @@ export default function SearchCard({ username, searchBarRef }) {
 SearchCard.propTypes = {
   username: PropTypes.string.isRequired,
   photoId: PropTypes.string,
-  searchBarRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  closeSearchbar: PropTypes.func.isRequired,
 };

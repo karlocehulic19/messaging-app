@@ -11,6 +11,7 @@ export default function SearchBar() {
   const [searchBarState, setSearchBarState] = useState("result");
   const [focused, setFocus] = useState(false);
   const searchBarRef = useRef();
+  const searchDivRef = useRef();
 
   const isOpen =
     (users.length ||
@@ -66,6 +67,7 @@ export default function SearchBar() {
       tabIndex={-1}
       onFocus={() => setFocus(true)}
       onBlur={handleBlur}
+      ref={searchDivRef}
       role="search"
       id={styles["user-search-bar"]}
       className={isOpen ? styles.open : null}
@@ -90,7 +92,7 @@ export default function SearchBar() {
               <SearchCard
                 key={user.username}
                 username={user.username}
-                searchBarRef={searchBarRef}
+                closeSearchbar={() => setFocus(false)}
               ></SearchCard>
             ))}
         </div>
