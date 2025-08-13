@@ -421,4 +421,18 @@ describe("<Main />", () => {
       expect(demoButton).toBeDisabled();
     });
   });
+
+  describe("searchbar", () => {
+    it("searchbar closes after it is opened from outer div", async () => {
+      const { user } = setup();
+
+      await user.click(screen.getByRole("search"));
+      await user.click(
+        screen.getByLabelText(defaultTestUser.username + " user")
+      );
+
+      // TODO: make this more explicit so its clearer
+      expect(screen.getByText("someUsername")).toBeInTheDocument();
+    });
+  });
 });
