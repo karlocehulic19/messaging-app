@@ -1,31 +1,31 @@
-import { MemoryRouter } from "react-router-dom";
-import App from "../../App";
 import { act, render, screen, waitFor } from "@testing-library/react";
-import "../../mocks/URL";
-import { expect, vi } from "vitest";
 import { userEvent } from "@testing-library/user-event";
-import * as customFetch from "../../utils/customFetch";
+import { delay, http, HttpResponse } from "msw";
+import { MemoryRouter } from "react-router-dom";
+import { expect, vi } from "vitest";
+import App from "../../App";
+import { config, POOLING_INTERVAL_TIME_SECONDS } from "../../Constants";
 import {
+  dateMessagesUser,
   defaultTestUser,
+  firstDateMessage,
   firstTestUser,
+  firstTodaysDateMessage,
+  firstYesterdaysDateMessage,
+  loginPostHandler,
+  oldMessage,
+  oldMessagesUser,
   poolingTestUser,
   secondTestUser,
+  Test2InstantMessage,
   TestPoolingMessage,
-  oldMessagesUser,
-  oldMessage,
-  userWithoutPicture,
-  dateMessagesUser,
-  firstDateMessage,
-  yesterdaysMessagesUser,
   todaysMessagesUser,
-  firstYesterdaysDateMessage,
-  firstTodaysDateMessage,
-  loginPostHandler,
+  userWithoutPicture,
+  yesterdaysMessagesUser,
 } from "../../mocks/handlers";
 import { server } from "../../mocks/node";
-import { delay, http, HttpResponse } from "msw";
-import { config, POOLING_INTERVAL_TIME_SECONDS } from "../../Constants";
-import { Test2InstantMessage } from "../../mocks/handlers";
+import "../../mocks/URL";
+import * as customFetch from "../../utils/customFetch";
 
 // Overrides react testing libraries tendency to use jest, needed for userEvents with fake timers
 this.jest = vi;
