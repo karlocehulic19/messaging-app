@@ -436,4 +436,22 @@ describe("<Main />", () => {
       expect(isSearchbarOpen).toThrow();
     });
   });
+
+  describe("messaging", () => {
+    it("clears message input after clicking send before successful API call", async () => {
+      const { user, firstMessageText } = await setupMessage();
+
+      server.use(
+        http.post(`${config.url.BACKEND_URL}/messages`, async () => {
+          return new Promise();
+        })
+      );
+
+      await user.click(screen.getByRole("button", { name: "Send button" }));
+
+      expect(
+        screen.queryByDisplayValue(firstMessageText)
+      ).not.toBeInTheDocument();
+    });
+  });
 });
