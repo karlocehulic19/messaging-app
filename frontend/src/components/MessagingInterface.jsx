@@ -52,6 +52,8 @@ export default function MessagingInterface({ receiverUsername }) {
           apiErrorLogger(error);
         });
     }
+
+    setMessage("");
   }, [user, message, receiverUsername, addMessages]);
 
   return (
