@@ -30,6 +30,7 @@ import * as customFetch from "../../utils/customFetch";
 // Overrides react testing libraries tendency to use jest, needed for userEvents with fake timers
 this.jest = vi;
 const mockedSystemTime = "2025-04-04T20:33:37.997Z";
+const BACKEND_URL = config.url.BACKEND_URL;
 
 vi.mock("../../utils/apiErrorLogger", async (importOriginal) => ({
   default: vi.fn(async (error) => {
@@ -224,9 +225,7 @@ describe("<Main />", () => {
 
   it("displays error popup on invalid message send", async () => {
     server.use(
-      http.post(`${config.url.BACKEND_URL}/messages`, () =>
-        HttpResponse.error()
-      )
+      http.post(`${BACKEND_URL}/messages`, () => HttpResponse.error())
     );
     const { sendMessage, firstMessageText } = await setupMessage();
 
@@ -400,7 +399,7 @@ describe("<Main />", () => {
     it("demo button displays loading and is disabled", async () => {
       const user = userEvent.setup();
       server.use(
-        http.post("/login", async (args) => {
+        http.post(`${BACKEND_URL}/login`, async (args) => {
           await delay();
           return loginPostHandler(args);
         })
@@ -442,7 +441,7 @@ describe("<Main />", () => {
       const { user, firstMessageText } = await setupMessage();
 
       server.use(
-        http.post(`${config.url.BACKEND_URL}/messages`, async () => {
+        http.post(`${BACKEND_URL}/messages`, async () => {
           return new Promise();
         })
       );
