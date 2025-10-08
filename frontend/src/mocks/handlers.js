@@ -1,6 +1,9 @@
 import { http, HttpResponse } from "msw";
-import { config, DEMO_USER_PASSWORD, DEMO_USER_USERNAME } from "../Constants";
+import { config } from "../Constants";
 import { Jimp } from "jimp";
+
+const DEMO_USER_PASSWORD = config.users.demo.DEMO_USER_PASSWORD;
+const DEMO_USER_USERNAME = config.users.demo.DEMO_USER_USERNAME;
 
 const BACKEND_URL = config.url.BACKEND_URL;
 const MS_IN_DAY = 1000 * 60 * 60 * 24;

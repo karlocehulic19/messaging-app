@@ -3,8 +3,11 @@ import { useAuth } from "../hooks/useAuth";
 import PropTypes from "prop-types";
 import styles from "./styles/LoginForm.module.css";
 import apiErrorLogger from "../utils/apiErrorLogger";
-import { DEMO_USER_PASSWORD, DEMO_USER_USERNAME } from "../Constants";
+import { config } from "../Constants";
 import LoadingButton from "./LoadingButton";
+
+const DEMO_USER_PASSWORD = config.users.demo.DEMO_USER_PASSWORD;
+const DEMO_USER_USERNAME = config.users.demo.DEMO_USER_USERNAME;
 
 function LoginForm({ callback }) {
   const [emptyErrors, setEmptyErrors] = useState({});
