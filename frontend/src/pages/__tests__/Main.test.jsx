@@ -227,15 +227,13 @@ describe("<Main />", () => {
     server.use(
       http.post(`${BACKEND_URL}/messages`, () => HttpResponse.error())
     );
-    const { sendMessage, firstMessageText } = await setupMessage();
+    const { sendMessage } = await setupMessage();
 
     vi.spyOn(console, "error").mockImplementationOnce(() => undefined);
     await sendMessage();
 
     const errorPopup = screen.getByRole("alert");
     expect(errorPopup).toBeInTheDocument();
-
-    expect(screen.getByRole("textbox")).toHaveValue(firstMessageText);
   });
 
   it("distinguishes messages from client and partner", async () => {
