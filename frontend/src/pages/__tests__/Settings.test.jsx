@@ -224,7 +224,9 @@ describe("<Settings>", () => {
 
   it("displays current default profile picture", async () => {
     await setup();
-    const defaultImgBlob = new Blob([await defaultPicBuffer]);
+    const defaultImgBlob = new Blob([await defaultPicBuffer], {
+      type: "application/octet-stream",
+    });
     expect(await screen.findByRole("img")).toHaveAttribute("src", objectURL);
     expect(createObjectURlSpy).toBeCalledWith(defaultImgBlob);
   });
